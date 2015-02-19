@@ -3,17 +3,11 @@ package com.byteshaft.namaztime;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.TextView;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +21,7 @@ import java.net.URL;
 
 
 public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
-    public SystemManagement(Context context) {  // can take other params if needed
+    public SystemManagement(Context context) {
         this.context = context;
     }
 // Initialization //
@@ -50,7 +44,7 @@ public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
 
         super.onPreExecute();
         pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Getting Data ...");
+        pDialog.setMessage("Updating Namaz Time");
         pDialog.setIndeterminate(false);
         pDialog.setCancelable(false);
         pDialog.show();
@@ -91,12 +85,15 @@ public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
 
         data = array.toString();
         try {
-
             createFile = context.openFileOutput(fileName , Context.MODE_PRIVATE);
             createFile.write(data.getBytes());
             createFile.close();
+
         }catch (IOException e){
             e.printStackTrace();
+        }catch(NullPointerException e){
+            e.printStackTrace();
         }
+
     }
 }
