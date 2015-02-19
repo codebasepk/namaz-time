@@ -9,7 +9,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.TextView;
@@ -49,6 +52,8 @@ public class MainActivity extends Activity /* implements View.OnClickListener */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+// checking States
+        checkNetworkStatus();
         textView = (TextView) findViewById(R.id.textView);
         textViewTwo = (TextView) findViewById(R.id.textViewTwo);
         try {
@@ -120,5 +125,36 @@ public class MainActivity extends Activity /* implements View.OnClickListener */
         });
 
         return builder.create();
+    }
+
+
+///module for checking internet access
+    public void  checkNetworkStatus(){
+
+        final ConnectivityManager connMgr = (ConnectivityManager)
+                this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo nf = connMgr.getActiveNetworkInfo();
+
+        final android.net.NetworkInfo wifi =
+                connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        final android.net.NetworkInfo mobile =
+                connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if( wifi.isAvailable() ){
+
+           // Toast.makeText(this, "Wifi" , Toast.LENGTH_LONG).show();
+        }
+        else if( mobile.isAvailable() ){
+
+         //   Toast.makeText(this, "Mobile 3G " , Toast.LENGTH_LONG).show();
+        }
+        else if (nf == null)
+        {
+
+            Toast.makeText(this, "No Network " , Toast.LENGTH_LONG).show();
+        }
+
     }
 }
