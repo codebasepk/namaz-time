@@ -26,14 +26,11 @@ import java.net.URL;
  */
 
 
-
 public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
     public SystemManagement(Context context) {  // can take other params if needed
         this.context = context;
-
     }
 // Initialization //
-
 
     private final String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
     private final String siteLink = "http://muslimsalat.com/weekly.json?key=";
@@ -48,7 +45,6 @@ public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
     final String fileName = "namazTime";
     FileOutputStream createFile;
 
-
     @Override
     protected void onPreExecute() {
 
@@ -60,8 +56,6 @@ public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
         pDialog.show();
         pDialog.show();
     }
-
-
 
     @Override
     protected JsonArray doInBackground(String... params) {
@@ -104,14 +98,5 @@ public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
         }catch (IOException e){
             e.printStackTrace();
         }
-
-
-
-
-
-
-
-
-
     }
 }

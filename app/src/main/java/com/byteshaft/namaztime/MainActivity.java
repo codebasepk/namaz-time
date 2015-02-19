@@ -45,14 +45,12 @@ public class MainActivity extends Activity /* implements View.OnClickListener */
     String maghrib;
     String isha;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textView);
         textViewTwo = (TextView) findViewById(R.id.textViewTwo);
-
         try {
             gettingDataFromDb();
         } catch (IOException e) {
@@ -60,13 +58,10 @@ public class MainActivity extends Activity /* implements View.OnClickListener */
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         if (matchedObj == null) {
-
             SystemManagement systemManagement = new SystemManagement(this);
             systemManagement.execute();
         }
-
     }
 
     private void gettingDataFromDb() throws IOException , JSONException{
@@ -102,15 +97,10 @@ public class MainActivity extends Activity /* implements View.OnClickListener */
                 buildErrorDialog(this,"No Namaz time Available", "Please Connect to internet" , "Ok" );
 
             }
-
             DbData = combineNew.append(loop + "\n").toString();
-
-
             textView.setText("Fajr :" + fajr+"\n" +"Dhuhr" + dhuhr +"\n" +"Asar"+asar + "\n"+"Maghrib"
                     + maghrib +"\n"+ "Isha" +isha);
-
-
-        }
+       }
 
     }
     private static AlertDialog buildErrorDialog(final Activity context, String title,
