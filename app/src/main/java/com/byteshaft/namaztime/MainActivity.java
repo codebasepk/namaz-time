@@ -89,9 +89,7 @@ public class MainActivity extends Activity {
         FileInputStream readFile = openFileInput(fileName);
         BufferedInputStream bis = new BufferedInputStream(readFile);
         StringBuilder stringBuilder = new StringBuilder();
-        while (bis.available() != 0)
-
-        {
+        while (bis.available() != 0) {
             char characters = (char) bis.read();
             stringBuilder.append(characters);
             Log.d(TAG, "error in while loop");
