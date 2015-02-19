@@ -2,159 +2,137 @@ package com.byteshaft.namaztime;
 
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
-public class MainActivity extends Activity /* implements View.OnClickListener */ {
+
+public class MainActivity extends Activity {
 
     TextView textView, textViewTwo;
+    int  launchCount = 0;
+    private static boolean valueOfLaunchCountModified = false;
+    NetworkInfo info;
     final String fileName = "namazTime";
     String DbData;
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-M-dd");
     String dDate = df.format(c.getTime());
     String matchedObj;
-    String fajr;
-    String dhuhr;
-    String asar;
-    String maghrib;
-    String isha;
+    String FAJR;
+    String DHUHR;
+    String ASAR;
+    String MAGHRIB;
+    String ISHA;
+    String DATE;
+    SharedPreferences preferences;
+
+    private static final String TAG = "Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-// checking States
-        checkNetworkStatus();
         textView = (TextView) findViewById(R.id.textView);
         textViewTwo = (TextView) findViewById(R.id.textViewTwo);
+
         try {
             gettingDataFromDb();
+            Log.d(TAG, "reading data is not working");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        if (matchedObj == null) {
+        if (DATE == null && checkNetworkStatus() != null) {
             SystemManagement systemManagement = new SystemManagement(this);
             systemManagement.execute();
+        } else {
+
+
+            if (checkNetworkStatus() == null && DATE == null) {
+                Toast.makeText(this, "No internet Connection", Toast.LENGTH_LONG).show();
+
+            } else {
+
+                try {
+                    gettingDataFromDb();
+                    Log.d(TAG, "reading data is not working");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            displayData();
         }
     }
 
-    private void gettingDataFromDb() throws IOException , JSONException{
+    public void gettingDataFromDb() throws InterruptedException, IOException, JSONException {
 
         FileInputStream readFile = openFileInput(fileName);
         BufferedInputStream bis = new BufferedInputStream(readFile);
         StringBuilder stringBuilder = new StringBuilder();
-        while (bis.available() != 0) {
+        while (bis.available() != 0)
+
+        {
             char characters = (char) bis.read();
             stringBuilder.append(characters);
+            Log.d(TAG, "error in while loop");
         }
         bis.close();
         readFile.close();
         // deserializing the content...
         JSONArray readingData = new JSONArray(stringBuilder.toString());
-        StringBuilder combineNew =new StringBuilder();
+        StringBuilder combineNew = new StringBuilder();
 
-        for (int i = 0; i < readingData.length();i++){
+        for (int i = 0; i < readingData.length(); i++) {
             String loop = readingData.getJSONObject(i).get("date_for").toString();
-            if (loop.matches(dDate)){
+            Log.e(TAG, "todays date not found");
+            if (loop.matches(dDate)) {
                 matchedObj = readingData.getJSONObject(i).toString().trim();
-                if (matchedObj.contains(dDate)){
-                    fajr = readingData.getJSONObject(i).get("fajr").toString();
-                    dhuhr = readingData.getJSONObject(i).get("dhuhr").toString();
-                    asar = readingData.getJSONObject(i).get("asr").toString();
-                    maghrib = readingData.getJSONObject(i).get("maghrib").toString();
-                    isha = readingData.getJSONObject(i).get("isha").toString();
-
+                if (matchedObj.contains(dDate)) {
+                    Log.d(TAG, "cannot find specific namaz");
+                    DATE = readingData.getJSONObject(i).get("date_for").toString();
+                    FAJR = readingData.getJSONObject(i).get("fajr").toString();
+                    DHUHR = readingData.getJSONObject(i).get("dhuhr").toString();
+                    ASAR = readingData.getJSONObject(i).get("asr").toString();
+                    MAGHRIB = readingData.getJSONObject(i).get("maghrib").toString();
+                    ISHA = readingData.getJSONObject(i).get("isha").toString();
                 }
-
-            }
-            else{
-                buildErrorDialog(this,"No Namaz time Available", "Please Connect to internet" , "Ok" );
-
             }
             DbData = combineNew.append(loop + "\n").toString();
-            textView.setText("Fajr :" + fajr+"\n" +"Dhuhr" + dhuhr +"\n" +"Asar"+asar + "\n"+"Maghrib"
-                    + maghrib +"\n"+ "Isha" +isha);
-       }
+            Log.d(TAG, "error with append");
 
-    }
-    private static AlertDialog buildErrorDialog(final Activity context, String title,
-                                                String description, String buttonText) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
-        builder.setMessage(description);
-        builder.setCancelable(false);
-        builder.setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                context.finish();
-            }
-        });
-
-        return builder.create();
+        }
     }
 
-
-///module for checking internet access
-    public void  checkNetworkStatus(){
+    private void displayData() {
+        textView.setText(DATE + "\n"+"Fajr :" + FAJR + "\n" + "Dhuhr :" + DHUHR + "\n" + "Asar :" + ASAR + "\n" + "Maghrib :"
+                + MAGHRIB + "\n" + "Isha :" + ISHA);
+    }
+    ///module for checking internet access
+    public NetworkInfo  checkNetworkStatus(){
 
         final ConnectivityManager connMgr = (ConnectivityManager)
                 this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo nf = connMgr.getActiveNetworkInfo();
-
-        final android.net.NetworkInfo wifi =
-                connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        final android.net.NetworkInfo mobile =
-                connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-        if( wifi.isAvailable() ){
-
-           // Toast.makeText(this, "Wifi" , Toast.LENGTH_LONG).show();
-        }
-        else if( mobile.isAvailable() ){
-
-         //   Toast.makeText(this, "Mobile 3G " , Toast.LENGTH_LONG).show();
-        }
-        else if (nf == null)
-        {
-
-            Toast.makeText(this, "No Network " , Toast.LENGTH_LONG).show();
-        }
-
+        info = connMgr.getActiveNetworkInfo();
+        return info;
     }
 }
