@@ -2,10 +2,16 @@ package com.byteshaft.namaztime;
 
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.JsonArray;
@@ -21,23 +27,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends Activity /* implements View.OnClickListener */ {
 
-    private final String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
-    private final String siteLink = "http://muslimsalat.com/daily.json?key=";
-    private final String mApiLink = siteLink + apiKey;
+    TextView textView, textViewTwo;
+    final String fileName = "namazTime";
+    String DbData;
+    Calendar c = Calendar.getInstance();
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-M-dd");
+    String dDate = df.format(c.getTime());
+    String matchedObj;
     String fajr;
-    String duhr;
+    String dhuhr;
     String asar;
-    String magrib;
-    String esha;
-    String date;
-    JsonObject namazTimes;
-    TextView textViewTwo;
-    TextView textView;
-    String getdate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    String maghrib;
+    String isha;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,61 +52,26 @@ public class MainActivity extends Activity /* implements View.OnClickListener */
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textView);
         textViewTwo = (TextView) findViewById(R.id.textViewTwo);
-        Toast.makeText(this,getdate,Toast.LENGTH_LONG).show();
 
         try {
-            HttpURLConnection request = gettingReadyTogetDataByUrlFromServer();
-            ParsingDataUsingJsonParser(request);
-            writeDataToFile();
-            ReadingFileFromDatabase();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+            gettingDataFromDb();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private HttpURLConnection gettingReadyTogetDataByUrlFromServer() throws IOException {
-        URL url = new URL(mApiLink);
-        HttpURLConnection request = (HttpURLConnection) url.openConnection();
-        request.connect();
-        return request;
-    }
-
-    private void ParsingDataUsingJsonParser(HttpURLConnection request) throws IOException {
-        JsonParser jp = new JsonParser();
-        JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-        JsonObject rootobj = root.getAsJsonObject();
-        JsonArray array = rootobj.get("items").getAsJsonArray();
-        namazTimes = array.get(0).getAsJsonObject();
-       // textView.setText(namazTimes.get("date_for").toString());
-        textView.setText(namazTimes.get("fajr").toString());
-    }
-
-    private void writeDataToFile() throws IOException, JSONException {
-
-        JSONArray array  = new JSONArray();
-        JSONObject info = new JSONObject();
-//        Toast.makeText(this,"working" , Toast.LENGTH_SHORT).show();
-// getting ready to send data to DB
-        info.put("date" , namazTimes.get("date_for").toString().trim());
-        info.put("fajr" , namazTimes.get("fajr").toString().trim());
-        info.put("dhuhr" , namazTimes.get("dhuhr").toString().trim());
-        info.put("asar" , namazTimes.get("asr").toString().trim());
-        info.put("magrib", namazTimes.get("maghrib").toString().trim());
-        info.put("esha" , namazTimes.get("isha").toString().trim());
-        array.put(info);
-//saving data to database now
-        String data = array.toString();
-        FileOutputStream createFile = openFileOutput("namazTime", MODE_PRIVATE);
-        createFile.write(data.getBytes());
-        createFile.close();
-        //textViewTwo.setText(data);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-    private void ReadingFileFromDatabase() throws IOException, JSONException {
-        FileInputStream readFile = openFileInput("namazTime");
+        if (matchedObj == null) {
+
+            SystemManagement systemManagement = new SystemManagement(this);
+            systemManagement.execute();
+        }
+
+    }
+
+    private void gettingDataFromDb() throws IOException , JSONException{
+
+        FileInputStream readFile = openFileInput(fileName);
         BufferedInputStream bis = new BufferedInputStream(readFile);
         StringBuilder stringBuilder = new StringBuilder();
         while (bis.available() != 0) {
@@ -109,40 +81,54 @@ public class MainActivity extends Activity /* implements View.OnClickListener */
         bis.close();
         readFile.close();
         // deserializing the content...
-        StringBuffer combineNew = loppingThroughtData(stringBuilder);
-        //textViewTwo.setText(combineNew.toString());
-    }
-
-    private StringBuffer loppingThroughtData(StringBuilder stringBuilder) throws JSONException {
         JSONArray readingData = new JSONArray(stringBuilder.toString());
-        StringBuffer combineNew =new StringBuffer();
+        StringBuilder combineNew =new StringBuilder();
 
-        for (int i = 0; i < readingData.length();i++) {
-            String date = readingData.getJSONObject(i).getString("date").replace("\"", "");
-            if (getdate.equals(date)) {
+        for (int i = 0; i < readingData.length();i++){
+            String loop = readingData.getJSONObject(i).get("date_for").toString();
+            if (loop.matches(dDate)){
+                matchedObj = readingData.getJSONObject(i).toString().trim();
+                if (matchedObj.contains(dDate)){
+                    fajr = readingData.getJSONObject(i).get("fajr").toString();
+                    dhuhr = readingData.getJSONObject(i).get("dhuhr").toString();
+                    asar = readingData.getJSONObject(i).get("asr").toString();
+                    maghrib = readingData.getJSONObject(i).get("maghrib").toString();
+                    isha = readingData.getJSONObject(i).get("isha").toString();
 
-                String fajr = readingData.getJSONObject(i).getString("fajr").replace("\"", "");
-                String dhuhr = readingData.getJSONObject(i).getString("duhr").replace("\"", "");
-                String asar = readingData.getJSONObject(i).getString("asr").replace("\"", "");
-                String maghrib = readingData.getJSONObject(i).getString("magrib").replace("\"", "");
-                String esha = readingData.getJSONObject(i).getString("esha").replace("\"", "");
-
-                textViewTwo.setText(" Date is " + date + "\n" + "Namaz Timings" + fajr + "\n"
-                        + dhuhr + "\n" + asar + "\n" + maghrib + "\n" + esha + "\n");
-            }else {
-                try {
-                    HttpURLConnection request = gettingReadyTogetDataByUrlFromServer();
-                    ParsingDataUsingJsonParser(request);
-                    writeDataToFile();
-                    Toast.makeText(this,"working" , Toast.LENGTH_SHORT).show();
                 }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
             }
+            else{
+                buildErrorDialog(this,"No Namaz time Available", "Please Connect to internet" , "Ok" );
+
+            }
+
+            DbData = combineNew.append(loop + "\n").toString();
+
+
+            textView.setText("Fajr :" + fajr+"\n" +"Dhuhr" + dhuhr +"\n" +"Asar"+asar + "\n"+"Maghrib"
+                    + maghrib +"\n"+ "Isha" +isha);
+
+
         }
-        return combineNew;
+
+    }
+    private static AlertDialog buildErrorDialog(final Activity context, String title,
+                                                String description, String buttonText) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(description);
+        builder.setCancelable(false);
+        builder.setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                context.finish();
+            }
+        });
+
+        return builder.create();
     }
 }
