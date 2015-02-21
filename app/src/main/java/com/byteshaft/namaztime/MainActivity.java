@@ -1,31 +1,30 @@
 package com.byteshaft.namaztime;
 
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
 public class MainActivity extends Activity {
 
-    TextView textView, textViewTwo;
-    int  launchCount = 0;
-    private static boolean valueOfLaunchCountModified = false;
-    NetworkInfo info;
+    private static final String TAG = "Activity";
     final String fileName = "namazTime";
+    TextView textView, textViewTwo;
     String DbData;
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-M-dd");
@@ -37,9 +36,6 @@ public class MainActivity extends Activity {
     String MAGHRIB;
     String ISHA;
     String DATE;
-    SharedPreferences preferences;
-
-    private static final String TAG = "Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,35 +47,14 @@ public class MainActivity extends Activity {
         try {
             gettingDataFromDb();
             Log.d(TAG, "reading data is not working");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | JSONException | InterruptedException e) {
             e.printStackTrace();
         }
         if (DATE == null && checkNetworkStatus() != null) {
-            SystemManagement systemManagement = new SystemManagement(this);
-            systemManagement.execute();
+            new SystemManagement(this).execute();
+        } else if (checkNetworkStatus() == null && DATE == null) {
+            Toast.makeText(this, "No internet Connection", Toast.LENGTH_LONG).show();
         } else {
-
-
-            if (checkNetworkStatus() == null && DATE == null) {
-                Toast.makeText(this, "No internet Connection", Toast.LENGTH_LONG).show();
-
-            } else {
-
-                try {
-                    gettingDataFromDb();
-                    Log.d(TAG, "reading data is not working");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
             displayData();
         }
     }
@@ -115,22 +90,24 @@ public class MainActivity extends Activity {
                     ISHA = readingData.getJSONObject(i).get("isha").toString();
                 }
             }
-            DbData = combineNew.append(loop + "\n").toString();
+            DbData = combineNew.append(loop).append("\n").toString();
             Log.d(TAG, "error with append");
 
         }
     }
 
     private void displayData() {
-        textView.setText(DATE + "\n"+"Fajr :" + FAJR + "\n" + "Dhuhr :" + DHUHR + "\n" + "Asar :" + ASAR + "\n" + "Maghrib :"
-                + MAGHRIB + "\n" + "Isha :" + ISHA);
+        textView.setText(DATE + "\n"
+                + "Fajr :"+ FAJR+ "\n"
+                + "Dhuhr :" + DHUHR + "\n"
+                + "Asar :" + ASAR + "\n"
+                + "Maghrib :"+ MAGHRIB + "\n"
+                + "Isha :" + ISHA);
     }
-    ///module for checking internet access
-    public NetworkInfo  checkNetworkStatus(){
 
-        final ConnectivityManager connMgr = (ConnectivityManager)
-                this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        info = connMgr.getActiveNetworkInfo();
-        return info;
+    public NetworkInfo checkNetworkStatus() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connMgr.getActiveNetworkInfo();
     }
 }
