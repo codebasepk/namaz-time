@@ -75,9 +75,7 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
             fileOutputStream = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
             fileOutputStream.write(input.getBytes());
             fileOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
     }
