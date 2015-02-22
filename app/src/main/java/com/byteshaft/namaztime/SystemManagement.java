@@ -3,11 +3,12 @@ package com.byteshaft.namaztime;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.JSONArray;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,85 +16,69 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by bilal on 2/18/15.
- */
+public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
+    ProgressDialog mProgressDialog;
+    Context mContext;
 
-public class SystemManagement extends AsyncTask<String , Void , JsonArray> {
     public SystemManagement(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
-// Initialization //
-
-    private final String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
-    private final String siteLink = "http://muslimsalat.com/weekly.json?key=";
-    final String mApiLink = siteLink + apiKey;
-    JsonObject rootobj;
-    JsonArray array;
-    ProgressDialog pDialog;
-    Context context;
-    String namaztime;
-    String result;
-    String data;
-    final String fileName = "namazTime";
-    FileOutputStream createFile;
 
     @Override
     protected void onPreExecute() {
-
         super.onPreExecute();
-        pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Updating Namaz Time");
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(false);
-        pDialog.show();
-        pDialog.show();
+
+        mProgressDialog = new ProgressDialog(mContext);
+        mProgressDialog.setMessage("Updating Namaz Time");
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
     }
 
     @Override
-    protected JsonArray doInBackground(String... params) {
-        try{
-        URL url = new URL(mApiLink);
-        HttpURLConnection request = (HttpURLConnection) url.openConnection();
-        request.connect();
+    protected JsonElement doInBackground(String... params) {
+        String siteLink = "http://muslimsalat.com/weekly.json?key=";
+        String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
+        String API = siteLink + apiKey;
 
-            JsonParser jp = new JsonParser();
-            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-            rootobj = root.getAsJsonObject();
-            array = rootobj.get("items").getAsJsonArray();
-       }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-        return array;
-    }
-
-    @Override
-    protected void onPostExecute(JsonArray jsonArray) {
-        super.onPostExecute(jsonArray);
-        pDialog.dismiss();
-
-        int i = 0;
-        while(i < array.size()) {
-            namaztime = array.get(0).getAsJsonObject().toString();
-            result += namaztime;
-            i++;
-        }
-        JSONArray jArr = new JSONArray();
-        jArr.put(result);
-
-        data = array.toString();
+        JsonElement rootJsonElement = null;
         try {
-            createFile = context.openFileOutput(fileName , Context.MODE_PRIVATE);
-            createFile.write(data.getBytes());
-            createFile.close();
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }catch(NullPointerException e){
+            URL url = new URL(API);
+            JsonParser jsonParser = new JsonParser();
+            HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+            httpConnection.connect();
+            rootJsonElement = jsonParser.parse(
+                    new InputStreamReader((InputStream) httpConnection.getContent()));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        return rootJsonElement;
+    }
+
+    @Override
+    protected void onPostExecute(JsonElement jsonElement) {
+        super.onPostExecute(jsonElement);
+        mProgressDialog.dismiss();
+        JsonObject mRootJsonObject = jsonElement.getAsJsonObject();
+        JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
+        String data =  mNamazTimesArray.toString();
+        writeDataToFile(data);
+    }
+
+    private void writeDataToFile(String input) {
+        String fileName = "namazTime";
+        FileOutputStream fileOutputStream;
+
+        try {
+            fileOutputStream = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fileOutputStream.write(input.getBytes());
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }
