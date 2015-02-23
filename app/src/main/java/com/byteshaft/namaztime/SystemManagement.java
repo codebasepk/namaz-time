@@ -9,6 +9,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.json.JSONException;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
+
+//    String PERIOD = "weekly";
 
     ProgressDialog mProgressDialog;
     Context mContext;
@@ -38,7 +42,7 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
     @Override
     protected JsonElement doInBackground(String... params) {
-        String siteLink = "http://muslimsalat.com/weekly.json?key=";
+        String siteLink = "http://muslimsalat.com/yearly.json?key=";
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
         String API = siteLink + apiKey;
 
@@ -65,19 +69,23 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data =  mNamazTimesArray.toString();
         writeDataToFile(data);
+        Helpers helpers = new Helpers(mContext);
+        try {
+            helpers.setTimesFromDatabase();
+        } catch (IOException | JSONException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void writeDataToFile(String input) {
-        String fileName = "namazTime";
+        String fileName = MainActivity.fileName;
         FileOutputStream fileOutputStream;
 
         try {
             fileOutputStream = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
             fileOutputStream.write(input.getBytes());
             fileOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
     }
