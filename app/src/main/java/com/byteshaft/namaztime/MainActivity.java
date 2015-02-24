@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -65,10 +64,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         categories.add("Peshawar");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        String FILE_NAME = "cities";
+        setting = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        int previousPosition = setting.getInt(SELECTED_CITY , 0);
         spinner.setAdapter(adapter);
-//        int previousPosition = setting.getInt(SELECTED_CITY , 0);
-//        System.out.println(previousPosition);
-//        spinner.setSelection(previousPosition);
+        spinner.setSelection(previousPosition);
         }
 
     @Override
@@ -79,7 +79,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        spinner.setSelection(setting.getInt(SELECTED_CITY, 0));
 
     }
 
