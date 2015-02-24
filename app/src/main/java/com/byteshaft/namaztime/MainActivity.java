@@ -21,28 +21,31 @@ import java.util.ArrayList;
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     final static String sFileName = "namaztimes.txt";
+    public static int CITY_NAME;
     static TextView sTextView;
     static String sDATE;
-    public static int CITY_NAME;
-    Spinner spinner;
-    SharedPreferences setting;
-    final String SELECTED_CITY = "city";
+    private final String SELECTED_CITY = "city";
+    private Spinner mSpinner;
+    private SharedPreferences setting;
+    private String FILE_NAME = "cities";
+    private SharedPreferences.OnSharedPreferenceChangeListener listen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sTextView = (TextView) findViewById(R.id.textView);
+        initializationOfXmlReferences();
         Helpers helpers = new Helpers(this);
-        spinner = (Spinner) findViewById(R.id.FirstSpinner);
-        spinner.setOnItemSelectedListener(this);
+        mSpinner.setOnItemSelectedListener(this);
         citiesSpinner();
+        refreshOnChangeSharedPrefrence(this);
+        setting.registerOnSharedPreferenceChangeListener(listen);
 
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         File file = new File(location);
         if (!file.exists()) {
             if (helpers.checkNetworkStatus() != null) {
-              new SystemManagement(this).execute();
+                new SystemManagement(this).execute();
             } else {
                 helpers.refreshDialoge(this);
             }
@@ -62,37 +65,46 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         categories.add("Multan");
         categories.add("Islamabad");
         categories.add("Peshawar");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        String FILE_NAME = "cities";
         setting = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        int previousPosition = setting.getInt(SELECTED_CITY , 0);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(previousPosition);
-        }
+        int previousPosition = setting.getInt(SELECTED_CITY, 0);
+        mSpinner.setAdapter(adapter);
+        mSpinner.setSelection(previousPosition);
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        setSharedPrefrenceForCities(spinner.getSelectedItemPosition());
-
+        setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    private void setSharedPrefrenceForCities(int value) {
+        setting = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+        editor = setting.edit();
+        editor.putInt(SELECTED_CITY, value);
+        editor.apply();
+        CITY_NAME = setting.getInt(SELECTED_CITY, 0);
+    }
+
+    private void refreshOnChangeSharedPrefrence(final Activity context) {
+        listen = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                new SystemManagement(context).execute();
+            }
+        };
 
     }
 
-private void setSharedPrefrenceForCities(int value){
-    String FILE_NAME = "cities";
-    setting = getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-    SharedPreferences.Editor  editor;
-    editor = setting.edit();
-    editor.putInt(SELECTED_CITY, value);
-    editor.apply();
-    CITY_NAME = setting.getInt(SELECTED_CITY, 0);
-    System.out.println(CITY_NAME);
-}
+    private void initializationOfXmlReferences() {
+        sTextView = (TextView) findViewById(R.id.textView);
+        mSpinner = (Spinner) findViewById(R.id.FirstSpinner);
 
-
-
+    }
 }

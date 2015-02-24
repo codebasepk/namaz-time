@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.widget.EditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,11 +24,12 @@ public class Helpers {
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-M-d");
     String dDate = df.format(c.getTime());
-    String FAJR;
-    String DHUHR;
-    String ASAR;
-    String MAGHRIB;
-    String ISHA;
+    String mFajr;
+    String mDhuhr;
+    String mAsar;
+    String mMaghrib;
+    String mIsha;
+    JSONObject jsonObject;
 
 
     public Helpers(Context context) {
@@ -40,25 +39,24 @@ public class Helpers {
     public void setTimesFromDatabase() throws InterruptedException, IOException, JSONException {
 
         String output = getPrayerTimesForDate(dDate);
-        JSONObject o = new JSONObject(output);
-
-        MainActivity.sDATE = o.get("date_for").toString();
-        FAJR = getPrayerTime(o, "fajr");
-        DHUHR = getPrayerTime(o, "dhuhr");
-        ASAR = getPrayerTime(o, "asr");
-        MAGHRIB = getPrayerTime(o, "maghrib");
-        ISHA = getPrayerTime(o, "isha");
+        jsonObject = new JSONObject(output);
+        MainActivity.sDATE = jsonObject.get("date_for").toString();
+        mFajr = getPrayerTime(jsonObject, "fajr");
+        mDhuhr = getPrayerTime(jsonObject, "dhuhr");
+        mAsar = getPrayerTime(jsonObject, "asr");
+        mMaghrib = getPrayerTime(jsonObject, "maghrib");
+        mIsha = getPrayerTime(jsonObject, "isha");
 
         displayData();
     }
 
     private void displayData() {
         MainActivity.sTextView.setText(MainActivity.sDATE + "\n"
-                + "Fajr :" + FAJR + "\n"
-                + "Dhuhr :" + DHUHR + "\n"
-                + "Asar :" + ASAR + "\n"
-                + "Maghrib :" + MAGHRIB + "\n"
-                + "Isha :" + ISHA);
+                + "Fajr :" + mFajr + "\n"
+                + "Dhuhr :" + mDhuhr + "\n"
+                + "Asar :" + mAsar + "\n"
+                + "Maghrib :" + mMaghrib + "\n"
+                + "Isha :" + mIsha);
     }
 
     public NetworkInfo checkNetworkStatus() {
@@ -85,7 +83,7 @@ public class Helpers {
         String _data = null;
         String data = getDataFromFileAsString();
         JSONArray readingData = new JSONArray(data);
-        for(int i = 0; i < readingData.length(); i++) {
+        for (int i = 0; i < readingData.length(); i++) {
             _data = readingData.getJSONObject(i).toString();
             if (_data.contains(request)) {
                 break;
@@ -99,27 +97,21 @@ public class Helpers {
         return jsonObject.get(namaz).toString();
     }
 
-    public void refreshDialoge(final Activity context){
-
+    public void refreshDialoge(final Activity context) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-        alert.setTitle("Internet Not Available");
-        alert.setMessage("Please connect to Internet");
-
-
+        alert.setTitle("No Internet");
+        alert.setMessage("Connect to Internet & Press Ok");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (checkNetworkStatus() != null) {
                     new SystemManagement(context).execute();
-                }else
-                {
+                } else {
                     context.finish();
                 }
-
             }
         });
-        alert.show();
 
+        alert.show();
     }
 
 }
