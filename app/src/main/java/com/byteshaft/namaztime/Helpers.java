@@ -24,11 +24,11 @@ public class Helpers {
     Calendar c = Calendar.getInstance();
     SimpleDateFormat df = new SimpleDateFormat("yyyy-M-d");
     String dDate = df.format(c.getTime());
-    String Fajr;
-    String Dhuhr;
-    String Asar;
-    String Maghrib;
-    String Isha;
+    String mFajr;
+    String mDhuhr;
+    String mAsar;
+    String mMaghrib;
+    String mIsha;
     JSONObject jsonObject;
 
 
@@ -41,22 +41,22 @@ public class Helpers {
         String output = getPrayerTimesForDate(dDate);
         jsonObject = new JSONObject(output);
         MainActivity.sDATE = jsonObject.get("date_for").toString();
-        Fajr = getPrayerTime(jsonObject, "fajr");
-        Dhuhr = getPrayerTime(jsonObject, "dhuhr");
-        Asar = getPrayerTime(jsonObject, "asr");
-        Maghrib = getPrayerTime(jsonObject, "maghrib");
-        Isha = getPrayerTime(jsonObject, "isha");
+        mFajr = getPrayerTime(jsonObject, "fajr");
+        mDhuhr = getPrayerTime(jsonObject, "dhuhr");
+        mAsar = getPrayerTime(jsonObject, "asr");
+        mMaghrib = getPrayerTime(jsonObject, "maghrib");
+        mIsha = getPrayerTime(jsonObject, "isha");
 
         displayData();
     }
 
     private void displayData() {
         MainActivity.sTextView.setText(MainActivity.sDATE + "\n"
-                + "Fajr :" + Fajr + "\n"
-                + "Dhuhr :" + Dhuhr + "\n"
-                + "Asar :" + Asar + "\n"
-                + "Maghrib :" + Maghrib + "\n"
-                + "Isha :" + Isha);
+                + "Fajr :" + mFajr + "\n"
+                + "Dhuhr :" + mDhuhr + "\n"
+                + "Asar :" + mAsar + "\n"
+                + "Maghrib :" + mMaghrib + "\n"
+                + "Isha :" + mIsha);
     }
 
     public NetworkInfo checkNetworkStatus() {

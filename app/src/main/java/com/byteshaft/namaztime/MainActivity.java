@@ -106,6 +106,5 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         sTextView = (TextView) findViewById(R.id.textView);
         mSpinner = (Spinner) findViewById(R.id.FirstSpinner);
 
-
     }
 }
