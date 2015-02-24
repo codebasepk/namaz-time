@@ -11,10 +11,9 @@ import android.os.SystemClock;
 
 public class WidgetReceiver extends BroadcastReceiver {
 
-    private final int TEN_SECONDS = 10000;
-
-    AudioManager mAudioManager;
     private static int sRingerModeBackup;
+    private final int TEN_SECONDS = 10000;
+    AudioManager mAudioManager;
     Context mContext;
     PendingIntent mPendingIntent;
     AlarmManager alarmManager;
