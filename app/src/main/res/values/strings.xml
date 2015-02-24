@@ -3,5 +3,6 @@
 
     <string name="app_name">Namaz Time</string>
     <string name="hello_world">Hello world!</string>
+    <string name="NewSpinner">Cities</string>
 
 </resources>

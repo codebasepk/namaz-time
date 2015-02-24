@@ -6,6 +6,15 @@
                 tools:context=".MainActivity"
                 android:orientation="vertical">
 
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/FirstSpinner"
+        android:prompt="@string/NewSpinner"
+        >
+    </Spinner>
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
