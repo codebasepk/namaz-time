@@ -20,7 +20,6 @@ import java.net.URL;
 
 public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
-//    String PERIOD = "weekly";
 
     ProgressDialog mProgressDialog;
     Context mContext;
@@ -42,7 +41,7 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
     @Override
     protected JsonElement doInBackground(String... params) {
-        String siteLink = "http://muslimsalat.com/yearly.json?key=";
+        String siteLink = "http://muslimsalat.com/weekly.json"+MainActivity.CITY_NAME +"?key=";
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
         String API = siteLink + apiKey;
 
@@ -78,7 +77,7 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
     }
 
     private void writeDataToFile(String input) {
-        String fileName = MainActivity.fileName;
+        String fileName = MainActivity.sFileName;
         FileOutputStream fileOutputStream;
 
         try {

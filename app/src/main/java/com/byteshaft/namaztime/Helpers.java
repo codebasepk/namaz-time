@@ -1,8 +1,13 @@
 package com.byteshaft.namaztime;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.widget.EditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +42,7 @@ public class Helpers {
         String output = getPrayerTimesForDate(dDate);
         JSONObject o = new JSONObject(output);
 
-        MainActivity.DATE = o.get("date_for").toString();
+        MainActivity.sDATE = o.get("date_for").toString();
         FAJR = getPrayerTime(o, "fajr");
         DHUHR = getPrayerTime(o, "dhuhr");
         ASAR = getPrayerTime(o, "asr");
@@ -48,7 +53,7 @@ public class Helpers {
     }
 
     private void displayData() {
-        MainActivity.textView.setText(MainActivity.DATE + "\n"
+        MainActivity.sTextView.setText(MainActivity.sDATE + "\n"
                 + "Fajr :" + FAJR + "\n"
                 + "Dhuhr :" + DHUHR + "\n"
                 + "Asar :" + ASAR + "\n"
@@ -63,7 +68,7 @@ public class Helpers {
     }
 
     private String getDataFromFileAsString() throws IOException {
-        FileInputStream fileInputStream = mContext.openFileInput(MainActivity.fileName);
+        FileInputStream fileInputStream = mContext.openFileInput(MainActivity.sFileName);
         BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -93,4 +98,28 @@ public class Helpers {
     private String getPrayerTime(JSONObject jsonObject, String namaz) throws JSONException {
         return jsonObject.get(namaz).toString();
     }
+
+    public void refreshDialoge(final Activity context){
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+        alert.setTitle("Internet Not Available");
+        alert.setMessage("Please connect to Internet");
+
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if (checkNetworkStatus() != null) {
+                    new SystemManagement(context).execute();
+                }else
+                {
+                    context.finish();
+                }
+
+            }
+        });
+        alert.show();
+
+    }
+
 }
