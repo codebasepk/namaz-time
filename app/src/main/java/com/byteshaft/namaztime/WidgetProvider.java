@@ -11,18 +11,16 @@ import android.widget.RemoteViews;
 
 public class WidgetProvider extends AppWidgetProvider {
 
-    private static Context mContext;
-
-    public static void setupWidget() {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
-        Intent receiver = new Intent(mContext, WidgetReceiver.class);
+    public static void setupWidget(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        Intent receiver = new Intent(context, WidgetReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                mContext, 0, receiver, 0);
-        RemoteViews mRemoteViews = new RemoteViews(mContext.getPackageName(),
+                context, 0, receiver, 0);
+        RemoteViews mRemoteViews = new RemoteViews(context.getPackageName(),
                 R.layout.widget);
         mRemoteViews.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
-        appWidgetManager.updateAppWidget(new ComponentName(mContext, WidgetProvider.class),
+        appWidgetManager.updateAppWidget(new ComponentName(context, WidgetProvider.class),
                 mRemoteViews);
     }
 
@@ -30,7 +28,6 @@ public class WidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
 
-        mContext = context;
-        setupWidget();
+        setupWidget(context);
     }
 }
