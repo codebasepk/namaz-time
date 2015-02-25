@@ -3,6 +3,7 @@ package com.byteshaft.namaztime;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -38,14 +39,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         initializationOfXmlReferences();
         Helpers helpers = new Helpers(this);
         mSpinner.setOnItemSelectedListener(this);
-        try {
-            helpers.getDifferenceBTTimes();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         citiesSpinner();
         refreshOnChangeSharedPrefrence(this);
         setting.registerOnSharedPreferenceChangeListener(listen);
+
 
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         File file = new File(location);
@@ -62,6 +59,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 e.printStackTrace();
             }
         }
+//        try {
+//            helpers.getDifferenceBTTimes();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+        startService(new Intent(getBaseContext(), NamazTimeService.class));
     }
 
 

@@ -6,20 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+public class NamazNotification {
 
-public class Notification {
-
-
-    private final int ID = 1;
+    private final int ID = 21;
     private Context context;
     private NotificationCompat.Builder notificationBuilder;
     private NotificationManager manager;
 
-    public Notification(Context context) {
+    public NamazNotification(Context context) {
         this.context = context;
     }
 
-    public void startNotification() {
+    public  void startNotification() {
         buildNotification();
         addPendingNotify();
         showNotification();
@@ -38,13 +36,13 @@ public class Notification {
         notificationBuilder.setContentText("Tap to remove");
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
-        //notificationBuilder.setSmallIcon(R.drawable.ic_notify);
+        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
         // disable slide to remove for the notification.
         notificationBuilder.setOngoing(true);
     }
 
     private void addPendingNotify() {
-        Intent intent = new Intent("android.intent.CLOSE_ACTIVITY");
+        Intent intent = new Intent("android.intent.NAMAZ.TIME");
         PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         notificationBuilder.setContentIntent(pIntent);
     }
@@ -53,5 +51,4 @@ public class Notification {
         manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(ID, notificationBuilder.build());
     }
-
 }

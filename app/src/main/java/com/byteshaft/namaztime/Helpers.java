@@ -6,31 +6,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Helpers {
 
     Context mContext;
-
-    String mFajr;
-    String mDhuhr;
-    String mAsar;
-    String mMaghrib;
-    String mIsha;
+    static String mFajr;
+    static String mDhuhr;
+    static String mAsar;
+    static String mMaghrib;
+    static String mIsha;
     JSONObject jsonObject;
 
-    private Calendar getCalenderInstance(){
+
+    public static Calendar getCalenderInstance(){
         return Calendar.getInstance();
     }
     private SimpleDateFormat getDateFormate(){
@@ -39,7 +35,12 @@ public class Helpers {
     private String getDate(){
         return getDateFormate().format(getCalenderInstance().getTime());
     }
-
+    public static  String getAmPm(){
+        return getTimeFormate().format(getCalenderInstance().getTime());
+    }
+    public static SimpleDateFormat getTimeFormate(){
+        return new  SimpleDateFormat("h:m");
+    }
     public Helpers(Context context) {
         mContext = context;
     }
@@ -73,12 +74,7 @@ public class Helpers {
                 + "Asar :" + mAsar + "\n"
                 + "Maghrib :" + mMaghrib + "\n"
                 + "Isha :" + mIsha);
-    }
 
-    public NetworkInfo checkNetworkStatus() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connMgr.getActiveNetworkInfo();
     }
 
     private String getDataFromFileAsString() throws IOException {
@@ -108,6 +104,11 @@ public class Helpers {
 
         return _data;
     }
+    public NetworkInfo checkNetworkStatus() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connMgr.getActiveNetworkInfo();
+    }
 
     public void refreshDialoge(final Activity context) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
@@ -126,34 +127,5 @@ public class Helpers {
         alert.show();
     }
 
-    public void displayTimeInNotification() {
+ }
 
-    }
-
-    private String getAmPm(){
-        return getTimeFormate().format(getCalenderInstance().getTime());
-    }
-    private SimpleDateFormat getTimeFormate(){
-        return new  SimpleDateFormat("HH:mm");
-    }
-
-    public void getDifferenceBTTimes() throws ParseException , NullPointerException {
-        System.out.println(getAmPm());
-
-//        String thisdate = getAmPm();
-//        String result = thisdate - mAsar;
-
-        Date date1 = getTimeFormate().parse(getAmPm());
-        Date  date2 = getTimeFormate().parse("5:00PM");
-
-        long difference = date1.getTime() - date2.getTime();
-        System.out.println(difference);
-
-        int hours = (int) ((difference - (1000*60*60*24)) / (1000*60*60));
-        int  min = (int) (difference - (1000*60*60*24) - (1000*60*60*hours)) / (1000*60);
-
-        System.out.println(hours + "this is mintues" + min);
-
-    }
-
-}
