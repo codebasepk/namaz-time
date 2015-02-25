@@ -15,6 +15,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 
@@ -37,6 +38,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         initializationOfXmlReferences();
         Helpers helpers = new Helpers(this);
         mSpinner.setOnItemSelectedListener(this);
+        try {
+            helpers.getDifferenceBTTimes();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         citiesSpinner();
         refreshOnChangeSharedPrefrence(this);
         setting.registerOnSharedPreferenceChangeListener(listen);
@@ -57,6 +63,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             }
         }
     }
+
 
     private void citiesSpinner() {
         ArrayList<String> categories = new ArrayList<>();
