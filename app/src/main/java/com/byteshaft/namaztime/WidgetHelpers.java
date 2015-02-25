@@ -45,9 +45,9 @@ public class WidgetHelpers {
         audioManager.setRingerMode(ringtoneSetting);
     }
 
-    public void vibrate() {
+    public void vibrate(int TIME) {
         Vibrator vibrator = getVibrator();
-        vibrator.vibrate(500);
+        vibrator.vibrate(TIME);
     }
 
     public void createToast(String message) {
