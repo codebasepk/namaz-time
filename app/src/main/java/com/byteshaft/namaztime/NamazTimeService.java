@@ -44,7 +44,7 @@ public class NamazTimeService extends Service {
                             String diff = Hours + ":" + Mins; // updated value every1 second
                             System.out.println(diff);
                             if (diff.equalsIgnoreCase(CONSTANT_TIME_LEFT)){
-                                namazNotification.startNotification();
+                                namazNotification.startNamazNotification();
                             }
                         }
                     }

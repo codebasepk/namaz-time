@@ -17,19 +17,19 @@ public class NamazNotification {
         this.context = context;
     }
 
-    public  void startNotification() {
-        buildNotification();
-        addPendingNotify();
-        showNotification();
+    public  void startNamazNotification() {
+        buildNamazNotification();
+        addPendingNamazNotification();
+        showNamazNotification();
     }
 
-    public void endNotification() {
+    public void endNamazNotification() {
         if (manager != null) {
             manager.cancel(ID);
         }
     }
 
-    private void buildNotification() {
+    private void buildNamazNotification() {
         notificationBuilder = new NotificationCompat.Builder(context);
 
         notificationBuilder.setContentTitle("Namaz Time");
@@ -41,13 +41,13 @@ public class NamazNotification {
         notificationBuilder.setOngoing(true);
     }
 
-    private void addPendingNotify() {
+    private void addPendingNamazNotification() {
         Intent intent = new Intent("android.intent.NAMAZ.TIME");
         PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         notificationBuilder.setContentIntent(pIntent);
     }
 
-    private void showNotification() {
+    private void showNamazNotification() {
         manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(ID, notificationBuilder.build());
     }
