@@ -14,16 +14,16 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Helpers {
 
     Context mContext;
 
-    Calendar c = Calendar.getInstance();
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-M-d");
-    String dDate = df.format(c.getTime());
     String mFajr;
     String mDhuhr;
     String mAsar;
@@ -31,6 +31,15 @@ public class Helpers {
     String mIsha;
     JSONObject jsonObject;
 
+    private Calendar getCalenderInstance(){
+        return Calendar.getInstance();
+    }
+    private SimpleDateFormat getDateFormate(){
+        return new  SimpleDateFormat("yyyy-M-d");
+    }
+    private String getDate(){
+        return getDateFormate().format(getCalenderInstance().getTime());
+    }
 
     public Helpers(Context context) {
         mContext = context;
@@ -38,16 +47,24 @@ public class Helpers {
 
     public void setTimesFromDatabase() throws InterruptedException, IOException, JSONException {
 
-        String output = getPrayerTimesForDate(dDate);
+        String output = getPrayerTimesForDate(getDate());
         jsonObject = new JSONObject(output);
         MainActivity.sDATE = jsonObject.get("date_for").toString();
-        mFajr = getPrayerTime(jsonObject, "fajr");
-        mDhuhr = getPrayerTime(jsonObject, "dhuhr");
-        mAsar = getPrayerTime(jsonObject, "asr");
-        mMaghrib = getPrayerTime(jsonObject, "maghrib");
-        mIsha = getPrayerTime(jsonObject, "isha");
+        setPrayerTime(jsonObject);
+    }
+
+    private void setPrayerTime(JSONObject day) throws JSONException {
+        mFajr = getPrayerTime(day, "fajr");
+        mDhuhr = getPrayerTime(day, "dhuhr");
+        mAsar = getPrayerTime(day, "asr");
+        mMaghrib = getPrayerTime(day, "maghrib");
+        mIsha = getPrayerTime(day, "isha");
 
         displayData();
+    }
+
+    private String getPrayerTime(JSONObject jsonObject, String namaz) throws JSONException {
+        return jsonObject.get(namaz).toString();
     }
 
     private void displayData() {
@@ -93,10 +110,6 @@ public class Helpers {
         return _data;
     }
 
-    private String getPrayerTime(JSONObject jsonObject, String namaz) throws JSONException {
-        return jsonObject.get(namaz).toString();
-    }
-
     public void refreshDialoge(final Activity context) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("No Internet");
@@ -112,6 +125,36 @@ public class Helpers {
         });
 
         alert.show();
+    }
+
+    public void displayTimeInNotification() {
+
+    }
+
+    private String getAmPm(){
+        return getTimeFormate().format(getCalenderInstance().getTime());
+    }
+    private SimpleDateFormat getTimeFormate(){
+        return new  SimpleDateFormat("HH:mm tt");
+    }
+
+    public void getDifferenceBTTimes() throws ParseException , NullPointerException {
+        System.out.println(getAmPm());
+
+//        String thisdate = getAmPm();
+//        String result = thisdate - mAsar;
+
+        Date date1 = getTimeFormate().parse(getAmPm());
+        Date  date2 = getTimeFormate().parse("5:00PM");
+
+        long difference = date1.getTime() - date2.getTime();
+        System.out.println(difference);
+
+        int hours = (int) ((difference - (1000*60*60*24)) / (1000*60*60));
+        int  min = (int) (difference - (1000*60*60*24) - (1000*60*60*hours)) / (1000*60);
+
+        System.out.println(hours + "this is mintues" + min);
+
     }
 
 }
