@@ -28,7 +28,7 @@ public class WidgetReceiver extends BroadcastReceiver {
                 setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
                 createToast("Phone ringer setting restored");
                 WidgetGlobals.resetRingtoneBackup();
-                WidgetGlobals.setPhoneIsSilent(false);
+                WidgetGlobals.setIsPhoneSilent(false);
             }
         };
 
@@ -46,13 +46,13 @@ public class WidgetReceiver extends BroadcastReceiver {
             setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
             createToast("Phone ringer setting restored");
             WidgetGlobals.resetRingtoneBackup();
-            WidgetGlobals.setPhoneIsSilent(false);
+            WidgetGlobals.setIsPhoneSilent(false);
         } else {
             WidgetGlobals.setRingtoneModeBackup(getCurrentRingtoneMode());
             setRingtoneMode(AudioManager.RINGER_MODE_VIBRATE);
             vibrate();
             createToast("Phone set to vibrate");
-            WidgetGlobals.setPhoneIsSilent(true);
+            WidgetGlobals.setIsPhoneSilent(true);
             registerReceiver();
             setAlarm(TEN_SECONDS, mPendingIntent);
         }

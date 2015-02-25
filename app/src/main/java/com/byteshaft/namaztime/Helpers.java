@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -135,7 +134,7 @@ public class Helpers {
         return getTimeFormate().format(getCalenderInstance().getTime());
     }
     private SimpleDateFormat getTimeFormate(){
-        return new  SimpleDateFormat("HH:mm tt");
+        return new  SimpleDateFormat("HH:mm");
     }
 
     public void getDifferenceBTTimes() throws ParseException , NullPointerException {
