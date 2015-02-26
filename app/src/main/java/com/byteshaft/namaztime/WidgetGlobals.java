@@ -3,6 +3,7 @@ package com.byteshaft.namaztime;
 public class WidgetGlobals {
 
     final static String SILENT_INTENT = "com.byteshaft.silent";
+    final static String NOTIFICATION_INTENT = "com.byeshaft.widgetnotification";
 
     private static final int DUMMY_RINGTONE_MODE = -78;
     private static boolean isPhoneSilent;

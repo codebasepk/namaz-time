@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationCompat;
 public class Notification {
 
 
-    private final int ID = 1;
+    private final int ID = 56;
     private Context context;
     private NotificationCompat.Builder notificationBuilder;
     private NotificationManager manager;
@@ -36,6 +36,7 @@ public class Notification {
 
         notificationBuilder.setContentTitle("Namaz Time");
         notificationBuilder.setContentText("Tap to remove");
+        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
         //notificationBuilder.setSmallIcon(R.drawable.ic_notify);
@@ -44,14 +45,14 @@ public class Notification {
     }
 
     private void addPendingNotify() {
-        Intent intent = new Intent("android.intent.CLOSE_ACTIVITY");
+        Intent intent = new Intent(WidgetGlobals.NOTIFICATION_INTENT);
         PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         notificationBuilder.setContentIntent(pIntent);
     }
 
     private void showNotification() {
         manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        System.out.println("Showing notification");
         manager.notify(ID, notificationBuilder.build());
     }
-
 }
