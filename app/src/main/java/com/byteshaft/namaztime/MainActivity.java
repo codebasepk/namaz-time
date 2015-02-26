@@ -59,11 +59,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 e.printStackTrace();
             }
         }
-//        try {
-//            helpers.getDifferenceBTTimes();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
         startService(new Intent(getBaseContext(), NamazTimeService.class));
     }
 
