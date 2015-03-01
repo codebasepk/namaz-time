@@ -4,8 +4,11 @@
                 android:layout_height="match_parent"
                 android:padding="16dp"
                 tools:context=".MainActivity"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:id="@+id/linearLayout"
 
+
+        >
     <Spinner
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -13,17 +16,31 @@
         android:prompt="@string/NewSpinner"
         >
     </Spinner>
-
-
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"/>
-
-    <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/textTime"
+        android:layout_gravity="center"
+        android:gravity="center"
+        />
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewTwo"/>
-
-
+        android:id="@+id/layout"
+        android:orientation="horizontal"
+        android:layout_marginTop="350dp"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            android:layout_marginEnd="150dp"
+            android:layout_marginRight="150dp"
+            />
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/text"
+            />
+    </LinearLayout>
 </LinearLayout>

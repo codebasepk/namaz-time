@@ -5,63 +5,58 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import org.json.JSONException;
-
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
+
+import static com.byteshaft.namaztime.R.drawable.namaz;
 
 
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
+
     final static String sFileName = "namaztimes.txt";
     public static int CITY_NAME;
-    static TextView sTextView;
-    static String sDATE;
+    static LinearLayout layout;
+    static LinearLayout linearLayout;
     private final String SELECTED_CITY = "city";
     private Spinner mSpinner;
     private SharedPreferences setting;
     private String FILE_NAME = "cities";
     private SharedPreferences.OnSharedPreferenceChangeListener listen;
+    public static TextView textView, text , textTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
+        startService(new Intent(this, NamazTimeService.class));
         initializationOfXmlReferences();
         Helpers helpers = new Helpers(this);
-        mSpinner.setOnItemSelectedListener(this);
-        citiesSpinner();
-        refreshOnChangeSharedPrefrence(this);
-        setting.registerOnSharedPreferenceChangeListener(listen);
-
 
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         File file = new File(location);
         if (!file.exists()) {
-            if (helpers.checkNetworkStatus() != null) {
+            if (Helpers.checkNetworkStatus() != null) {
                 new SystemManagement(this).execute();
             } else {
-                helpers.refreshDialoge(this);
+                Helpers.refreshDialoge(this);
             }
         } else {
-            try {
-                helpers.setTimesFromDatabase();
-            } catch (InterruptedException | IOException | JSONException e) {
-                e.printStackTrace();
-            }
+            helpers.setTimesFromDatabase();
         }
-        startService(new Intent(getBaseContext(), NamazTimeService.class));
     }
-
 
     private void citiesSpinner() {
         ArrayList<String> categories = new ArrayList<>();
@@ -104,12 +99,19 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 new SystemManagement(context).execute();
             }
         };
-
     }
 
     private void initializationOfXmlReferences() {
-        sTextView = (TextView) findViewById(R.id.textView);
         mSpinner = (Spinner) findViewById(R.id.FirstSpinner);
-
+        layout = (LinearLayout) findViewById(R.id.layout);
+        mSpinner.setOnItemSelectedListener(this);
+        citiesSpinner();
+        refreshOnChangeSharedPrefrence(this);
+        setting.registerOnSharedPreferenceChangeListener(listen);
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        linearLayout.setBackgroundResource(R.drawable.namaz);
+        textView = (TextView) findViewById(R.id.textView);
+        text = (TextView) findViewById(R.id.text);
+        textTime = (TextView) findViewById(R.id.textTime);
     }
 }

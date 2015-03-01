@@ -17,7 +17,7 @@ public class NamazNotification {
         this.context = context;
     }
 
-    public  void startNamazNotification() {
+    public void startNamazNotification() {
         buildNamazNotification();
         addPendingNamazNotification();
         showNamazNotification();
@@ -32,7 +32,7 @@ public class NamazNotification {
     private void buildNamazNotification() {
         notificationBuilder = new NotificationCompat.Builder(context);
 
-        notificationBuilder.setContentTitle("Namaz Time");
+        notificationBuilder.setContentTitle("Namaz Time in 10 Minutes");
         notificationBuilder.setContentText("Tap to remove");
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
