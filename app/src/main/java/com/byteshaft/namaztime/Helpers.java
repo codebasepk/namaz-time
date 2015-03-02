@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -119,7 +117,6 @@ public class Helpers {
             e.printStackTrace();
 
         }
-
         return _data;
     }
 
