@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import org.json.JSONArray;
@@ -74,10 +76,21 @@ public class Helpers {
 
     public void displayData() {
         MainActivity.textTime.setText(sDATE);
+        MainActivity.textTime.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        MainActivity.textTime.setTextSize(20);
+        MainActivity.text.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        MainActivity.text.setTextSize(20);
+        MainActivity.textView.setTextSize(20);
+        MainActivity.textView.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
         MainActivity.textView.setText("Fajr"+"\n"+"\n"+"Dhuhr"+"\n"+"\n"+"Asar"+"\n"+"\n"
-                +"Maghrib"+"\n"+"\n"+"Isha");
-        MainActivity.text.setText(mFajr + "\n"+"\n"+mDhuhr + "\n"+"\n"+mAsar
-                + "\n"+"\n"+mMaghrib + "\n"+"\n"+mIsha);
+                +"Maghrib"+"\n"+"\n"
+                +"Isha");
+        MainActivity.textView.setTextColor(Color.parseColor("#FFFFFF"));
+        MainActivity.text.setText(mFajr + "\n"+"\n"+mDhuhr + "\n"+"\n"
+                +mAsar
+                + "\n"+"\n"
+                +mMaghrib +"\n"+"\n"+mIsha);
+        MainActivity.text.setTextColor(Color.parseColor("#FFFFFF"));
 
     }
 

@@ -6,20 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
-
-import static com.byteshaft.namaztime.R.drawable.namaz;
 
 
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
@@ -96,7 +91,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         listen = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                new SystemManagement(context).execute();
+                if (Helpers.checkNetworkStatus() == null) {
+                    Helpers.refreshDialoge(context);
+                }else{
+                    new SystemManagement(context).execute();
+                }
             }
         };
     }
@@ -109,7 +108,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         refreshOnChangeSharedPrefrence(this);
         setting.registerOnSharedPreferenceChangeListener(listen);
         linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-        linearLayout.setBackgroundResource(R.drawable.namaz);
+        linearLayout.setBackgroundResource(R.drawable.back);
         textView = (TextView) findViewById(R.id.textView);
         text = (TextView) findViewById(R.id.text);
         textTime = (TextView) findViewById(R.id.textTime);
