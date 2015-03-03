@@ -3,14 +3,10 @@ package com.byteshaft.namaztime;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import org.json.JSONException;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +19,7 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
     ProgressDialog mProgressDialog;
     Context mContext;
+    Helpers helpers;
 
     public SystemManagement(Context context) {
         this.mContext = context;
@@ -41,7 +38,7 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
     @Override
     protected JsonElement doInBackground(String... params) {
-        String siteLink = "http://muslimsalat.com/weekly.json" + MainActivity.CITY_NAME + "?key=";
+        String siteLink = "http://muslimsalat.com/monthly.json/" + MainActivity.CITY_NAME + "?key=";
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
         String API = siteLink + apiKey;
 
@@ -68,12 +65,9 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         writeDataToFile(data);
-        Helpers helpers = new Helpers(mContext);
-        try {
-            helpers.setTimesFromDatabase();
-        } catch (IOException | JSONException | InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        helpers = new Helpers(mContext);
+        helpers.setTimesFromDatabase();
     }
 
     private void writeDataToFile(String input) {
