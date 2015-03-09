@@ -17,8 +17,8 @@ public class NamazNotification {
         this.context = context;
     }
 
-    public void startNamazNotification() {
-        buildNamazNotification();
+    public void startNamazNotification(String namazz) {
+        buildNamazNotification(namazz);
         addPendingNamazNotification();
         showNamazNotification();
     }
@@ -29,14 +29,14 @@ public class NamazNotification {
         }
     }
 
-    private void buildNamazNotification() {
+    private void buildNamazNotification(String namaz) {
         notificationBuilder = new NotificationCompat.Builder(context);
 
-        notificationBuilder.setContentTitle("Namaz Time in 10 Minutes");
+        notificationBuilder.setContentTitle(" Namaz Time at "+ namaz);
         notificationBuilder.setContentText("Tap to remove");
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+        notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         // disable slide to remove for the notification.
         notificationBuilder.setOngoing(true);
     }
