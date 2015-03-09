@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
 public class Helpers {
 
     static String mFajr;
@@ -28,6 +32,8 @@ public class Helpers {
     JSONObject jsonObject;
     StringBuilder stringBuilder;
     String _data;
+    String output = null;
+    public static String mPresentDate;
 
 
     public Helpers(Context context) {
@@ -42,14 +48,27 @@ public class Helpers {
         return new SimpleDateFormat("yyyy-M-d");
     }
 
-    private String getDate() {
-        return getDateFormate().format(getCalenderInstance().getTime());
+    private void getDate() {
+        mPresentDate =  getDateFormate().format(getCalenderInstance().getTime());
+    }
+
+    public void  addOneToDate() {
+        getCalenderInstance().add(Calendar.DATE, 1);
+        mPresentDate = getDateFormate().format(getCalenderInstance().getTime());
+        Log.v("next DATE : ", mPresentDate);
+
+
+    }
+    public void  subOneToDate() {
+        getCalenderInstance().add(Calendar.DATE, -1);
+        mPresentDate = getDateFormate().format(getCalenderInstance().getTime());
+        Log.v("Previous DATE : ", mPresentDate);
+
     }
 
     public void setTimesFromDatabase() {
-
-        String output = null;
-            output = getPrayerTimesForDate(getDate());
+            getDate();
+            output = getPrayerTimesForDate(mPresentDate);
         try {
             jsonObject = new JSONObject(output);
             sDATE = jsonObject.get("date_for").toString();

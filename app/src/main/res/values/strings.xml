@@ -5,5 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="NewSpinner">Cities</string>
     <string name="fajr">Fajr</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
 
 </resources>
