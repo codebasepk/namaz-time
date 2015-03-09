@@ -17,12 +17,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NamazTimeService extends Service {
-    static String mFajr;
-    static String mDhuhr;
-    static String mAsar;
-    static String mMaghrib;
-    static String mIsha;
-    static String sDATE;
+    String mFajr;
+    String mDhuhr;
+    String mAsar;
+    String mMaghrib;
+    String mIsha;
+    String sDATE;
     JSONObject jsonObject;
     StringBuilder stringBuilder;
     String _data;
@@ -146,7 +146,6 @@ public class NamazTimeService extends Service {
             }
         }catch(JSONException e){
             e.printStackTrace();
-
         }
         return _data;
     }

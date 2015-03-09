@@ -31,7 +31,6 @@ public class NamazNotification {
 
     private void buildNamazNotification(String namaz) {
         notificationBuilder = new NotificationCompat.Builder(context);
-
         notificationBuilder.setContentTitle(" Namaz Time at "+ namaz);
         notificationBuilder.setContentText("Tap to remove");
         // dismiss notification when its tapped.

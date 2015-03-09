@@ -56,23 +56,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/previous"
-        android:id="@+id/btnPrevious"
-        android:layout_marginTop="3dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
-        />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnNext"
-        android:background="@drawable/next"
-        android:layout_marginLeft="200dp"
-        android:layout_marginStart="200dp"
-        />
     </LinearLayout>
 </LinearLayout>
 

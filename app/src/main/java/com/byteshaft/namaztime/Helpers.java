@@ -35,7 +35,6 @@ public class Helpers {
     String output = null;
     public static String mPresentDate;
 
-
     public Helpers(Context context) {
         mContext = context;
     }
@@ -50,20 +49,6 @@ public class Helpers {
 
     private void getDate() {
         mPresentDate =  getDateFormate().format(getCalenderInstance().getTime());
-    }
-
-    public void  addOneToDate() {
-        getCalenderInstance().add(Calendar.DATE, 1);
-        mPresentDate = getDateFormate().format(getCalenderInstance().getTime());
-        Log.v("next DATE : ", mPresentDate);
-
-
-    }
-    public void  subOneToDate() {
-        getCalenderInstance().add(Calendar.DATE, -1);
-        mPresentDate = getDateFormate().format(getCalenderInstance().getTime());
-        Log.v("Previous DATE : ", mPresentDate);
-
     }
 
     public void setTimesFromDatabase() {
@@ -84,9 +69,7 @@ public class Helpers {
         mAsar = getPrayerTime(day, "asr");
         mMaghrib = getPrayerTime(day, "maghrib");
         mIsha = getPrayerTime(day, "isha");
-
         displayData();
-
     }
 
     private String getPrayerTime(JSONObject jsonObject, String namaz) throws JSONException {
@@ -110,7 +93,6 @@ public class Helpers {
                 + "\n"+"\n"
                 +mMaghrib +"\n"+"\n"+mIsha);
         MainActivity.text.setTextColor(Color.parseColor("#FFFFFF"));
-
     }
 
     private String getDataFromFileAsString()  {
@@ -118,7 +100,6 @@ public class Helpers {
         try {
             fileInputStream = mContext.openFileInput(MainActivity.sFileName);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-
             stringBuilder = new StringBuilder();
             while (bufferedInputStream.available() != 0) {
                 char characters = (char) bufferedInputStream.read();
@@ -129,7 +110,6 @@ public class Helpers {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return stringBuilder.toString();
     }
 
@@ -142,12 +122,12 @@ public class Helpers {
             _data = readingData.getJSONObject(i).toString();
             if (_data.contains(request)) {
                 break;
+            }else{
+                new SystemManagement(mContext).execute();
             }
-
         }
         }catch(JSONException e){
             e.printStackTrace();
-
         }
         return _data;
     }
@@ -173,6 +153,5 @@ public class Helpers {
         });
         alert.show();
     }
-
 }
 

@@ -18,8 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener , View.OnClickListener {
-
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener{
 
     final static String sFileName = "namaztimes.txt";
     public static int CITY_NAME;
@@ -39,11 +38,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         super.onCreate(savedInstanceState);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, NamazTimeService.class));
         initializationOfXmlReferences();
         helpers = new Helpers(this);
-
-
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         File file = new File(location);
         if (!file.exists()) {
@@ -54,9 +50,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             }
         } else {
             helpers.setTimesFromDatabase();
+            startService(new Intent(MainActivity.this, NamazTimeService.class));
         }
     }
-
 
     private void citiesSpinner() {
         ArrayList<String> categories = new ArrayList<>();
@@ -117,39 +113,5 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         textView = (TextView) findViewById(R.id.textView);
         text = (TextView) findViewById(R.id.text);
         textTime = (TextView) findViewById(R.id.textTime);
-        btnNext = (Button) findViewById(R.id.btnNext);
-        btnPrevious = (Button) findViewById(R.id.btnPrevious);
-        btnNext.setOnClickListener(this);
-        btnPrevious.setOnClickListener(this);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnNext:
-                helpers.addOneToDate();
-                if (!Helpers.mPresentDate.matches(Helpers.sDATE)) {
-                    btnNext.setBackgroundResource(R.drawable.onclicknext);
-                    helpers.setTimesFromDatabase();
-                } else {
-                    btnNext.setBackgroundResource(R.drawable.next);
-                }
-
-                break;
-            case R.id.btnPrevious:
-                helpers.subOneToDate();
-                if (!Helpers.mPresentDate.matches(Helpers.sDATE)) {
-                    btnPrevious.setBackgroundResource(R.drawable.onclickprevious);
-                    helpers.setTimesFromDatabase();
-                } else {
-                    btnPrevious.setBackgroundResource(R.drawable.previous);
-                }
-
-
-
-                break;
-        }
-
     }
 }
