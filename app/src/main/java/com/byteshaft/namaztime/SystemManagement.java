@@ -3,10 +3,12 @@ package com.byteshaft.namaztime;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

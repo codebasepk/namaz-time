@@ -10,33 +10,32 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import java.io.File;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener{
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     final static String sFileName = "namaztimes.txt";
     public static int CITY_NAME;
+    public static TextView textView, text, textTime;
     static LinearLayout layout;
     static LinearLayout linearLayout;
     private final String SELECTED_CITY = "city";
+    Helpers helpers;
     private Spinner mSpinner;
     private SharedPreferences setting;
     private String FILE_NAME = "cities";
     private SharedPreferences.OnSharedPreferenceChangeListener listen;
-    public static TextView textView, text , textTime;
-    Button btnPrevious, btnNext;
-    Helpers helpers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
         initializationOfXmlReferences();
         helpers = new Helpers(this);
@@ -50,7 +49,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             }
         } else {
             helpers.setTimesFromDatabase();
-            startService(new Intent(MainActivity.this, NamazTimeService.class));
+            startService(new Intent(this, NamazTimeService.class));
         }
     }
 
@@ -94,7 +93,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (Helpers.checkNetworkStatus() == null) {
                     Helpers.refreshDialoge(context);
-                }else{
+                } else {
                     new SystemManagement(context).execute();
                 }
             }

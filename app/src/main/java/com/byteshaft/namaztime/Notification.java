@@ -36,11 +36,9 @@ public class Notification {
 
         notificationBuilder.setContentTitle("Namaz Time");
         notificationBuilder.setContentText("Tap to remove");
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+        notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
-        //notificationBuilder.setSmallIcon(R.drawable.ic_notify);
-        // disable slide to remove for the notification.
         notificationBuilder.setOngoing(true);
     }
 

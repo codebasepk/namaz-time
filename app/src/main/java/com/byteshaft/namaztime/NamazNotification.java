@@ -31,12 +31,10 @@ public class NamazNotification {
 
     private void buildNamazNotification(String namaz) {
         notificationBuilder = new NotificationCompat.Builder(context);
-        notificationBuilder.setContentTitle(" Namaz Time at "+ namaz);
+        notificationBuilder.setContentTitle(" Namaz Time at " + namaz);
         notificationBuilder.setContentText("Tap to remove");
-        // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
-        // disable slide to remove for the notification.
         notificationBuilder.setOngoing(true);
     }
 

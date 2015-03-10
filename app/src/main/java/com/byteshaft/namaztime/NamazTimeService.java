@@ -4,9 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,19 +19,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NamazTimeService extends Service {
-    String mFajr;
-    String mDhuhr;
-    String mAsar;
-    String mMaghrib;
-    String mIsha;
+    private String diff;
+    private final String CONSTANT_TIME_LEFT = "0:-10";
+    private String mFajr;
+    private String mDhuhr;
+    private String mAsar;
+    private String mMaghrib;
+    private String mIsha;
     String sDATE;
     JSONObject jsonObject;
     StringBuilder stringBuilder;
     String _data;
-    private final String CONSTANT_TIME_LEFT = "0:-10";
     NamazNotification namazNotification = new NamazNotification(this);
     Timer updateTimer;
-    public static String diff;
 
     public static Calendar getCalenderInstance() {
         return Calendar.getInstance();
@@ -55,8 +57,8 @@ public class NamazTimeService extends Service {
         updateTimer.schedule(new TimerTask() {
             public void run() {
                 try {
-                    String namazTimeArr[] = {mFajr , mDhuhr, mAsar,
-                            mMaghrib, mIsha};
+                    String namazTimeArr[] = {mFajr, mDhuhr, mAsar,mMaghrib, mIsha};
+
                     for (String i : namazTimeArr) {
                         Date date1 = getTimeFormate().parse(getAmPm());
                         Date date2 = getTimeFormate().parse(i);
@@ -67,7 +69,7 @@ public class NamazTimeService extends Service {
                             int Hours = (int) (mills / (1000 * 60 * 60));
                             int Mins = (int) (mills / (1000 * 60)) % 60;
                             diff = Hours + ":" + Mins; // updated value every1 second
-                            System.out.println(diff);
+                            Log.v("TIME:", diff);
                             if (diff.equals(CONSTANT_TIME_LEFT)) {
                                 Log.v("condition match", "" + diff);
                                 namazNotification.startNamazNotification(i);
@@ -91,7 +93,7 @@ public class NamazTimeService extends Service {
         return getDateFormate().format(getCalenderInstance().getTime());
     }
 
-    public void setTimesFromDatabase() {
+    private void setTimesFromDatabase() {
         String output = null;
         output = getPrayerTimesForDate(getDate());
         try {
@@ -115,7 +117,7 @@ public class NamazTimeService extends Service {
         return jsonObject.get(namaz).toString();
     }
 
-    private String getDataFromFileAsString()  {
+    private String getDataFromFileAsString() {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = this.openFileInput("namaztimes.txt");
@@ -133,8 +135,8 @@ public class NamazTimeService extends Service {
         return stringBuilder.toString();
     }
 
-    private String getPrayerTimesForDate(String request)  {
-        try{
+    private String getPrayerTimesForDate(String request) {
+        try {
             _data = null;
             String data = getDataFromFileAsString();
             JSONArray readingData = new JSONArray(data);
@@ -144,7 +146,7 @@ public class NamazTimeService extends Service {
                     break;
                 }
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return _data;
