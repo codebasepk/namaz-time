@@ -105,14 +105,15 @@ public class Helpers {
         MainActivity.text.setTextSize(20);
         MainActivity.textView.setTextSize(20);
         MainActivity.textView.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-        MainActivity.textView.setText("Fajr" + "\n" + "\n" + "Dhuhr" + "\n" + "\n" + "Asar" + "\n" + "\n"
-                + "Maghrib" + "\n" + "\n"
+        MainActivity.textView.setText("Fajr" + "\n" + "\n"
+                + "Dhuhr" + "\n" + "\n" + "Asar"
+                + "\n" + "\n"+ "Maghrib" + "\n" + "\n"
                 + "Isha");
         MainActivity.textView.setTextColor(Color.parseColor("#FFFFFF"));
-        MainActivity.text.setText(mFajr + "\n" + "\n" + mDhuhr + "\n" + "\n"
-                + mAsar
-                + "\n" + "\n"
-                + mMaghrib + "\n" + "\n" + mIsha);
+        MainActivity.text.setText(mFajr + "\n" + "\n" +
+                mDhuhr + "\n" + "\n"+ mAsar
+                + "\n" + "\n"+ mMaghrib + "\n" + "\n"
+                + mIsha);
         MainActivity.text.setTextColor(Color.parseColor("#FFFFFF"));
     }
 
