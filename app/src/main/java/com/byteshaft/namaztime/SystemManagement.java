@@ -3,10 +3,12 @@ package com.byteshaft.namaztime;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +17,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
-
 
     ProgressDialog mProgressDialog;
     Context mContext;
@@ -28,7 +29,6 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
         mProgressDialog = new ProgressDialog(mContext);
         mProgressDialog.setMessage("Updating Namaz Time");
         mProgressDialog.setIndeterminate(false);
@@ -41,7 +41,6 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
         String siteLink = "http://muslimsalat.com/monthly.json/" + MainActivity.CITY_NAME + "?key=";
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
         String API = siteLink + apiKey;
-
         JsonElement rootJsonElement = null;
         try {
             URL url = new URL(API);
@@ -53,7 +52,6 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return rootJsonElement;
     }
 
@@ -65,7 +63,6 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         writeDataToFile(data);
-
         helpers = new Helpers(mContext);
         helpers.setTimesFromDatabase();
     }
@@ -73,7 +70,6 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
     private void writeDataToFile(String input) {
         String fileName = MainActivity.sFileName;
         FileOutputStream fileOutputStream;
-
         try {
             fileOutputStream = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
             fileOutputStream.write(input.getBytes());

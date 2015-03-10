@@ -10,40 +10,35 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import java.io.File;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener , View.OnClickListener {
-
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     final static String sFileName = "namaztimes.txt";
     public static int CITY_NAME;
+    public static TextView textView, text, textTime;
     static LinearLayout layout;
     static LinearLayout linearLayout;
     private final String SELECTED_CITY = "city";
+    Helpers helpers;
     private Spinner mSpinner;
     private SharedPreferences setting;
     private String FILE_NAME = "cities";
     private SharedPreferences.OnSharedPreferenceChangeListener listen;
-    public static TextView textView, text , textTime;
-    Button btnPrevious, btnNext;
-    Helpers helpers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, NamazTimeService.class));
         initializationOfXmlReferences();
         helpers = new Helpers(this);
-
-
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         File file = new File(location);
         if (!file.exists()) {
@@ -54,9 +49,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             }
         } else {
             helpers.setTimesFromDatabase();
+            startService(new Intent(this, NamazTimeService.class));
         }
     }
-
 
     private void citiesSpinner() {
         ArrayList<String> categories = new ArrayList<>();
@@ -98,7 +93,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (Helpers.checkNetworkStatus() == null) {
                     Helpers.refreshDialoge(context);
-                }else{
+                } else {
                     new SystemManagement(context).execute();
                 }
             }
@@ -117,39 +112,5 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         textView = (TextView) findViewById(R.id.textView);
         text = (TextView) findViewById(R.id.text);
         textTime = (TextView) findViewById(R.id.textTime);
-        btnNext = (Button) findViewById(R.id.btnNext);
-        btnPrevious = (Button) findViewById(R.id.btnPrevious);
-        btnNext.setOnClickListener(this);
-        btnPrevious.setOnClickListener(this);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnNext:
-                helpers.addOneToDate();
-                if (!Helpers.mPresentDate.matches(Helpers.sDATE)) {
-                    btnNext.setBackgroundResource(R.drawable.onclicknext);
-                    helpers.setTimesFromDatabase();
-                } else {
-                    btnNext.setBackgroundResource(R.drawable.next);
-                }
-
-                break;
-            case R.id.btnPrevious:
-                helpers.subOneToDate();
-                if (!Helpers.mPresentDate.matches(Helpers.sDATE)) {
-                    btnPrevious.setBackgroundResource(R.drawable.onclickprevious);
-                    helpers.setTimesFromDatabase();
-                } else {
-                    btnPrevious.setBackgroundResource(R.drawable.previous);
-                }
-
-
-
-                break;
-        }
-
     }
 }

@@ -19,7 +19,6 @@ public class WidgetProvider extends AppWidgetProvider {
         RemoteViews mRemoteViews = new RemoteViews(context.getPackageName(),
                 R.layout.widget);
         mRemoteViews.setOnClickPendingIntent(R.id.widget, pendingIntent);
-
         appWidgetManager.updateAppWidget(new ComponentName(context, WidgetProvider.class),
                 mRemoteViews);
     }
@@ -27,7 +26,6 @@ public class WidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
-
         setupWidget(context);
     }
 }
