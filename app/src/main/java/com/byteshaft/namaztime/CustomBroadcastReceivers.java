@@ -22,6 +22,7 @@ public class CustomBroadcastReceivers {
             public void onReceive(Context context, Intent intent) {
                 mWidgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
                 mWidgetHelpers.createToast("Phone ringer setting restored");
+                WidgetReceiver.notification.endNotification();
                 WidgetGlobals.resetRingtoneBackup();
                 WidgetGlobals.setIsPhoneSilent(false);
             }

@@ -51,7 +51,7 @@ public class Helpers {
     public static void refreshDialoge(final Activity context) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("No Internet");
-        alert.setMessage("Connect to Internet & Press Ok");
+        alert.setMessage("Please connect to the internet and try again");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (checkNetworkStatus() != null) {
