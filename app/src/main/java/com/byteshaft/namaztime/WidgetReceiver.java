@@ -10,12 +10,15 @@ import android.util.Log;
 public class WidgetReceiver extends BroadcastReceiver {
 
     final int TEN_SECONDS = 10000;
+    static Notification notification;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         WidgetHelpers widgetHelpers = new WidgetHelpers(context);
         CustomBroadcastReceivers customBroadcastReceivers = new CustomBroadcastReceivers(context);
-        Notification notification = new Notification(context);
+        if (notification == null) {
+            notification = new Notification(context);
+        }
 
         if (WidgetGlobals.isPhoneSilent()) {
             Log.i("NAMAZ", "Phone is in silent mode already.");
