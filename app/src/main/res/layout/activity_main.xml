@@ -31,7 +31,6 @@
         android:layout_marginTop="10dp"
         android:prompt="@string/NewSpinner"
         android:layout_gravity="center"
-        android:gravity="center"
         >
     </Spinner>
 

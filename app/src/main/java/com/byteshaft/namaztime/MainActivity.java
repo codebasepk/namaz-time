@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,9 +28,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     static LinearLayout linearLayout;
     private final String SELECTED_CITY = "city";
     Helpers helpers;
-    private Spinner mSpinner;
+    public static  Spinner mSpinner;
     private SharedPreferences setting;
     private String FILE_NAME = "cities";
+    File file;
     private SharedPreferences.OnSharedPreferenceChangeListener listen;
 
     @Override
@@ -40,7 +42,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         initializationOfXmlReferences();
         helpers = new Helpers(this);
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
-        File file = new File(location);
+        file = new File(location);
         if (!file.exists()) {
             if (Helpers.checkNetworkStatus() != null) {
                 new SystemManagement(this).execute();
@@ -71,7 +73,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
+        if (Helpers.checkNetworkStatus() != null) {
+            setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
+            setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
+        }else if (Helpers.checkNetworkStatus() == null && file.exists()) {
+            Toast.makeText(this, "Connect to internet" , Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -92,6 +99,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (Helpers.checkNetworkStatus() == null) {
+
                     Helpers.refreshDialoge(context);
                 } else {
                     new SystemManagement(context).execute();
