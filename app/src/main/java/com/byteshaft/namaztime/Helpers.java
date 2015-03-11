@@ -27,7 +27,7 @@ public class Helpers {
     private String mAsar;
     private String mMaghrib;
     private String mIsha;
-    private String sDATE;
+    public static String sDATE;
     private static Context mContext;
     JSONObject jsonObject;
     StringBuilder stringBuilder;
