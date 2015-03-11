@@ -76,7 +76,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         if (Helpers.checkNetworkStatus() != null) {
             setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
             setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
-        }else if (Helpers.checkNetworkStatus() == null && file.exists()) {
+        }else if (Helpers.checkNetworkStatus() == null && file.exists() && Helpers.sDATE == null) {
             Toast.makeText(this, "Connect to internet" , Toast.LENGTH_SHORT).show();
         }
     }
