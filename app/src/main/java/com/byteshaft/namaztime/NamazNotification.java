@@ -4,6 +4,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 public class NamazNotification {
@@ -32,10 +35,13 @@ public class NamazNotification {
     private void buildNamazNotification(String namaz) {
         notificationBuilder = new NotificationCompat.Builder(context);
         notificationBuilder.setContentTitle(" Namaz Time at " + namaz);
-        notificationBuilder.setContentText("Tap to remove");
+        notificationBuilder.setContentText("Slide to remove");
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
-        notificationBuilder.setOngoing(true);
+        notificationBuilder.setVibrate(new long[] {1000, 1000, 1000, 1000, 1000});
+        notificationBuilder.setLights(Color.RED, 3000, 3000);
+        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        notificationBuilder.setSound(uri);
     }
 
     private void addPendingNamazNotification() {
