@@ -9,21 +9,21 @@ import android.util.Log;
 
 public class WidgetReceiver extends BroadcastReceiver {
 
-    static Notification notification;
-    private final int TEN_SECONDS = 15 * 60000;
+    public static Notification sNotification = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        final int FIFTEEN_MINUTES = 15 * 60000;
         WidgetHelpers widgetHelpers = new WidgetHelpers(context);
         BroadcastReceivers broadcastReceivers = new BroadcastReceivers(context);
-        if (notification == null) {
-            notification = new Notification(context);
+        if (sNotification == null) {
+            sNotification = new Notification(context);
         }
 
         if (WidgetGlobals.isPhoneSilent()) {
             Log.i("NAMAZ", "Phone is in silent mode already.");
             widgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
-            notification.endNotification();
+            sNotification.endNotification();
             widgetHelpers.createToast("Phone ringer setting restored");
             WidgetGlobals.resetRingtoneBackup();
             WidgetGlobals.setIsPhoneSilent(false);
@@ -35,10 +35,10 @@ public class WidgetReceiver extends BroadcastReceiver {
             WidgetGlobals.setIsPhoneSilent(true);
             broadcastReceivers.registerReceiver();
             broadcastReceivers.registerNotificationReceiver();
-            notification.startNotification();
+            sNotification.startNotification();
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);
-            widgetHelpers.setAlarm(TEN_SECONDS, pendingIntent);
+            widgetHelpers.setAlarm(FIFTEEN_MINUTES, pendingIntent);
         }
 
         WidgetProvider.setupWidget(context);

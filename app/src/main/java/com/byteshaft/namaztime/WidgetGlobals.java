@@ -9,7 +9,6 @@ public class WidgetGlobals {
     private static boolean isPhoneSilent;
     private static int ringtoneModeBackup;
 
-
     public static boolean isPhoneSilent() {
         return isPhoneSilent;
     }

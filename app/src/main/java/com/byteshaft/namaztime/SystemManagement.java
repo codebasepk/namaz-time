@@ -18,9 +18,8 @@ import java.net.URL;
 
 public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
-    private ProgressDialog mProgressDialog;
-    private Context mContext;
-    private Helpers helpers;
+    private ProgressDialog mProgressDialog = null;
+    private Context mContext = null;
 
     public SystemManagement(Context context) {
         this.mContext = context;
@@ -62,8 +61,8 @@ public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
         JsonObject mRootJsonObject = jsonElement.getAsJsonObject();
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
+        Helpers helpers = new Helpers(mContext);
         writeDataToFile(data);
-        helpers = new Helpers(mContext);
         helpers.setTimesFromDatabase();
     }
 

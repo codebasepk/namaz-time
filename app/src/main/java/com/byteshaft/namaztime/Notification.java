@@ -10,10 +10,9 @@ import android.support.v4.app.NotificationCompat;
 
 public class Notification extends ContextWrapper {
 
-
     private final int ID = 56;
-    private NotificationCompat.Builder notificationBuilder;
-    private NotificationManager manager;
+    private NotificationCompat.Builder mNotificationBuilder = null;
+    private NotificationManager mNotificationManager = null;
 
     public Notification(Context context) {
         super(context);
@@ -26,31 +25,30 @@ public class Notification extends ContextWrapper {
     }
 
     public void endNotification() {
-        if (manager != null) {
-            manager.cancel(ID);
+        if (mNotificationManager != null) {
+            mNotificationManager.cancel(ID);
         }
     }
 
     private void buildNotification() {
-        notificationBuilder = new NotificationCompat.Builder(this);
+        mNotificationBuilder = new NotificationCompat.Builder(this);
 
-        notificationBuilder.setContentTitle("Namaz Time");
-        notificationBuilder.setContentText("Tap to remove");
-        notificationBuilder.setSmallIcon(R.drawable.ic_notification);
+        mNotificationBuilder.setContentTitle("Namaz Time");
+        mNotificationBuilder.setContentText("Tap to remove");
+        mNotificationBuilder.setSmallIcon(R.drawable.ic_notification);
         // dismiss notification when its tapped.
-        notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setOngoing(true);
+        mNotificationBuilder.setAutoCancel(true);
+        mNotificationBuilder.setOngoing(true);
     }
 
     private void addPendingNotify() {
         Intent intent = new Intent(WidgetGlobals.NOTIFICATION_INTENT);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        notificationBuilder.setContentIntent(pIntent);
+        mNotificationBuilder.setContentIntent(pIntent);
     }
 
     private void showNotification() {
-        manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        System.out.println("Showing notification");
-        manager.notify(ID, notificationBuilder.build());
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager.notify(ID, mNotificationBuilder.build());
     }
 }

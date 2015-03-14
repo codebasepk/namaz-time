@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class BroadcastReceivers extends ContextWrapper {
 
-    private WidgetHelpers mWidgetHelpers;
+    private WidgetHelpers mWidgetHelpers = null;
 
     public BroadcastReceivers(Context context) {
         super(context);
@@ -22,7 +22,7 @@ public class BroadcastReceivers extends ContextWrapper {
             public void onReceive(Context context, Intent intent) {
                 mWidgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
                 mWidgetHelpers.createToast("Phone ringer setting restored");
-                WidgetReceiver.notification.endNotification();
+                WidgetReceiver.sNotification.endNotification();
                 WidgetGlobals.resetRingtoneBackup();
                 WidgetGlobals.setIsPhoneSilent(false);
             }

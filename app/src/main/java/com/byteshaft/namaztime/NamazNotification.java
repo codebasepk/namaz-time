@@ -1,6 +1,5 @@
 package com.byteshaft.namaztime;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -12,9 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 public class NamazNotification extends ContextWrapper {
 
-    public final int ID = 21;
-    public NotificationCompat.Builder notificationBuilder;
-    private NotificationManager manager;
+    private NotificationCompat.Builder notificationBuilder = null;
 
 
     public NamazNotification(Context context) {
@@ -24,7 +21,6 @@ public class NamazNotification extends ContextWrapper {
     public void NamazNotificationStart(String namazz) {
         buildNamazNotification(namazz);
         addPendingNamazNotification();
-        showNamazNotification();
     }
 
 
@@ -44,9 +40,5 @@ public class NamazNotification extends ContextWrapper {
         Intent intent = new Intent("android.intent.NAMAZ.TIME");
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         notificationBuilder.setContentIntent(pIntent);
-    }
-
-    private void showNamazNotification() {
-        manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 }

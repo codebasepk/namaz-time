@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class WidgetHelpers extends ContextWrapper {
 
-    private static Toast toast;
+    private static Toast sToast = null;
 
     public WidgetHelpers(Context context) {
         super(context);
@@ -52,13 +52,13 @@ public class WidgetHelpers extends ContextWrapper {
 
     public void createToast(String message) {
         cancelPreviousToastIfVisible();
-        toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-        toast.show();
+        sToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        sToast.show();
     }
 
     private void cancelPreviousToastIfVisible() {
-        if (toast != null && toast.getView().isShown()) {
-            toast.cancel();
+        if (sToast != null && sToast.getView().isShown()) {
+            sToast.cancel();
         }
     }
 }

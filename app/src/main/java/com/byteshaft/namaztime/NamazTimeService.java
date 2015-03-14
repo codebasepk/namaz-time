@@ -26,12 +26,9 @@ public class NamazTimeService extends Service {
     private String mAsar;
     private String mMaghrib;
     private String mIsha;
-    private String sDATE;
-    private JSONObject jsonObject;
     private StringBuilder stringBuilder;
     private String _data;
     private NamazNotification namazNotification = new NamazNotification(this);
-    private Timer updateTimer;
 
     public static Calendar getCalenderInstance() {
         return Calendar.getInstance();
@@ -53,7 +50,7 @@ public class NamazTimeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         setTimesFromDatabase();
-        updateTimer = new Timer();
+        Timer updateTimer = new Timer();
         updateTimer.schedule(new TimerTask() {
             public void run() {
                 try {
@@ -94,11 +91,10 @@ public class NamazTimeService extends Service {
     }
 
     private void setTimesFromDatabase() {
-        String output = null;
+        String output;
         output = getPrayerTimesForDate(getDate());
         try {
-            jsonObject = new JSONObject(output);
-            sDATE = jsonObject.get("date_for").toString();
+            JSONObject jsonObject = new JSONObject(output);
             setPrayerTime(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -118,7 +114,7 @@ public class NamazTimeService extends Service {
     }
 
     private String getDataFromFileAsString() {
-        FileInputStream fileInputStream = null;
+        FileInputStream fileInputStream;
         try {
             fileInputStream = this.openFileInput("namaztimes.txt");
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);

@@ -29,7 +29,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     static LinearLayout linearLayout;
     static MainActivity instance = null;
     private final String SELECTED_CITY = "city";
-    private Helpers helpers;
     private SharedPreferences setting;
     private String FILE_NAME = "cities";
     private File file;
@@ -42,7 +41,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         setContentView(R.layout.activity_main);
         instance = this;
         initializationOfXmlReferences();
-        helpers = new Helpers(this);
+        Helpers helpers = new Helpers(this);
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
         if (!file.exists()) {

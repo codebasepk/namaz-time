@@ -30,10 +30,8 @@ public class Helpers {
     private String mAsar;
     private String mMaghrib;
     private String mIsha;
-    private JSONObject jsonObject;
     private StringBuilder stringBuilder;
     private String _data;
-    private String output = null;
 
     public Helpers(Context context) {
         mContext = context;
@@ -76,9 +74,9 @@ public class Helpers {
 
     public void setTimesFromDatabase() {
         getDate();
-        output = getPrayerTimesForDate(mPresentDate);
+        String output = getPrayerTimesForDate(mPresentDate);
         try {
-            jsonObject = new JSONObject(output);
+            JSONObject jsonObject = new JSONObject(output);
             sDATE = jsonObject.get("date_for").toString();
             setPrayerTime(jsonObject);
         } catch (JSONException e) {
@@ -120,7 +118,7 @@ public class Helpers {
     }
 
     private String getDataFromFileAsString() {
-        FileInputStream fileInputStream = null;
+        FileInputStream fileInputStream;
         try {
             fileInputStream = mContext.openFileInput(MainActivity.sFileName);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
