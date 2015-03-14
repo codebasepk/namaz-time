@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-public class CustomBroadcastReceivers {
+public class BroadcastReceivers {
 
     Context mContext;
     WidgetHelpers mWidgetHelpers;
 
-    public CustomBroadcastReceivers(Context context) {
+    public BroadcastReceivers(Context context) {
         mContext = context;
         mWidgetHelpers = new WidgetHelpers(context);
     }

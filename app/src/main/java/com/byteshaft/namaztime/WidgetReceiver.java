@@ -15,7 +15,7 @@ public class WidgetReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         WidgetHelpers widgetHelpers = new WidgetHelpers(context);
-        CustomBroadcastReceivers customBroadcastReceivers = new CustomBroadcastReceivers(context);
+        BroadcastReceivers broadcastReceivers = new BroadcastReceivers(context);
         if (notification == null) {
             notification = new Notification(context);
         }
@@ -33,8 +33,8 @@ public class WidgetReceiver extends BroadcastReceiver {
             widgetHelpers.vibrate(500);
             widgetHelpers.createToast("Phone set to vibrate");
             WidgetGlobals.setIsPhoneSilent(true);
-            customBroadcastReceivers.registerReceiver();
-            customBroadcastReceivers.registerNotificationReceiver();
+            broadcastReceivers.registerReceiver();
+            broadcastReceivers.registerNotificationReceiver();
             notification.startNotification();
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);
