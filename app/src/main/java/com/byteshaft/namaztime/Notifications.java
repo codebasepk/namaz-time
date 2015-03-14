@@ -43,7 +43,7 @@ public class Notifications extends ContextWrapper {
 
     private NotificationCompat.Builder buildPhoneSilentNotification() {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
-        Intent intent = new Intent(WidgetGlobals.NOTIFICATION_INTENT);
+        Intent intent = new Intent(WidgetGlobals.SILENT_INTENT);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
         notificationBuilder.setContentTitle("Namaz Time");

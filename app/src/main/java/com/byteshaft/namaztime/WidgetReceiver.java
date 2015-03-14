@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.util.Log;
 
+import java.util.concurrent.TimeUnit;
+
 public class WidgetReceiver extends BroadcastReceiver {
 
     public static Notifications sNotifications = null;
@@ -31,10 +33,10 @@ public class WidgetReceiver extends BroadcastReceiver {
             WidgetGlobals.setRingtoneModeBackup(widgetHelpers.getCurrentRingtoneMode());
             widgetHelpers.setRingtoneMode(AudioManager.RINGER_MODE_VIBRATE);
             widgetHelpers.vibrate(500);
-            widgetHelpers.createToast("Phone set to vibrate");
+            widgetHelpers.createToast(String.format("Phone set to vibrate for %d minutes",
+                    TimeUnit.MILLISECONDS.toMinutes(FIFTEEN_MINUTES)));
             WidgetGlobals.setIsPhoneSilent(true);
-            broadcastReceivers.registerReceiver();
-            broadcastReceivers.registerNotificationReceiver();
+            broadcastReceivers.registerRingtoneSettingsRestoreReceiver();
             sNotifications.startPhoneSilentNotification();
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);

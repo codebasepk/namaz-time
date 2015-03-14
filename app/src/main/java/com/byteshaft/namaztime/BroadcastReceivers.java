@@ -16,7 +16,7 @@ public class BroadcastReceivers extends ContextWrapper {
         mWidgetHelpers = new WidgetHelpers(this);
     }
 
-    public void registerReceiver() {
+    public void registerRingtoneSettingsRestoreReceiver() {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -30,20 +30,5 @@ public class BroadcastReceivers extends ContextWrapper {
 
         getApplicationContext().registerReceiver(broadcastReceiver,
                 new IntentFilter(WidgetGlobals.SILENT_INTENT));
-    }
-
-    public void registerNotificationReceiver() {
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mWidgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
-                mWidgetHelpers.createToast("Phone ringer setting restored");
-                WidgetGlobals.resetRingtoneBackup();
-                WidgetGlobals.setIsPhoneSilent(false);
-            }
-        };
-
-        getApplicationContext().registerReceiver(broadcastReceiver,
-                new IntentFilter((WidgetGlobals.NOTIFICATION_INTENT)));
     }
 }
