@@ -12,7 +12,7 @@ import android.support.v4.app.NotificationCompat;
 
 public class NamazNotification extends ContextWrapper {
 
-    public  final int ID = 21;
+    public final int ID = 21;
     public NotificationCompat.Builder notificationBuilder;
     private NotificationManager manager;
 
@@ -34,9 +34,9 @@ public class NamazNotification extends ContextWrapper {
         notificationBuilder.setContentText("Slide to remove");
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
-        notificationBuilder.setVibrate(new long[] {1000, 1000, 1000, 1000, 1000});
+        notificationBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
         notificationBuilder.setLights(Color.RED, 3000, 3000);
-        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         notificationBuilder.setSound(uri);
     }
 

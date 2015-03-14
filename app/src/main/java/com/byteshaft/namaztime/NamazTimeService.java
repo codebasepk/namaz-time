@@ -19,8 +19,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NamazTimeService extends Service {
-    private String diff;
     private final String CONSTANT_TIME_LEFT = "0:-10";
+    private String diff;
     private String mFajr;
     private String mDhuhr;
     private String mAsar;
@@ -57,7 +57,7 @@ public class NamazTimeService extends Service {
         updateTimer.schedule(new TimerTask() {
             public void run() {
                 try {
-                    String namazTimeArr[] = {mFajr, mDhuhr, mAsar,mMaghrib, mIsha};
+                    String namazTimeArr[] = {mFajr, mDhuhr, mAsar, mMaghrib, mIsha};
 
                     for (String i : namazTimeArr) {
                         Date date1 = getTimeFormate().parse(getAmPm());

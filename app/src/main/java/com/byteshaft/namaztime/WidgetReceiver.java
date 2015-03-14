@@ -9,8 +9,8 @@ import android.util.Log;
 
 public class WidgetReceiver extends BroadcastReceiver {
 
-    private final int TEN_SECONDS = 15*60000;
     static Notification notification;
+    private final int TEN_SECONDS = 15 * 60000;
 
     @Override
     public void onReceive(Context context, Intent intent) {

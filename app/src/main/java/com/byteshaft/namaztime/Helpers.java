@@ -22,25 +22,21 @@ import java.util.Calendar;
 public class Helpers {
 
     public static String mPresentDate;
+    public static String sDATE;
+    static Activity activity;
+    private static Context mContext;
     private String mFajr;
     private String mDhuhr;
     private String mAsar;
     private String mMaghrib;
     private String mIsha;
-    public static String sDATE;
-    private static Context mContext;
     private JSONObject jsonObject;
     private StringBuilder stringBuilder;
     private String _data;
     private String output = null;
-    static Activity activity;
 
     public Helpers(Context context) {
         mContext = context;
-    }
-
-    public  Calendar getCalenderInstance() {
-        return Calendar.getInstance();
     }
 
     public static NetworkInfo checkNetworkStatus() {
@@ -64,6 +60,10 @@ public class Helpers {
             }
         });
         alert.show();
+    }
+
+    public Calendar getCalenderInstance() {
+        return Calendar.getInstance();
     }
 
     private SimpleDateFormat getDateFormate() {
@@ -109,12 +109,12 @@ public class Helpers {
         MainActivity.textView.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
         MainActivity.textView.setText("Fajr" + "\n" + "\n"
                 + "Dhuhr" + "\n" + "\n" + "Asar"
-                + "\n" + "\n"+ "Maghrib" + "\n" + "\n"
+                + "\n" + "\n" + "Maghrib" + "\n" + "\n"
                 + "Isha");
         MainActivity.textView.setTextColor(Color.parseColor("#FFFFFF"));
         MainActivity.text.setText(mFajr + "\n" + "\n" +
-                mDhuhr + "\n" + "\n"+ mAsar
-                + "\n" + "\n"+ mMaghrib + "\n" + "\n"
+                mDhuhr + "\n" + "\n" + mAsar
+                + "\n" + "\n" + mMaghrib + "\n" + "\n"
                 + mIsha);
         MainActivity.text.setTextColor(Color.parseColor("#FFFFFF"));
     }
@@ -154,7 +154,7 @@ public class Helpers {
         if (!_data.contains(request) && checkNetworkStatus() != null) {
 
             new SystemManagement(mContext).execute();
-        }else if (checkNetworkStatus() == null && !_data.contains(request)) {
+        } else if (checkNetworkStatus() == null && !_data.contains(request)) {
             refreshDialoge(MainActivity.instance);
         }
         return _data;

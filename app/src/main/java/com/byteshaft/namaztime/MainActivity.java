@@ -24,16 +24,16 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     final static String sFileName = "namaztimes.txt";
     public static int CITY_NAME;
     public static TextView textView, text, textTime;
+    public static Spinner mSpinner;
     static LinearLayout layout;
     static LinearLayout linearLayout;
+    static MainActivity instance = null;
     private final String SELECTED_CITY = "city";
     private Helpers helpers;
-    public static  Spinner mSpinner;
     private SharedPreferences setting;
     private String FILE_NAME = "cities";
     private File file;
     private SharedPreferences.OnSharedPreferenceChangeListener listen;
-    static MainActivity instance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +78,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         if (Helpers.checkNetworkStatus() != null) {
             setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
             setSharedPrefrenceForCities(mSpinner.getSelectedItemPosition());
-        }else if (Helpers.checkNetworkStatus() == null && file.exists() && Helpers.sDATE == null) {
-            Toast.makeText(this, "Connect to internet" , Toast.LENGTH_SHORT).show();
+        } else if (Helpers.checkNetworkStatus() == null && file.exists() && Helpers.sDATE == null) {
+            Toast.makeText(this, "Connect to internet", Toast.LENGTH_SHORT).show();
         }
     }
 
