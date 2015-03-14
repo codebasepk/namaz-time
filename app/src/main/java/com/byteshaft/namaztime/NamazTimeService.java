@@ -19,36 +19,20 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NamazTimeService extends Service {
+
     private final String CONSTANT_TIME_LEFT = "0:-10";
-    private String diff;
-    private String mFajr;
-    private String mDhuhr;
-    private String mAsar;
-    private String mMaghrib;
-    private String mIsha;
-    private StringBuilder stringBuilder;
-    private String _data;
-    private NamazNotification namazNotification = new NamazNotification(this);
-
-    public static Calendar getCalenderInstance() {
-        return Calendar.getInstance();
-    }
-
-    public static String getAmPm() {
-        return getTimeFormate().format(getCalenderInstance().getTime());
-    }
-
-    public static SimpleDateFormat getTimeFormate() {
-        return new SimpleDateFormat("h:mm aa");
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    private String diff = null;
+    private String mFajr = null;
+    private String mDhuhr = null;
+    private String mAsar = null;
+    private String mMaghrib = null;
+    private String mIsha = null;
+    private StringBuilder stringBuilder = null;
+    private String _data = null;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        final NamazNotification namazNotification = new NamazNotification(this);
         setTimesFromDatabase();
         Timer updateTimer = new Timer();
         updateTimer.schedule(new TimerTask() {
@@ -57,8 +41,8 @@ public class NamazTimeService extends Service {
                     String namazTimeArr[] = {mFajr, mDhuhr, mAsar, mMaghrib, mIsha};
 
                     for (String i : namazTimeArr) {
-                        Date date1 = getTimeFormate().parse(getAmPm());
-                        Date date2 = getTimeFormate().parse(i);
+                        Date date1 = getTimeFormat().parse(getAmPm());
+                        Date date2 = getTimeFormat().parse(i);
                         if (date1.before(date2)) {
                             long mills = date1.getTime() - date2.getTime();
                             Log.v("Data1", "" + date1.getTime());
@@ -82,12 +66,29 @@ public class NamazTimeService extends Service {
         return flags;
     }
 
-    private SimpleDateFormat getDateFormate() {
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private Calendar getCalenderInstance() {
+        return Calendar.getInstance();
+    }
+
+    private String getAmPm() {
+        return getTimeFormat().format(getCalenderInstance().getTime());
+    }
+
+    private SimpleDateFormat getTimeFormat() {
+        return new SimpleDateFormat("h:mm aa");
+    }
+
+    private SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat("yyyy-M-d");
     }
 
     private String getDate() {
-        return getDateFormate().format(getCalenderInstance().getTime());
+        return getDateFormat().format(getCalenderInstance().getTime());
     }
 
     private void setTimesFromDatabase() {
@@ -101,7 +102,7 @@ public class NamazTimeService extends Service {
         }
     }
 
-    private void setPrayerTime(JSONObject day) throws JSONException {
+    private void setPrayerTime(JSONObject day) {
         mFajr = getPrayerTime(day, "fajr");
         mDhuhr = getPrayerTime(day, "dhuhr");
         mAsar = getPrayerTime(day, "asr");
@@ -109,8 +110,13 @@ public class NamazTimeService extends Service {
         mIsha = getPrayerTime(day, "isha");
     }
 
-    private String getPrayerTime(JSONObject jsonObject, String namaz) throws JSONException {
-        return jsonObject.get(namaz).toString();
+    private String getPrayerTime(JSONObject jsonObject, String namaz) {
+        try {
+            return jsonObject.get(namaz).toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String getDataFromFileAsString() {

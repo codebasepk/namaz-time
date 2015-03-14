@@ -23,7 +23,6 @@ public class Helpers {
 
     public static String mPresentDate;
     public static String sDATE;
-    static Activity activity;
     private static Context mContext;
     private String mFajr;
     private String mDhuhr;
@@ -44,7 +43,6 @@ public class Helpers {
     }
 
     public static void refreshDialog(final Activity context) {
-        activity = context;
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("No Internet");
         alert.setMessage("Please connect to the internet and try again");

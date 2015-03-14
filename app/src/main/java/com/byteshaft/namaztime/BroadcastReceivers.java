@@ -36,7 +36,6 @@ public class BroadcastReceivers extends ContextWrapper {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("NAMAZ", "Phone is in silent mode already.");
                 mWidgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
                 mWidgetHelpers.createToast("Phone ringer setting restored");
                 WidgetGlobals.resetRingtoneBackup();
