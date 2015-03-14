@@ -43,7 +43,7 @@ public class Helpers {
         return connMgr.getActiveNetworkInfo();
     }
 
-    public static void refreshDialoge(final Activity context) {
+    public static void refreshDialog(final Activity context) {
         activity = context;
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("No Internet");
@@ -153,7 +153,7 @@ public class Helpers {
 
             new SystemManagement(mContext).execute();
         } else if (checkNetworkStatus() == null && !_data.contains(request)) {
-            refreshDialoge(MainActivity.instance);
+            refreshDialog(MainActivity.instance);
         }
         return _data;
     }
