@@ -46,9 +46,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         file = new File(location);
         if (!file.exists()) {
             if (Helpers.checkNetworkStatus() != null) {
-                new SystemManagement(this).execute();
+                new NamazTimesDownloadTask(this).execute();
             } else {
-                Helpers.refreshDialoge(this);
+                Helpers.refreshDialog(this);
             }
         } else {
             helpers.setTimesFromDatabase();
@@ -102,9 +102,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (Helpers.checkNetworkStatus() == null) {
 
-                    Helpers.refreshDialoge(context);
+                    Helpers.refreshDialog(context);
                 } else {
-                    new SystemManagement(context).execute();
+                    new NamazTimesDownloadTask(context).execute();
                 }
             }
         };

@@ -28,7 +28,7 @@ public class BroadcastReceivers extends ContextWrapper {
             }
         };
 
-        registerReceiver(broadcastReceiver,
+        getApplicationContext().registerReceiver(broadcastReceiver,
                 new IntentFilter(WidgetGlobals.SILENT_INTENT));
     }
 
@@ -44,7 +44,7 @@ public class BroadcastReceivers extends ContextWrapper {
             }
         };
 
-        registerReceiver(broadcastReceiver,
+        getApplicationContext().registerReceiver(broadcastReceiver,
                 new IntentFilter((WidgetGlobals.NOTIFICATION_INTENT)));
     }
 }

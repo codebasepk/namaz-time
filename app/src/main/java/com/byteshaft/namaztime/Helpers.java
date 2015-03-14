@@ -51,7 +51,7 @@ public class Helpers {
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (checkNetworkStatus() != null) {
-                    new SystemManagement(context).execute();
+                    new NamazTimesDownloadTask(context).execute();
                 } else {
                     context.finish();
                 }
@@ -151,7 +151,7 @@ public class Helpers {
         }
         if (!_data.contains(request) && checkNetworkStatus() != null) {
 
-            new SystemManagement(mContext).execute();
+            new NamazTimesDownloadTask(mContext).execute();
         } else if (checkNetworkStatus() == null && !_data.contains(request)) {
             refreshDialog(MainActivity.instance);
         }

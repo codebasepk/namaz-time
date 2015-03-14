@@ -16,12 +16,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
+public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement> {
 
     private ProgressDialog mProgressDialog = null;
     private Context mContext = null;
 
-    public SystemManagement(Context context) {
+    public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
     }
 

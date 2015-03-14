@@ -21,7 +21,6 @@ public class WidgetReceiver extends BroadcastReceiver {
         }
 
         if (WidgetGlobals.isPhoneSilent()) {
-            Log.i("NAMAZ", "Phone is in silent mode already.");
             widgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
             sNotification.endNotification();
             widgetHelpers.createToast("Phone ringer setting restored");
