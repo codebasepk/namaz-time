@@ -72,7 +72,7 @@ public class NamazTimeService extends Service {
                             Log.v("TIME:", diff);
                             if (diff.equals(CONSTANT_TIME_LEFT)) {
                                 Log.v("condition match", "" + diff);
-                                namazNotification.startNamazNotification(i);
+                                namazNotification.NamazNotificationStart(i);
                             }
                         }
                     }

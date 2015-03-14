@@ -33,12 +33,14 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     private String FILE_NAME = "cities";
     File file;
     private SharedPreferences.OnSharedPreferenceChangeListener listen;
+    static MainActivity instance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
+        instance = this;
         initializationOfXmlReferences();
         helpers = new Helpers(this);
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;

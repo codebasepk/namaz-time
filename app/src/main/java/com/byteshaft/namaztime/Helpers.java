@@ -33,6 +33,7 @@ public class Helpers {
     StringBuilder stringBuilder;
     String _data;
     String output = null;
+    static Activity activity;
 
     public Helpers(Context context) {
         mContext = context;
@@ -49,6 +50,7 @@ public class Helpers {
     }
 
     public static void refreshDialoge(final Activity context) {
+        activity = context;
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("No Internet");
         alert.setMessage("Please connect to the internet and try again");
@@ -149,8 +151,11 @@ public class Helpers {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (!_data.contains(request)) {
+        if (!_data.contains(request) && checkNetworkStatus() != null) {
+
             new SystemManagement(mContext).execute();
+        }else if (checkNetworkStatus() == null && !_data.contains(request)) {
+            refreshDialoge(MainActivity.instance);
         }
         return _data;
     }
