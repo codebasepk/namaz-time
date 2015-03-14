@@ -7,5 +7,6 @@
     <string name="fajr">Fajr</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
+    <string name="ticker_text">Notification</string>
 
 </resources>

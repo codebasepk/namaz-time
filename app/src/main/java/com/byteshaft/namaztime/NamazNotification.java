@@ -11,26 +11,22 @@ import android.support.v4.app.NotificationCompat;
 
 public class NamazNotification {
 
-    private final int ID = 21;
-    private Context context;
-    private NotificationCompat.Builder notificationBuilder;
+    public  final int ID = 21;
+    public Context context;
+    public NotificationCompat.Builder notificationBuilder;
     private NotificationManager manager;
+
 
     public NamazNotification(Context context) {
         this.context = context;
     }
 
-    public void startNamazNotification(String namazz) {
+    public void NamazNotificationStart(String namazz) {
         buildNamazNotification(namazz);
         addPendingNamazNotification();
         showNamazNotification();
     }
 
-    public void endNamazNotification() {
-        if (manager != null) {
-            manager.cancel(ID);
-        }
-    }
 
     private void buildNamazNotification(String namaz) {
         notificationBuilder = new NotificationCompat.Builder(context);
@@ -52,6 +48,5 @@ public class NamazNotification {
 
     private void showNamazNotification() {
         manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(ID, notificationBuilder.build());
     }
 }
