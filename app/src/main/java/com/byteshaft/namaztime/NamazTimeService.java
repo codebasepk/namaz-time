@@ -26,12 +26,12 @@ public class NamazTimeService extends Service {
     private String mAsar;
     private String mMaghrib;
     private String mIsha;
-    String sDATE;
-    JSONObject jsonObject;
-    StringBuilder stringBuilder;
-    String _data;
-    NamazNotification namazNotification = new NamazNotification(this);
-    Timer updateTimer;
+    private String sDATE;
+    private JSONObject jsonObject;
+    private StringBuilder stringBuilder;
+    private String _data;
+    private NamazNotification namazNotification = new NamazNotification(this);
+    private Timer updateTimer;
 
     public static Calendar getCalenderInstance() {
         return Calendar.getInstance();

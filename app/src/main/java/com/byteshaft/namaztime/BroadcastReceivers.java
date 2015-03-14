@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class BroadcastReceivers extends ContextWrapper {
 
-    WidgetHelpers mWidgetHelpers;
+    private WidgetHelpers mWidgetHelpers;
 
     public BroadcastReceivers(Context context) {
         super(context);

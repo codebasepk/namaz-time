@@ -29,10 +29,10 @@ public class Helpers {
     private String mIsha;
     public static String sDATE;
     private static Context mContext;
-    JSONObject jsonObject;
-    StringBuilder stringBuilder;
-    String _data;
-    String output = null;
+    private JSONObject jsonObject;
+    private StringBuilder stringBuilder;
+    private String _data;
+    private String output = null;
     static Activity activity;
 
     public Helpers(Context context) {

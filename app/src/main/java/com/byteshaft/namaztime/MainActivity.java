@@ -27,11 +27,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     static LinearLayout layout;
     static LinearLayout linearLayout;
     private final String SELECTED_CITY = "city";
-    Helpers helpers;
+    private Helpers helpers;
     public static  Spinner mSpinner;
     private SharedPreferences setting;
     private String FILE_NAME = "cities";
-    File file;
+    private File file;
     private SharedPreferences.OnSharedPreferenceChangeListener listen;
     static MainActivity instance = null;
 

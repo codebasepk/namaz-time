@@ -18,9 +18,9 @@ import java.net.URL;
 
 public class SystemManagement extends AsyncTask<String, Void, JsonElement> {
 
-    ProgressDialog mProgressDialog;
-    Context mContext;
-    Helpers helpers;
+    private ProgressDialog mProgressDialog;
+    private Context mContext;
+    private Helpers helpers;
 
     public SystemManagement(Context context) {
         this.mContext = context;
