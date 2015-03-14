@@ -3,30 +3,30 @@ package com.byteshaft.namaztime;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.media.AudioManager;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.widget.Toast;
 
-public class WidgetHelpers {
+public class WidgetHelpers extends ContextWrapper {
 
     private static Toast toast;
-    private Context mContext;
 
     public WidgetHelpers(Context context) {
-        mContext = context;
+        super(context);
     }
 
     private AudioManager getAudioManager() {
-        return (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        return (AudioManager) getSystemService(Context.AUDIO_SERVICE);
     }
 
     private AlarmManager getAlarmManager() {
-        return (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        return (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     }
 
     private Vibrator getVibrator() {
-        return (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        return (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public void setAlarm(int time, PendingIntent pendingIntent) {
@@ -52,7 +52,7 @@ public class WidgetHelpers {
 
     public void createToast(String message) {
         cancelPreviousToastIfVisible();
-        toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+        toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         toast.show();
     }
 

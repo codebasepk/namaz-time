@@ -2,18 +2,18 @@ package com.byteshaft.namaztime;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-public class BroadcastReceivers {
+public class BroadcastReceivers extends ContextWrapper {
 
-    Context mContext;
     WidgetHelpers mWidgetHelpers;
 
     public BroadcastReceivers(Context context) {
-        mContext = context;
-        mWidgetHelpers = new WidgetHelpers(context);
+        super(context);
+        mWidgetHelpers = new WidgetHelpers(this);
     }
 
     public void registerReceiver() {
@@ -28,7 +28,7 @@ public class BroadcastReceivers {
             }
         };
 
-        mContext.getApplicationContext().registerReceiver(broadcastReceiver,
+        getApplicationContext().registerReceiver(broadcastReceiver,
                 new IntentFilter(WidgetGlobals.SILENT_INTENT));
     }
 
@@ -44,7 +44,7 @@ public class BroadcastReceivers {
             }
         };
 
-        mContext.getApplicationContext().registerReceiver(broadcastReceiver,
+        getApplicationContext().registerReceiver(broadcastReceiver,
                 new IntentFilter((WidgetGlobals.NOTIFICATION_INTENT)));
     }
 }

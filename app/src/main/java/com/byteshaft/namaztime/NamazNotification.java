@@ -3,22 +3,22 @@ package com.byteshaft.namaztime;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
-public class NamazNotification {
+public class NamazNotification extends ContextWrapper {
 
     public  final int ID = 21;
-    public Context context;
     public NotificationCompat.Builder notificationBuilder;
     private NotificationManager manager;
 
 
     public NamazNotification(Context context) {
-        this.context = context;
+        super(context);
     }
 
     public void NamazNotificationStart(String namazz) {
@@ -29,7 +29,7 @@ public class NamazNotification {
 
 
     private void buildNamazNotification(String namaz) {
-        notificationBuilder = new NotificationCompat.Builder(context);
+        notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setContentTitle(" Namaz Time at " + namaz);
         notificationBuilder.setContentText("Slide to remove");
         notificationBuilder.setAutoCancel(true);
@@ -42,11 +42,11 @@ public class NamazNotification {
 
     private void addPendingNamazNotification() {
         Intent intent = new Intent("android.intent.NAMAZ.TIME");
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         notificationBuilder.setContentIntent(pIntent);
     }
 
     private void showNamazNotification() {
-        manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 }
