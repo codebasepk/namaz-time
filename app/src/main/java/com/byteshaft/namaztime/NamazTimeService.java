@@ -32,7 +32,7 @@ public class NamazTimeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final NamazNotification namazNotification = new NamazNotification(this);
+        final Notifications notifications = new Notifications(this);
         setTimesFromDatabase();
         Timer updateTimer = new Timer();
         updateTimer.schedule(new TimerTask() {
@@ -53,7 +53,7 @@ public class NamazTimeService extends Service {
                             Log.v("TIME:", diff);
                             if (diff.equals(CONSTANT_TIME_LEFT)) {
                                 Log.v("condition match", "" + diff);
-                                namazNotification.NamazNotificationStart(i);
+                                notifications.startUpcomingNamazNotification(i);
                             }
                         }
                     }

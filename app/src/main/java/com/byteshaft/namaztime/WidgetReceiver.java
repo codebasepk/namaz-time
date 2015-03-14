@@ -1,5 +1,6 @@
 package com.byteshaft.namaztime;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,20 +10,20 @@ import android.util.Log;
 
 public class WidgetReceiver extends BroadcastReceiver {
 
-    public static Notification sNotification = null;
+    public static Notifications sNotifications = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         final int FIFTEEN_MINUTES = 15 * 60000;
         WidgetHelpers widgetHelpers = new WidgetHelpers(context);
         BroadcastReceivers broadcastReceivers = new BroadcastReceivers(context);
-        if (sNotification == null) {
-            sNotification = new Notification(context);
+        if (sNotifications == null) {
+            sNotifications = new Notifications(context);
         }
 
         if (WidgetGlobals.isPhoneSilent()) {
             widgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
-            sNotification.endNotification();
+            sNotifications.clearPhoneSilentNotification();
             widgetHelpers.createToast("Phone ringer setting restored");
             WidgetGlobals.resetRingtoneBackup();
             WidgetGlobals.setIsPhoneSilent(false);
@@ -34,7 +35,7 @@ public class WidgetReceiver extends BroadcastReceiver {
             WidgetGlobals.setIsPhoneSilent(true);
             broadcastReceivers.registerReceiver();
             broadcastReceivers.registerNotificationReceiver();
-            sNotification.startNotification();
+            sNotifications.startPhoneSilentNotification();
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);
             widgetHelpers.setAlarm(FIFTEEN_MINUTES, pendingIntent);
