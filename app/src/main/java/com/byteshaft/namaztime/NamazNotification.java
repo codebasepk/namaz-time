@@ -13,7 +13,6 @@ public class NamazNotification extends ContextWrapper {
 
     private NotificationCompat.Builder notificationBuilder = null;
 
-
     public NamazNotification(Context context) {
         super(context);
     }
@@ -22,7 +21,6 @@ public class NamazNotification extends ContextWrapper {
         buildNamazNotification(namazz);
         addPendingNamazNotification();
     }
-
 
     private void buildNamazNotification(String namaz) {
         notificationBuilder = new NotificationCompat.Builder(this);

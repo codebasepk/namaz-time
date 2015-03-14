@@ -84,6 +84,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     private void setSharedPrefrenceForCities(int value) {

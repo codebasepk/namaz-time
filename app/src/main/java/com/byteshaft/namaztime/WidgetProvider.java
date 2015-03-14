@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-
 public class WidgetProvider extends AppWidgetProvider {
 
     public static void setupWidget(Context context) {
