@@ -20,9 +20,11 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
 
     private ProgressDialog mProgressDialog = null;
     private Context mContext = null;
+    private Helpers mHelpers = null;
 
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
+        mHelpers = new Helpers(mContext);
     }
 
     @Override
@@ -37,7 +39,9 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
 
     @Override
     protected JsonElement doInBackground(String... params) {
-        String siteLink = "http://muslimsalat.com/monthly.json/" + MainActivity.CITY_NAME + "?key=";
+        System.out.println(mHelpers.getPreviouslySelectedCityName());
+        String city = mHelpers.getPreviouslySelectedCityName();
+        String siteLink = "http://muslimsalat.com/monthly.json/" + city + "?key=";
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
         String API = siteLink + apiKey;
         JsonElement rootJsonElement = null;

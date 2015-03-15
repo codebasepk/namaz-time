@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 
 public class BroadcastReceivers extends ContextWrapper {
 

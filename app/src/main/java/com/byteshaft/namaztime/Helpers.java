@@ -3,7 +3,9 @@ package com.byteshaft.namaztime;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -19,11 +21,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class Helpers {
+public class Helpers extends ContextWrapper {
 
     public static String mPresentDate;
     public static String sDATE;
-    private static Context mContext;
     private String mFajr;
     private String mDhuhr;
     private String mAsar;
@@ -31,27 +32,34 @@ public class Helpers {
     private String mIsha;
     private StringBuilder stringBuilder;
     private String _data;
+    private final String SELECTED_CITY_POSITION = "cityPosition";
+    private final String SELECTED_CITY_NAME = "cityName";
 
     public Helpers(Context context) {
-        mContext = context;
+        super(context);
     }
 
-    public static NetworkInfo checkNetworkStatus() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connMgr.getActiveNetworkInfo();
+    public Helpers(Activity activityContext) {
+        super(activityContext);
     }
 
-    public static void showInternetNotAvailableDialog(final Activity context) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void showInternetNotAvailableDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("No Internet");
         alert.setMessage("Please connect to the internet and try again");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if (checkNetworkStatus() != null) {
-                    new NamazTimesDownloadTask(context).execute();
+                if (isNetworkAvailable()) {
+                    new NamazTimesDownloadTask(getApplicationContext()).execute();
                 } else {
-                    context.finish();
+                    MainActivity.getInstance().finish();
                 }
             }
         });
@@ -118,7 +126,7 @@ public class Helpers {
     private String getDataFromFileAsString() {
         FileInputStream fileInputStream;
         try {
-            fileInputStream = mContext.openFileInput(MainActivity.sFileName);
+            fileInputStream = openFileInput(MainActivity.sFileName);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             stringBuilder = new StringBuilder();
             while (bufferedInputStream.available() != 0) {
@@ -147,13 +155,41 @@ public class Helpers {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (!_data.contains(request) && checkNetworkStatus() != null) {
+        if (!_data.contains(request) && isNetworkAvailable()) {
 
-            new NamazTimesDownloadTask(mContext).execute();
-        } else if (checkNetworkStatus() == null && !_data.contains(request)) {
-            showInternetNotAvailableDialog(MainActivity.instance);
+            new NamazTimesDownloadTask(this).execute();
+        } else if (isNetworkAvailable() && !_data.contains(request)) {
+            showInternetNotAvailableDialog();
         }
         return _data;
+    }
+
+    public String getDiskLocationForFile(String file) {
+        return getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + file;
+    }
+
+    public SharedPreferences getPreferenceManager() {
+        return getSharedPreferences("NAMAZ_TIME", Context.MODE_PRIVATE);
+    }
+
+    public String getPreviouslySelectedCityName() {
+        SharedPreferences preferences = getPreferenceManager();
+        return preferences.getString(SELECTED_CITY_NAME, "Karachi");
+    }
+
+    public int getPreviouslySelectedCityIndex() {
+        SharedPreferences preferences = getPreferenceManager();
+        return preferences.getInt(SELECTED_CITY_POSITION, 0);
+    }
+
+    public void setPreferenceForCityByIndex(int value) {
+        SharedPreferences preferences = getPreferenceManager();
+        preferences.edit().putInt(SELECTED_CITY_POSITION, value).apply();
+    }
+
+    public void saveSelectedCityName(String city) {
+        SharedPreferences preferences = getPreferenceManager();
+        preferences.edit().putString(SELECTED_CITY_NAME, city).apply();
     }
 }
 
