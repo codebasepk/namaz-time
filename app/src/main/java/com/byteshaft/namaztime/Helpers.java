@@ -42,7 +42,7 @@ public class Helpers {
         return connMgr.getActiveNetworkInfo();
     }
 
-    public static void refreshDialog(final Activity context) {
+    public static void showInternetNotAvailableDialog(final Activity context) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("No Internet");
         alert.setMessage("Please connect to the internet and try again");
@@ -151,7 +151,7 @@ public class Helpers {
 
             new NamazTimesDownloadTask(mContext).execute();
         } else if (checkNetworkStatus() == null && !_data.contains(request)) {
-            refreshDialog(MainActivity.instance);
+            showInternetNotAvailableDialog(MainActivity.instance);
         }
         return _data;
     }
