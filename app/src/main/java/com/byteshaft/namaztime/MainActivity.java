@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             if (Helpers.checkNetworkStatus() != null) {
                 new NamazTimesDownloadTask(this).execute();
             } else {
-                Helpers.refreshDialog(this);
+                Helpers.showInternetNotAvailableDialog(this);
             }
         } else {
             helpers.setTimesFromDatabase();
@@ -101,8 +101,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (Helpers.checkNetworkStatus() == null) {
-
-                    Helpers.refreshDialog(context);
+                    Helpers.showInternetNotAvailableDialog(context);
                 } else {
                     new NamazTimesDownloadTask(context).execute();
                 }
