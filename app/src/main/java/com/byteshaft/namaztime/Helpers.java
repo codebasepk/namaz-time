@@ -62,12 +62,12 @@ public class Helpers {
         return Calendar.getInstance();
     }
 
-    private SimpleDateFormat getDateFormate() {
+    private SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat("yyyy-M-d");
     }
 
     private void getDate() {
-        mPresentDate = getDateFormate().format(getCalenderInstance().getTime());
+        mPresentDate = getDateFormat().format(getCalenderInstance().getTime());
     }
 
     public void setTimesFromDatabase() {
