@@ -17,7 +17,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
     public final static String sFileName = "NAMAZ_TIMES";
     private static MainActivity activityInstance = null;
-    private File file;
+    private File mFile = null;
     private Helpers mHelpers = null;
 
     public static MainActivity getInstance() {
@@ -36,7 +36,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         mHelpers = new Helpers(this);
         setupCitiesSelectionSpinner();
         String location = mHelpers.getDiskLocationForFile(sFileName);
-        file = new File(location);
+        mFile = new File(location);
     }
 
     @Override
@@ -47,12 +47,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 mHelpers.saveSelectedCity(city, position);
                 new NamazTimesDownloadTask(MainActivity.this).execute();
             }
-            if (file.exists()) {
+            if (mFile.exists()) {
                 mHelpers.setTimesFromDatabase();
             } else {
                 new NamazTimesDownloadTask(MainActivity.this).execute();
             }
-        } else if (file.exists()) {
+        } else if (mFile.exists()) {
             mHelpers.setTimesFromDatabase();
         } else {
             mHelpers.showInternetNotAvailableDialog();

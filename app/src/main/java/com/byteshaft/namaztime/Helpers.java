@@ -21,15 +21,14 @@ import java.util.Calendar;
 
 public class Helpers extends ContextWrapper {
 
-    public static String mPresentDate;
-    public static String sDATE;
-    private String mFajr;
-    private String mDhuhr;
-    private String mAsar;
-    private String mMaghrib;
-    private String mIsha;
-    private StringBuilder stringBuilder;
-    private String _data;
+    public static String sDATE = null;
+    private String mFajr = null;
+    private String mDhuhr = null;
+    private String mAsar = null;
+    private String mMaghrib = null;
+    private String mIsha = null;
+    private StringBuilder stringBuilder = null;
+    private String _data = null;
     private final String SELECTED_CITY_POSITION = "cityPosition";
     private final String SELECTED_CITY_NAME = "cityName";
 
@@ -68,13 +67,13 @@ public class Helpers extends ContextWrapper {
         return new SimpleDateFormat("yyyy-M-d");
     }
 
-    private void getDate() {
-        mPresentDate = getDateFormat().format(getCalenderInstance().getTime());
+    private String getDate() {
+        return getDateFormat().format(getCalenderInstance().getTime());
     }
 
     public void setTimesFromDatabase() {
-        getDate();
-        String output = getPrayerTimesForDate(mPresentDate);
+        String date = getDate();
+        String output = getPrayerTimesForDate(date);
         try {
             JSONObject jsonObject = new JSONObject(output);
             sDATE = jsonObject.get("date_for").toString();

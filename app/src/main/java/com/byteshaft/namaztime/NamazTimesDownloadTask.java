@@ -39,11 +39,10 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
 
     @Override
     protected JsonElement doInBackground(String... params) {
-        System.out.println(mHelpers.getPreviouslySelectedCityName());
         String city = mHelpers.getPreviouslySelectedCityName();
-        String siteLink = "http://muslimsalat.com/monthly.json/" + city + "?key=";
+        String siteLink = String.format("http://muslimsalat.com/monthly.json/%s?key=", city);
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
-        String API = siteLink + apiKey;
+        String API = siteLink.concat(apiKey);
         JsonElement rootJsonElement = null;
         try {
             URL url = new URL(API);
