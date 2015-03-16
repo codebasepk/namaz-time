@@ -16,16 +16,16 @@ import java.util.ArrayList;
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     public final static String sFileName = "NAMAZ_TIMES";
-    private static MainActivity activityInstance = null;
+    private static MainActivity sActivityInstance = null;
     private File mFile = null;
     private Helpers mHelpers = null;
 
     public static MainActivity getInstance() {
-        return activityInstance;
+        return sActivityInstance;
     }
 
     private void setActivityInstance(MainActivity mainActivity) {
-        activityInstance = mainActivity;
+        sActivityInstance = mainActivity;
     }
 
     @Override
@@ -60,7 +60,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         startService(new Intent(this, NamazTimeService.class));
     }
 
-    @Override public void onNothingSelected(AdapterView<?> parent) {}
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Intentionally left blank.
+    }
 
     private void setupCitiesSelectionSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.FirstSpinner);
