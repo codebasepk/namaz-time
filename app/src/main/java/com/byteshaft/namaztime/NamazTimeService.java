@@ -122,7 +122,7 @@ public class NamazTimeService extends Service {
     private String getDataFromFileAsString() {
         FileInputStream fileInputStream;
         try {
-            fileInputStream = this.openFileInput("namaztimes.txt");
+            fileInputStream = this.openFileInput(MainActivity.sFileName);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             stringBuilder = new StringBuilder();
             while (bufferedInputStream.available() != 0) {

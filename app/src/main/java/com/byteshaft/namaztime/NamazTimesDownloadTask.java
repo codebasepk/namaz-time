@@ -31,7 +31,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
     protected void onPreExecute() {
         super.onPreExecute();
         mProgressDialog = new ProgressDialog(mContext);
-        mProgressDialog.setMessage("Updating Namaz Time");
+        mProgressDialog.setMessage("Downloading Namaz Time");
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
@@ -65,9 +65,8 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         JsonObject mRootJsonObject = jsonElement.getAsJsonObject();
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
-        Helpers helpers = new Helpers(mContext);
         writeDataToFile(data);
-        helpers.setTimesFromDatabase();
+        mHelpers.setTimesFromDatabase();
     }
 
     private void writeDataToFile(String input) {

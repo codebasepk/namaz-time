@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -56,11 +54,7 @@ public class Helpers extends ContextWrapper {
         alert.setMessage("Please connect to the internet and try again");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if (isNetworkAvailable()) {
-                    new NamazTimesDownloadTask(getApplicationContext()).execute();
-                } else {
-                    MainActivity.getInstance().finish();
-                }
+                MainActivity.getInstance().finish();
             }
         });
         alert.show();
@@ -104,23 +98,16 @@ public class Helpers extends ContextWrapper {
     }
 
     public void displayData() {
-        MainActivity.textTime.setText(sDATE);
-        MainActivity.textTime.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-        MainActivity.textTime.setTextSize(20);
-        MainActivity.text.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-        MainActivity.text.setTextSize(20);
-        MainActivity.textView.setTextSize(20);
-        MainActivity.textView.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-        MainActivity.textView.setText("Fajr" + "\n" + "\n"
+        UiUpdateHelpers uiUpdateHelpers = new UiUpdateHelpers(MainActivity.getInstance());
+        uiUpdateHelpers.setDate(sDATE);
+        uiUpdateHelpers.setNamazNames("Fajr" + "\n" + "\n"
                 + "Dhuhr" + "\n" + "\n" + "Asar"
                 + "\n" + "\n" + "Maghrib" + "\n" + "\n"
                 + "Isha");
-        MainActivity.textView.setTextColor(Color.parseColor("#FFFFFF"));
-        MainActivity.text.setText(mFajr + "\n" + "\n" +
+        uiUpdateHelpers.setNamazTimesLabel(mFajr + "\n" + "\n" +
                 mDhuhr + "\n" + "\n" + mAsar
                 + "\n" + "\n" + mMaghrib + "\n" + "\n"
                 + mIsha);
-        MainActivity.text.setTextColor(Color.parseColor("#FFFFFF"));
     }
 
     private String getDataFromFileAsString() {
@@ -156,7 +143,6 @@ public class Helpers extends ContextWrapper {
             e.printStackTrace();
         }
         if (!_data.contains(request) && isNetworkAvailable()) {
-
             new NamazTimesDownloadTask(this).execute();
         } else if (isNetworkAvailable() && !_data.contains(request)) {
             showInternetNotAvailableDialog();
@@ -182,14 +168,12 @@ public class Helpers extends ContextWrapper {
         return preferences.getInt(SELECTED_CITY_POSITION, 0);
     }
 
-    public void setPreferenceForCityByIndex(int value) {
+    public void saveSelectedCity(String cityName, int positionInSpinner) {
         SharedPreferences preferences = getPreferenceManager();
-        preferences.edit().putInt(SELECTED_CITY_POSITION, value).apply();
-    }
-
-    public void saveSelectedCityName(String city) {
-        SharedPreferences preferences = getPreferenceManager();
-        preferences.edit().putString(SELECTED_CITY_NAME, city).apply();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SELECTED_CITY_NAME, cityName);
+        editor.putInt(SELECTED_CITY_POSITION, positionInSpinner);
+        editor.apply();
     }
 }
 
