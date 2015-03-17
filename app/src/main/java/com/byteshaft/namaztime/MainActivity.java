@@ -40,6 +40,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        mHelpers.refreshNamazTimeIfDateChange();
+    }
+
+    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (mHelpers.isNetworkAvailable()) {
             if (mHelpers.getPreviouslySelectedCityIndex() != position) {
