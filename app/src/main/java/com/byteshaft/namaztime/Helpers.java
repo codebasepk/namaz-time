@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,9 +28,10 @@ public class Helpers extends ContextWrapper {
     private static String mMaghrib = null;
     private static String mIsha = null;
     private StringBuilder stringBuilder = null;
-    private String _data = null;
+    private String mData = null;
     private final String SELECTED_CITY_POSITION = "cityPosition";
     private final String SELECTED_CITY_NAME = "cityName";
+    private String mPresentDate;
 
     public Helpers(Context context) {
         super(context);
@@ -109,6 +109,7 @@ public class Helpers extends ContextWrapper {
     public void displayData() {
         UiUpdateHelpers uiUpdateHelpers = new UiUpdateHelpers(MainActivity.getInstance());
         uiUpdateHelpers.setDate(getDate());
+        mPresentDate = getDate();
         uiUpdateHelpers.setNamazNames("Fajr" + "\n" + "\n"
                 + "Dhuhr" + "\n" + "\n" + "Asar"
                 + "\n" + "\n" + "Maghrib" + "\n" + "\n"
@@ -139,12 +140,12 @@ public class Helpers extends ContextWrapper {
 
     private String getPrayerTimesForDate(String request, boolean runningFromActivity) {
         try {
-            _data = null;
+            mData = null;
             String data = getDataFromFileAsString();
             JSONArray readingData = new JSONArray(data);
             for (int i = 0; i < readingData.length(); i++) {
-                _data = readingData.getJSONObject(i).toString();
-                if (_data.contains(request)) {
+                mData = readingData.getJSONObject(i).toString();
+                if (mData.contains(request)) {
                     break;
                 }
             }
@@ -152,13 +153,13 @@ public class Helpers extends ContextWrapper {
             e.printStackTrace();
         }
         if (runningFromActivity) {
-            if (!_data.contains(request) && isNetworkAvailable()) {
+            if (!mData.contains(request) && isNetworkAvailable()) {
                 new NamazTimesDownloadTask(this).execute();
-            } else if (isNetworkAvailable() && !_data.contains(request)) {
+            } else if (isNetworkAvailable() && !mData.contains(request)) {
                 showInternetNotAvailableDialog();
             }
         }
-        return _data;
+        return mData;
     }
 
     public String getDiskLocationForFile(String file) {
@@ -200,6 +201,12 @@ public class Helpers extends ContextWrapper {
 
     public String[] getNamazTimesArray() {
         return new String[]{mFajr, mDhuhr, mAsar, mMaghrib, mIsha};
+    }
+
+    public void refreshNamazTimeIfDateChange() {
+            if (!mPresentDate.equals(getDate())) {
+                setTimesFromDatabase(true);
+            }
     }
 }
 
