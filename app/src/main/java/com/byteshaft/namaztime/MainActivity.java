@@ -48,16 +48,17 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 new NamazTimesDownloadTask(MainActivity.this).execute();
             }
             if (mFile.exists()) {
-                mHelpers.setTimesFromDatabase();
+                mHelpers.setTimesFromDatabase(true);
+                startService(new Intent(this, NamazTimeService.class));
             } else {
                 new NamazTimesDownloadTask(MainActivity.this).execute();
             }
         } else if (mFile.exists()) {
-            mHelpers.setTimesFromDatabase();
+            mHelpers.setTimesFromDatabase(true);
+            startService(new Intent(this, NamazTimeService.class));
         } else {
             mHelpers.showInternetNotAvailableDialog();
         }
-        startService(new Intent(this, NamazTimeService.class));
     }
 
     @Override

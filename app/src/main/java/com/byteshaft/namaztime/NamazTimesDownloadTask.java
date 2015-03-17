@@ -2,6 +2,7 @@ package com.byteshaft.namaztime;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.google.gson.JsonArray;
@@ -9,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,7 +40,10 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
     @Override
     protected JsonElement doInBackground(String... params) {
         String city = mHelpers.getPreviouslySelectedCityName();
-        String siteLink = String.format("http://muslimsalat.com/monthly.json/%s?key=", city);
+        String timeSpan = "monthly";
+        String month = mHelpers.getDate();
+        String siteLink = String.format("http://muslimsalat.com/%s/%s/%s.json?key=",
+                timeSpan, month, city);
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
         String API = siteLink.concat(apiKey);
         JsonElement rootJsonElement = null;
@@ -64,19 +67,8 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         JsonObject mRootJsonObject = jsonElement.getAsJsonObject();
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
-        writeDataToFile(data);
-        mHelpers.setTimesFromDatabase();
-    }
-
-    private void writeDataToFile(String input) {
-        String fileName = MainActivity.sFileName;
-        FileOutputStream fileOutputStream;
-        try {
-            fileOutputStream = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
-            fileOutputStream.write(input.getBytes());
-            fileOutputStream.close();
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-        }
+        mHelpers.writeDataToFile(MainActivity.sFileName, data);
+        mHelpers.setTimesFromDatabase(true);
+        mContext.startService(new Intent(mContext.getApplicationContext(), NamazTimeService.class));
     }
 }

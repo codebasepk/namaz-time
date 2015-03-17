@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,18 +16,18 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Helpers extends ContextWrapper {
 
-    public static String sDATE = null;
-    private String mFajr = null;
-    private String mDhuhr = null;
-    private String mAsar = null;
-    private String mMaghrib = null;
-    private String mIsha = null;
+    private static String mFajr = null;
+    private static String mDhuhr = null;
+    private static String mAsar = null;
+    private static String mMaghrib = null;
+    private static String mIsha = null;
     private StringBuilder stringBuilder = null;
     private String _data = null;
     private final String SELECTED_CITY_POSITION = "cityPosition";
@@ -59,7 +60,7 @@ public class Helpers extends ContextWrapper {
         alert.show();
     }
 
-    public Calendar getCalenderInstance() {
+    private Calendar getCalenderInstance() {
         return Calendar.getInstance();
     }
 
@@ -67,29 +68,38 @@ public class Helpers extends ContextWrapper {
         return new SimpleDateFormat("yyyy-M-d");
     }
 
-    private String getDate() {
+    public String getDate() {
         return getDateFormat().format(getCalenderInstance().getTime());
     }
 
-    public void setTimesFromDatabase() {
+    public String getAmPm() {
+        return getTimeFormat().format(getCalenderInstance().getTime());
+    }
+
+    public SimpleDateFormat getTimeFormat() {
+        return new SimpleDateFormat("h:mm aa");
+    }
+
+    public void setTimesFromDatabase(boolean runningFromActivity) {
         String date = getDate();
-        String output = getPrayerTimesForDate(date);
+        String output = getPrayerTimesForDate(date, runningFromActivity);
         try {
             JSONObject jsonObject = new JSONObject(output);
-            sDATE = jsonObject.get("date_for").toString();
-            setPrayerTime(jsonObject);
+            setPrayerTime(jsonObject, runningFromActivity);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void setPrayerTime(JSONObject day) throws JSONException {
+    private void setPrayerTime(JSONObject day, boolean runningFromActivity) throws JSONException {
         mFajr = getPrayerTime(day, "fajr");
         mDhuhr = getPrayerTime(day, "dhuhr");
         mAsar = getPrayerTime(day, "asr");
         mMaghrib = getPrayerTime(day, "maghrib");
         mIsha = getPrayerTime(day, "isha");
-        displayData();
+        if (runningFromActivity) {
+            displayData();
+        }
     }
 
     private String getPrayerTime(JSONObject jsonObject, String namaz) throws JSONException {
@@ -98,7 +108,7 @@ public class Helpers extends ContextWrapper {
 
     public void displayData() {
         UiUpdateHelpers uiUpdateHelpers = new UiUpdateHelpers(MainActivity.getInstance());
-        uiUpdateHelpers.setDate(sDATE);
+        uiUpdateHelpers.setDate(getDate());
         uiUpdateHelpers.setNamazNames("Fajr" + "\n" + "\n"
                 + "Dhuhr" + "\n" + "\n" + "Asar"
                 + "\n" + "\n" + "Maghrib" + "\n" + "\n"
@@ -127,7 +137,7 @@ public class Helpers extends ContextWrapper {
         return stringBuilder.toString();
     }
 
-    private String getPrayerTimesForDate(String request) {
+    private String getPrayerTimesForDate(String request, boolean runningFromActivity) {
         try {
             _data = null;
             String data = getDataFromFileAsString();
@@ -141,10 +151,12 @@ public class Helpers extends ContextWrapper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (!_data.contains(request) && isNetworkAvailable()) {
-            new NamazTimesDownloadTask(this).execute();
-        } else if (isNetworkAvailable() && !_data.contains(request)) {
-            showInternetNotAvailableDialog();
+        if (runningFromActivity) {
+            if (!_data.contains(request) && isNetworkAvailable()) {
+                new NamazTimesDownloadTask(this).execute();
+            } else if (isNetworkAvailable() && !_data.contains(request)) {
+                showInternetNotAvailableDialog();
+            }
         }
         return _data;
     }
@@ -173,6 +185,21 @@ public class Helpers extends ContextWrapper {
         editor.putString(SELECTED_CITY_NAME, cityName);
         editor.putInt(SELECTED_CITY_POSITION, positionInSpinner);
         editor.apply();
+    }
+
+    public void writeDataToFile(String file, String data) {
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
+            fileOutputStream.write(data.getBytes());
+            fileOutputStream.close();
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String[] getNamazTimesArray() {
+        return new String[]{mFajr, mDhuhr, mAsar, mMaghrib, mIsha};
     }
 }
 

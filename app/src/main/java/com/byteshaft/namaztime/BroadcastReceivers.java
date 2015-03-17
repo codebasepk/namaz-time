@@ -28,4 +28,5 @@ public class BroadcastReceivers extends ContextWrapper {
         getApplicationContext().registerReceiver(broadcastReceiver,
                 new IntentFilter(WidgetGlobals.SILENT_INTENT));
     }
+
 }

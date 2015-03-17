@@ -1,69 +1,51 @@
 package com.byteshaft.namaztime;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.text.ParseException;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class NamazTimeService extends Service {
 
-    private final String CONSTANT_TIME_LEFT = "0:-10";
-    private String diff = null;
-    private String mFajr = null;
-    private String mDhuhr = null;
-    private String mAsar = null;
-    private String mMaghrib = null;
-    private String mIsha = null;
-    private StringBuilder stringBuilder = null;
-    private String _data = null;
+    private final long ONE_SECOND = 1000;
+    private final long ONE_MINUTE = ONE_SECOND * 60;
+    private final long TEN_MINUTES = ONE_MINUTE * 10;
+    private Helpers mHelpers = null;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mHelpers = new Helpers(this);
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final Notifications notifications = new Notifications(this);
-        setTimesFromDatabase();
-        Timer updateTimer = new Timer();
-        updateTimer.schedule(new TimerTask() {
-            public void run() {
-                try {
-                    String namazTimeArr[] = {mFajr, mDhuhr, mAsar, mMaghrib, mIsha};
-
-                    for (String i : namazTimeArr) {
-                        Date date1 = getTimeFormat().parse(getAmPm());
-                        Date date2 = getTimeFormat().parse(i);
-                        if (date1.before(date2)) {
-                            long mills = date1.getTime() - date2.getTime();
-                            Log.v("Data1", "" + date1.getTime());
-                            Log.v("Data2", "" + date2.getTime());
-                            int Hours = (int) (mills / (1000 * 60 * 60));
-                            int Mins = (int) (mills / (1000 * 60)) % 60;
-                            diff = Hours + ":" + Mins; // updated value every1 second
-                            Log.v("TIME:", diff);
-                            if (diff.equals(CONSTANT_TIME_LEFT)) {
-                                Log.v("condition match", "" + diff);
-                                notifications.startUpcomingNamazNotification(i);
-                            }
-                        }
+        String namazTimes[] = mHelpers.getNamazTimesArray();
+        for (String namaz: namazTimes) {
+            try {
+                Date presentTime = mHelpers.getTimeFormat().parse(mHelpers.getAmPm());
+                Date namazTime = mHelpers.getTimeFormat().parse(namaz);
+                if (presentTime.before(namazTime)) {
+                    long difference =  namazTime.getTime() - presentTime.getTime();
+                    if (difference < TEN_MINUTES) {
+                        setNotificationAlarmForNamaz(namaz, difference);
+                    } else {
+                        long tenMinutesBeforeEvent = difference - TEN_MINUTES;
+                        setNotificationAlarmForNamaz(namaz, tenMinutesBeforeEvent);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-
-        }, 0, 30000);
-        return flags;
+        }
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -71,87 +53,19 @@ public class NamazTimeService extends Service {
         return null;
     }
 
-    private Calendar getCalenderInstance() {
-        return Calendar.getInstance();
+    private AlarmManager getAlarmManager() {
+        return (AlarmManager) getSystemService(ALARM_SERVICE);
     }
 
-    private String getAmPm() {
-        return getTimeFormat().format(getCalenderInstance().getTime());
-    }
-
-    private SimpleDateFormat getTimeFormat() {
-        return new SimpleDateFormat("h:mm aa");
-    }
-
-    private SimpleDateFormat getDateFormat() {
-        return new SimpleDateFormat("yyyy-M-d");
-    }
-
-    private String getDate() {
-        return getDateFormat().format(getCalenderInstance().getTime());
-    }
-
-    private void setTimesFromDatabase() {
-        String output;
-        output = getPrayerTimesForDate(getDate());
-        try {
-            JSONObject jsonObject = new JSONObject(output);
-            setPrayerTime(jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setPrayerTime(JSONObject day) {
-        mFajr = getPrayerTime(day, "fajr");
-        mDhuhr = getPrayerTime(day, "dhuhr");
-        mAsar = getPrayerTime(day, "asr");
-        mMaghrib = getPrayerTime(day, "maghrib");
-        mIsha = getPrayerTime(day, "isha");
-    }
-
-    private String getPrayerTime(JSONObject jsonObject, String namaz) {
-        try {
-            return jsonObject.get(namaz).toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String getDataFromFileAsString() {
-        FileInputStream fileInputStream;
-        try {
-            fileInputStream = this.openFileInput(MainActivity.sFileName);
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-            stringBuilder = new StringBuilder();
-            while (bufferedInputStream.available() != 0) {
-                char characters = (char) bufferedInputStream.read();
-                stringBuilder.append(characters);
-            }
-            bufferedInputStream.close();
-            fileInputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringBuilder.toString();
-    }
-
-    private String getPrayerTimesForDate(String request) {
-        try {
-            _data = null;
-            String data = getDataFromFileAsString();
-            JSONArray readingData = new JSONArray(data);
-            for (int i = 0; i < readingData.length(); i++) {
-                _data = readingData.getJSONObject(i).toString();
-                if (_data.contains(request)) {
-                    break;
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return _data;
+    private void setNotificationAlarmForNamaz(String namaz, long time) {
+        Log.i("ALARM", String.format("Setting alarm for %s", namaz));
+        Intent intent = new Intent("com.byteshaft.namazupcoming");
+        intent.putExtra("namaz", namaz);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        AlarmManager alarmManager = getAlarmManager();
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + time,
+                pendingIntent);
     }
 }
 
