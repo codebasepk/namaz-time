@@ -16,16 +16,16 @@ import java.util.ArrayList;
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     public final static String sFileName = "NAMAZ_TIMES";
-    private static MainActivity activityInstance = null;
-    private File file;
+    private static MainActivity sActivityInstance = null;
+    private File mFile = null;
     private Helpers mHelpers = null;
 
     public static MainActivity getInstance() {
-        return activityInstance;
+        return sActivityInstance;
     }
 
     private void setActivityInstance(MainActivity mainActivity) {
-        activityInstance = mainActivity;
+        sActivityInstance = mainActivity;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         mHelpers = new Helpers(this);
         setupCitiesSelectionSpinner();
         String location = mHelpers.getDiskLocationForFile(sFileName);
-        file = new File(location);
+        mFile = new File(location);
     }
 
     @Override
@@ -47,20 +47,24 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
                 mHelpers.saveSelectedCity(city, position);
                 new NamazTimesDownloadTask(MainActivity.this).execute();
             }
-            if (file.exists()) {
-                mHelpers.setTimesFromDatabase();
+            if (mFile.exists()) {
+                mHelpers.setTimesFromDatabase(true);
+                startService(new Intent(this, NamazTimeService.class));
             } else {
                 new NamazTimesDownloadTask(MainActivity.this).execute();
             }
-        } else if (file.exists()) {
-            mHelpers.setTimesFromDatabase();
+        } else if (mFile.exists()) {
+            mHelpers.setTimesFromDatabase(true);
+            startService(new Intent(this, NamazTimeService.class));
         } else {
             mHelpers.showInternetNotAvailableDialog();
         }
-        startService(new Intent(this, NamazTimeService.class));
     }
 
-    @Override public void onNothingSelected(AdapterView<?> parent) {}
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Intentionally left blank.
+    }
 
     private void setupCitiesSelectionSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.FirstSpinner);

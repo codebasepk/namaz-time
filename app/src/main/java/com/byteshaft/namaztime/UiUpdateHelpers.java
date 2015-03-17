@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 public class UiUpdateHelpers {
 
-    private Activity mActivity;
+    private Activity mActivity = null;
 
     public UiUpdateHelpers(Activity context) {
         mActivity = context;
