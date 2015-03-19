@@ -13,6 +13,15 @@ public class UiUpdateHelpers {
         mActivity = context;
     }
 
+    public void setCurrentCity(String city) {
+        TextView textCity = (TextView) mActivity.findViewById(R.id.textCity);
+        setupLabels(textCity, city);
+    }
+    public void displayDate(String date) {
+        TextView displayDate = (TextView) mActivity.findViewById(R.id.displayTime);
+        setupLabels(displayDate , date);
+    }
+
     public void setDate(String date) {
         TextView dateLabel = (TextView) mActivity.findViewById(R.id.dateLabel);
         setupLabels(dateLabel, date);
@@ -34,6 +43,7 @@ public class UiUpdateHelpers {
         textView.setTextSize(TEXT_SIZE);
         textView.setTextColor(getCustomTextColorCode());
         textView.setText(text);
+        textView.setShadowLayer(4 , 6 , 4 , Color.BLACK);
     }
 
     private Typeface getTypeface() {

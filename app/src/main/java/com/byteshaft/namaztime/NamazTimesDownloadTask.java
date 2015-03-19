@@ -69,6 +69,5 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         String data = mNamazTimesArray.toString();
         mHelpers.writeDataToFile(MainActivity.sFileName, data);
         mHelpers.setTimesFromDatabase(true);
-        mContext.startService(new Intent(mContext.getApplicationContext(), NamazTimeService.class));
     }
 }

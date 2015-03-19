@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -89,6 +90,7 @@ public class Helpers extends ContextWrapper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        startService(new Intent(this, NamazTimeService.class));
     }
 
     private void setPrayerTime(JSONObject day, boolean runningFromActivity) throws JSONException {
@@ -107,9 +109,11 @@ public class Helpers extends ContextWrapper {
     }
 
     public void displayData() {
+        String currentCity = getPreviouslySelectedCityName();
         UiUpdateHelpers uiUpdateHelpers = new UiUpdateHelpers(MainActivity.getInstance());
         uiUpdateHelpers.setDate(getDate());
-        mPresentDate = getDate();
+        uiUpdateHelpers.setCurrentCity(toTheUpperCaseSingle(currentCity));
+        uiUpdateHelpers.displayDate(getAmPm());
         uiUpdateHelpers.setNamazNames("Fajr" + "\n" + "\n"
                 + "Dhuhr" + "\n" + "\n" + "Asar"
                 + "\n" + "\n" + "Maghrib" + "\n" + "\n"
@@ -204,9 +208,20 @@ public class Helpers extends ContextWrapper {
     }
 
     public void refreshNamazTimeIfDateChange() {
-            if (!mPresentDate.equals(getDate())) {
-                setTimesFromDatabase(true);
-            }
+        mPresentDate = getDate();
+        System.out.println(mPresentDate);
+        System.out.println(getDate());
+        if (!mPresentDate.equals(getDate())) {
+            setTimesFromDatabase(true);
+        }
+    }
+
+    public String toTheUpperCaseSingle(String givenString) {
+        String example = givenString;
+
+        example = example.substring(0, 1).toUpperCase()
+                + example.substring(1, example.length());
+        return example;
     }
 }
 
