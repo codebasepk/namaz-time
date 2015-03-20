@@ -90,7 +90,6 @@ public class Helpers extends ContextWrapper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        startService(new Intent(this, NamazTimeService.class));
     }
 
     private void setPrayerTime(JSONObject day, boolean runningFromActivity) throws JSONException {
@@ -209,8 +208,6 @@ public class Helpers extends ContextWrapper {
 
     public void refreshNamazTimeIfDateChange() {
         mPresentDate = getDate();
-        System.out.println(mPresentDate);
-        System.out.println(getDate());
         if (!mPresentDate.equals(getDate())) {
             setTimesFromDatabase(true);
         }

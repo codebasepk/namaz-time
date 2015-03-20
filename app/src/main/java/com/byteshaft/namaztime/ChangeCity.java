@@ -1,7 +1,5 @@
 package com.byteshaft.namaztime;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -13,10 +11,11 @@ import android.widget.ListView;
 import java.io.File;
 
 
-public class SettingActivity extends ActionBarActivity {
+public class ChangeCity extends ActionBarActivity {
     public final static String sFileName = "NAMAZ_TIMES";
     LinearLayout linearLayout;
     Helpers mHelpers;
+    public static  boolean downloadRun = false;
 
 
     @Override
@@ -31,7 +30,7 @@ public class SettingActivity extends ActionBarActivity {
         File mFile = new File(location);
         ListView modeList = new ListView(this);
         String[] stringArray = new String[]{"Karachi", "Lahore", "Multan"
-                , "Islamabad", "Peshawar", "Azad Jammu and Kashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
+                , "Islamabad", "Peshawar", "Azad-Kashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
         ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, stringArray);
         modeList.setAdapter(modeAdapter);
         modeList.setItemChecked(mPreviousCity, true);
@@ -39,15 +38,26 @@ public class SettingActivity extends ActionBarActivity {
         modeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                new NamazTimesDownloadTask(SettingActivity.this).execute();
+                new NamazTimesDownloadTask(ChangeCity.this).execute();
                 parent.getItemAtPosition(position);
                 parent.setSelection(position);
                 String city = parent.getItemAtPosition(position).toString().toLowerCase();
                 mHelpers.saveSelectedCity(city, position);
-                Intent intent = new Intent(SettingActivity.this, MainActivity.class);
-                startActivity(intent);
+                downloadRun = true;
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.finish();
     }
 }

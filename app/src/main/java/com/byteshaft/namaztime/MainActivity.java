@@ -26,6 +26,13 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mHelpers.setTimesFromDatabase(true);
+        startService(new Intent(this, NamazTimeService.class));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -38,7 +45,16 @@ public class MainActivity extends ActionBarActivity {
         }else {
             mHelpers.setTimesFromDatabase(true);
         }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
     @Override
@@ -58,7 +74,7 @@ public class MainActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 if (mHelpers.isNetworkAvailable()) {
-                    openSettings();
+                    changeCity();
                     return true;
                 } else {
                     Toast.makeText(this, "Network isn't available", Toast.LENGTH_SHORT).show();
@@ -69,8 +85,8 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void openSettings() {
-        Intent intent = new Intent(this, SettingActivity.class);
+    private void changeCity() {
+        Intent intent = new Intent(this, ChangeCity.class);
         startActivity(intent);
     }
 

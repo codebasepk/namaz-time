@@ -22,6 +22,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
     private Context mContext = null;
     private Helpers mHelpers = null;
 
+
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
         mHelpers = new Helpers(mContext);
@@ -68,6 +69,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         mHelpers.writeDataToFile(MainActivity.sFileName, data);
-        mHelpers.setTimesFromDatabase(true);
+        Intent intent = new Intent(mContext, MainActivity.class);
+        mContext.startActivity(intent);
     }
 }
