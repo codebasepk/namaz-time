@@ -10,7 +10,6 @@ import android.util.Log;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class NamazTimeService extends Service {
 
@@ -28,12 +27,12 @@ public class NamazTimeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String namazTimes[] = mHelpers.getNamazTimesArray();
-        for (String namaz: namazTimes) {
+        for (String namaz : namazTimes) {
             try {
                 Date presentTime = mHelpers.getTimeFormat().parse(mHelpers.getAmPm());
                 Date namazTime = mHelpers.getTimeFormat().parse(namaz);
                 if (presentTime.before(namazTime)) {
-                    long difference =  namazTime.getTime() - presentTime.getTime();
+                    long difference = namazTime.getTime() - presentTime.getTime();
                     if (difference < TEN_MINUTES) {
                         setNotificationAlarmForNamaz(namaz, difference);
                     } else {
@@ -63,7 +62,7 @@ public class NamazTimeService extends Service {
         intent.putExtra("namaz", namaz);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         AlarmManager alarmManager = getAlarmManager();
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME,
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + time,
                 pendingIntent);
     }

@@ -1,24 +1,21 @@
 package com.byteshaft.namaztime;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.io.File;
-import java.util.ArrayList;
 
-
-public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends ActionBarActivity {
 
     public final static String sFileName = "NAMAZ_TIMES";
     private static MainActivity sActivityInstance = null;
-    private File mFile = null;
     private Helpers mHelpers = null;
+    File file;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
@@ -29,14 +26,35 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mHelpers.setTimesFromDatabase(true);
+        startService(new Intent(this, NamazTimeService.class));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setActivityInstance(this);
         mHelpers = new Helpers(this);
-        setupCitiesSelectionSpinner();
-        String location = mHelpers.getDiskLocationForFile(sFileName);
-        mFile = new File(location);
+        String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
+        file = new File(location);
+        if (!file.exists()) {
+            new NamazTimesDownloadTask(MainActivity.this).execute();
+        }else {
+            mHelpers.setTimesFromDatabase(true);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
     @Override
@@ -46,46 +64,31 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (mHelpers.isNetworkAvailable()) {
-            if (mHelpers.getPreviouslySelectedCityIndex() != position) {
-                String city = parent.getItemAtPosition(position).toString().toLowerCase();
-                mHelpers.saveSelectedCity(city, position);
-                new NamazTimesDownloadTask(MainActivity.this).execute();
-            }
-            if (mFile.exists()) {
-                mHelpers.setTimesFromDatabase(true);
-                startService(new Intent(this, NamazTimeService.class));
-            } else {
-                new NamazTimesDownloadTask(MainActivity.this).execute();
-            }
-        } else if (mFile.exists()) {
-            mHelpers.setTimesFromDatabase(true);
-            startService(new Intent(this, NamazTimeService.class));
-        } else {
-            mHelpers.showInternetNotAvailableDialog();
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Intentionally left blank.
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                if (mHelpers.isNetworkAvailable()) {
+                    changeCity();
+                    return true;
+                } else {
+                    Toast.makeText(this, "Network isn't available", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
-    private void setupCitiesSelectionSpinner() {
-        Spinner spinner = (Spinner) findViewById(R.id.FirstSpinner);
-        int previouslySelectedCityIndex = mHelpers.getPreviouslySelectedCityIndex();
-        ArrayList<String> citiesList = new ArrayList<>();
-        citiesList.add("Karachi");
-        citiesList.add("Lahore");
-        citiesList.add("Multan");
-        citiesList.add("Islamabad");
-        citiesList.add("Peshawar");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, citiesList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(previouslySelectedCityIndex);
-        spinner.setOnItemSelectedListener(this);
+    private void changeCity() {
+        Intent intent = new Intent(this, ChangeCity.class);
+        startActivity(intent);
     }
+
+
 }
