@@ -2,6 +2,7 @@ package com.byteshaft.namaztime;
 
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -16,6 +17,7 @@ public class MainActivity extends ActionBarActivity {
     private static MainActivity sActivityInstance = null;
     private Helpers mHelpers = null;
     File file;
+    SetAlarmReceiver setAlarmReceiver;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
@@ -25,27 +27,33 @@ public class MainActivity extends ActionBarActivity {
         sActivityInstance = mainActivity;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mHelpers.setTimesFromDatabase(true);
-        startService(new Intent(this, NamazTimeService.class));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setAlarmReceiver = new SetAlarmReceiver();
+        registerReceiver(setAlarmReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
-        if (!file.exists()) {
+        if (!file.exists() && mHelpers.isNetworkAvailable()) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
+
         }else {
             mHelpers.setTimesFromDatabase(true);
         }
+
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -55,7 +63,10 @@ public class MainActivity extends ActionBarActivity {
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startMain);
+
     }
+
+
 
     @Override
     protected void onRestart() {
@@ -89,6 +100,13 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(this, ChangeCity.class);
         startActivity(intent);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(setAlarmReceiver);
+    }
+
 
 
 }

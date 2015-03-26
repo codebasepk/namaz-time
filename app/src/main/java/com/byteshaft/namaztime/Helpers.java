@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,11 +24,6 @@ import java.util.Calendar;
 
 public class Helpers extends ContextWrapper {
 
-    private static String mFajr = null;
-    private static String mDhuhr = null;
-    private static String mAsar = null;
-    private static String mMaghrib = null;
-    private static String mIsha = null;
     private StringBuilder stringBuilder = null;
     private String mData = null;
     private final String SELECTED_CITY_POSITION = "cityPosition";
@@ -93,11 +89,11 @@ public class Helpers extends ContextWrapper {
     }
 
     private void setPrayerTime(JSONObject day, boolean runningFromActivity) throws JSONException {
-        mFajr = getPrayerTime(day, "fajr");
-        mDhuhr = getPrayerTime(day, "dhuhr");
-        mAsar = getPrayerTime(day, "asr");
-        mMaghrib = getPrayerTime(day, "maghrib");
-        mIsha = getPrayerTime(day, "isha");
+        saveTimeForNamaz("fajr", getPrayerTime(day, "fajr"));
+        saveTimeForNamaz("dhuhr", getPrayerTime(day, "dhuhr"));
+        saveTimeForNamaz("asr", getPrayerTime(day, "asr"));
+        saveTimeForNamaz("maghrib", getPrayerTime(day, "maghrib"));
+        saveTimeForNamaz("isha", getPrayerTime(day, "isha"));
         if (runningFromActivity) {
             displayData();
         }
@@ -117,10 +113,13 @@ public class Helpers extends ContextWrapper {
                 + "Dhuhr" + "\n" + "\n" + "Asar"
                 + "\n" + "\n" + "Maghrib" + "\n" + "\n"
                 + "Isha");
-        uiUpdateHelpers.setNamazTimesLabel(mFajr + "\n" + "\n" +
-                mDhuhr + "\n" + "\n" + mAsar
-                + "\n" + "\n" + mMaghrib + "\n" + "\n"
-                + mIsha);
+        uiUpdateHelpers.setNamazTimesLabel(
+                retrieveTimeForNamaz("fajr") + "\n" + "\n" +
+                retrieveTimeForNamaz("dhuhr") + "\n" + "\n" +
+                retrieveTimeForNamaz("asr") + "\n" + "\n" +
+                retrieveTimeForNamaz("maghrib") + "\n" + "\n" +
+                retrieveTimeForNamaz("isha"));
+        mPresentDate = getDate();
     }
 
     private String getDataFromFileAsString() {
@@ -170,7 +169,7 @@ public class Helpers extends ContextWrapper {
     }
 
     public SharedPreferences getPreferenceManager() {
-        return getSharedPreferences("NAMAZ_TIME", Context.MODE_PRIVATE);
+        return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     public String getPreviouslySelectedCityName() {
@@ -203,11 +202,16 @@ public class Helpers extends ContextWrapper {
     }
 
     public String[] getNamazTimesArray() {
-        return new String[]{mFajr, mDhuhr, mAsar, mMaghrib, mIsha};
+        return new String[] {
+                retrieveTimeForNamaz("fajr"),
+                retrieveTimeForNamaz("dhuhr"),
+                retrieveTimeForNamaz("asr"),
+                retrieveTimeForNamaz("maghrib"),
+                retrieveTimeForNamaz("isha")
+        };
     }
 
     public void refreshNamazTimeIfDateChange() {
-        mPresentDate = getDate();
         if (!mPresentDate.equals(getDate())) {
             setTimesFromDatabase(true);
         }
@@ -219,6 +223,23 @@ public class Helpers extends ContextWrapper {
         example = example.substring(0, 1).toUpperCase()
                 + example.substring(1, example.length());
         return example;
+    }
+
+    private void saveTimeForNamaz(String namaz, String time) {
+        SharedPreferences preference = getPreferenceManager();
+        preference.edit().putString(namaz, time).apply();
+        preference.edit().putString("date", getDate()).apply();
+    }
+
+    private String retrieveTimeForNamaz(String namaz) {
+        SharedPreferences preference = getPreferenceManager();
+        return preference.getString(namaz, null);
+    }
+
+    boolean arePrayerTimesForTodaySaved() {
+        SharedPreferences preference = getPreferenceManager();
+        String currentDate = getDate();
+        return preference.getString("date", null).equals(currentDate);
     }
 }
 
