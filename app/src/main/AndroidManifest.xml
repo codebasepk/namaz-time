@@ -46,6 +46,17 @@
                 <action android:name="com.byteshaft.fireNotification"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".RingtoneRestoreReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.byteshaft.silent"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".NotificationAlarm" android:exported="false">
+            <intent-filter>
+                <action android:name="com.byteshaft.test"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 

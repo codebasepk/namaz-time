@@ -13,11 +13,9 @@ import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
 
-    public final static String sFileName = "NAMAZ_TIMES";
+    final static String sFileName = "NAMAZ_TIMES";
     private static MainActivity sActivityInstance = null;
     private Helpers mHelpers = null;
-    File file;
-    SetAlarmReceiver setAlarmReceiver;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
@@ -27,33 +25,22 @@ public class MainActivity extends ActionBarActivity {
         sActivityInstance = mainActivity;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setAlarmReceiver = new SetAlarmReceiver();
-        registerReceiver(setAlarmReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
-        file = new File(location);
+        File file = new File(location);
         if (!file.exists() && mHelpers.isNetworkAvailable()) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
-
-        }else {
+        } else {
             mHelpers.setTimesFromDatabase(true);
         }
-
+        Intent alarmIntent = new Intent("com.byteshaft.test");
+        sendBroadcast(alarmIntent);
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
-
-
 
     @Override
     public void onBackPressed() {
@@ -63,10 +50,7 @@ public class MainActivity extends ActionBarActivity {
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startMain);
-
     }
-
-
 
     @Override
     protected void onRestart() {
@@ -100,13 +84,4 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(this, ChangeCity.class);
         startActivity(intent);
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(setAlarmReceiver);
-    }
-
-
-
 }

@@ -16,7 +16,6 @@ public class WidgetReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         final int FIFTEEN_MINUTES = 15 * 60000;
         WidgetHelpers widgetHelpers = new WidgetHelpers(context);
-        BroadcastReceivers broadcastReceivers = new BroadcastReceivers(context);
         if (sNotifications == null) {
             sNotifications = new Notifications(context);
         }
@@ -34,7 +33,6 @@ public class WidgetReceiver extends BroadcastReceiver {
             widgetHelpers.createToast(String.format("Phone set to vibrate for %d minutes",
                     TimeUnit.MILLISECONDS.toMinutes(FIFTEEN_MINUTES)));
             WidgetGlobals.setIsPhoneSilent(true);
-            broadcastReceivers.registerRingtoneSettingsRestoreReceiver();
             sNotifications.startPhoneSilentNotification();
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);
