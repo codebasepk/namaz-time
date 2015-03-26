@@ -30,7 +30,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <service android:name=".NamazTimeService"/>
         <receiver android:name=".WidgetProvider" android:icon="@drawable/ic_widget"
                   android:label="Namaz Time">
             <intent-filter>
@@ -44,9 +43,10 @@
             android:name=".NotificationReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.byteshaft.namazupcoming"/>
+                <action android:name="com.byteshaft.fireNotification"/>
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

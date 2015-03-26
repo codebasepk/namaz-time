@@ -69,7 +69,10 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         mHelpers.writeDataToFile(MainActivity.sFileName, data);
-        Intent intent = new Intent(mContext, MainActivity.class);
-        mContext.startActivity(intent);
+        if (ChangeCity.downloadRun) {
+            Intent intent = new Intent(mContext, MainActivity.class);
+            mContext.startActivity(intent);
+        }
+        mHelpers.setTimesFromDatabase(true);
     }
 }
