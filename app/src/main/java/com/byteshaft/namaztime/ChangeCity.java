@@ -15,8 +15,7 @@ public class ChangeCity extends ActionBarActivity {
     public final static String sFileName = "NAMAZ_TIMES";
     LinearLayout linearLayout;
     Helpers mHelpers;
-    public static  boolean downloadRun = false;
-
+    public static boolean downloadRun = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,6 @@ public class ChangeCity extends ActionBarActivity {
                 String city = parent.getItemAtPosition(position).toString().toLowerCase();
                 mHelpers.saveSelectedCity(city, position);
                 downloadRun = true;
-
             }
         });
     }

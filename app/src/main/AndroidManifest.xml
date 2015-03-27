@@ -52,9 +52,19 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".NotificationAlarm" android:exported="false">
+        <receiver android:name=".AlarmNotification" android:exported="false">
             <intent-filter>
-                <action android:name="com.byteshaft.test"/>
+                <action android:name="com.byteshaft.Setalarm"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".NextNamazTimeReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.byteshaft.SetNextAlarm"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".NullAlarmReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.byteshaft.SetNullAlarm"/>
             </intent-filter>
         </receiver>
 

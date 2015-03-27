@@ -35,11 +35,23 @@ public class MainActivity extends ActionBarActivity {
         File file = new File(location);
         if (!file.exists() && mHelpers.isNetworkAvailable()) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
+        } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
+            mHelpers.showInternetNotAvailableDialog();
         } else {
             mHelpers.setTimesFromDatabase(true);
         }
-        Intent alarmIntent = new Intent("com.byteshaft.test");
-        sendBroadcast(alarmIntent);
+        if (Helpers.setData && !ChangeCity.downloadRun) {
+            Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
+            sendBroadcast(alarmIntent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Helpers.setData) {
+            mHelpers.refreshNamazTimeIfDateChange();
+        }
     }
 
     @Override
@@ -50,12 +62,6 @@ public class MainActivity extends ActionBarActivity {
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startMain);
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        mHelpers.refreshNamazTimeIfDateChange();
     }
 
     @Override
