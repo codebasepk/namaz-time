@@ -29,7 +29,7 @@ public class Helpers extends ContextWrapper {
     private String mData = null;
     private final String SELECTED_CITY_POSITION = "cityPosition";
     private final String SELECTED_CITY_NAME = "cityName";
-    private String mPresentDate;
+    String mPresentDate;
     static boolean setData;
 
     Helpers(Context context) {
@@ -214,12 +214,6 @@ public class Helpers extends ContextWrapper {
         };
     }
 
-    void refreshNamazTimeIfDateChange() {
-        if (!mPresentDate.equals(getDate())) {
-            Log.i("refreshNamazTime", "working");
-            setTimesFromDatabase(true);
-        }
-    }
 
     String toTheUpperCaseSingle(String givenString) {
         String example = givenString;
