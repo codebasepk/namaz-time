@@ -35,7 +35,7 @@ public class Helpers extends ContextWrapper {
     Helpers(Context context) {
         super(context);
     }
-    
+
     Helpers(Activity activityContext) {
         super(activityContext);
     }
