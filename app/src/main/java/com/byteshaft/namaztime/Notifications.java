@@ -53,7 +53,6 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setOngoing(true);
         notificationBuilder.setContentIntent(pIntent);
-
         return notificationBuilder;
     }
 
@@ -71,7 +70,6 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setLights(Color.RED, 3000, 3000);
         notificationBuilder.setSound(uri);
         notificationBuilder.setContentIntent(pIntent);
-
         return notificationBuilder;
     }
 }

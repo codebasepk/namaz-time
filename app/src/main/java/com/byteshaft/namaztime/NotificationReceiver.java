@@ -15,14 +15,12 @@ public class NotificationReceiver extends BroadcastReceiver {
     private int ONE_MINUTE = ONE_SECOND * 60;
     private int TWELVE_MINUTE = ONE_MINUTE * 12;
 
-
     @Override
     public void onReceive(Context context, Intent intent) {
         String namaz = intent.getExtras().getString("namaz");
         Notifications notifications = new Notifications(context);
         notifications.startUpcomingNamazNotification(namaz);
         alarmToForTwelveMinutes(context, TWELVE_MINUTE);
-
     }
 
     private void alarmToForTwelveMinutes(Context context, long time) {

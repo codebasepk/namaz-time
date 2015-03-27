@@ -35,7 +35,7 @@ public class Helpers extends ContextWrapper {
     Helpers(Context context) {
         super(context);
     }
-
+    
     Helpers(Activity activityContext) {
         super(activityContext);
     }
@@ -216,7 +216,7 @@ public class Helpers extends ContextWrapper {
 
     void refreshNamazTimeIfDateChange() {
         if (!mPresentDate.equals(getDate())) {
-            Log.i("refreshNamazTime" , "working");
+            Log.i("refreshNamazTime", "working");
             setTimesFromDatabase(true);
         }
     }

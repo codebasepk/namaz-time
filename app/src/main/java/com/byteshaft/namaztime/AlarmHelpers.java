@@ -43,8 +43,8 @@ public class AlarmHelpers extends ContextWrapper {
                     long subtractTenMinutes = difference - TEN_MINUTES;
                     setAlarmsForNamaz(context, subtractTenMinutes, namazTime);
                     break;
-                } else if (presentTime.after(lastItem)){
-                    Log.i("TAG" , "Working");
+                } else if (presentTime.after(lastItem)) {
+                    Log.i("TAG", "Working");
                     mHelpers.setTimesFromDatabase(false);
                     alarmIfNoNamazTimeAvailable(context);
                     break;
@@ -74,12 +74,12 @@ public class AlarmHelpers extends ContextWrapper {
         Intent intent = new Intent("com.byteshaft.SetNullAlarm");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         Calendar timeOff = Calendar.getInstance();
-        timeOff.add(Calendar.DATE , 1);
+        timeOff.add(Calendar.DATE, 1);
         //time 1.00AM
         timeOff.set(Calendar.HOUR_OF_DAY, 1);
-        timeOff.set(Calendar.MINUTE , 5);
+        timeOff.set(Calendar.MINUTE, 5);
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                timeOff.getTimeInMillis() + 86400000, AlarmManager.INTERVAL_DAY , pendingIntent);
+                timeOff.getTimeInMillis() + 86400000, AlarmManager.INTERVAL_DAY, pendingIntent);
         Log.i("TAG", "setting alarm of :" + timeOff.getTime());
     }
 }

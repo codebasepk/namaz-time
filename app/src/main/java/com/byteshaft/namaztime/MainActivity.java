@@ -17,7 +17,6 @@ public class MainActivity extends ActionBarActivity {
     private static MainActivity sActivityInstance = null;
     private Helpers mHelpers = null;
 
-
     public static MainActivity getInstance() {
         return sActivityInstance;
     }
@@ -41,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
         } else {
             mHelpers.setTimesFromDatabase(true);
         }
-        System.out.println(Helpers.setData);
         if (Helpers.setData) {
             Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
             sendBroadcast(alarmIntent);

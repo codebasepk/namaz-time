@@ -17,7 +17,6 @@ public class ChangeCity extends ActionBarActivity {
     Helpers mHelpers;
     public static boolean downloadRun = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +43,6 @@ public class ChangeCity extends ActionBarActivity {
                 String city = parent.getItemAtPosition(position).toString().toLowerCase();
                 mHelpers.saveSelectedCity(city, position);
                 downloadRun = true;
-
             }
         });
     }

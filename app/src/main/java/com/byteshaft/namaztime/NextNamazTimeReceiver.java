@@ -11,7 +11,5 @@ public class NextNamazTimeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
         alarmHelpers.setAlarmForNextNamaz(context);
-
-
     }
 }

@@ -22,7 +22,6 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
     private Context mContext = null;
     private Helpers mHelpers = null;
 
-
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
         mHelpers = new Helpers(mContext);
