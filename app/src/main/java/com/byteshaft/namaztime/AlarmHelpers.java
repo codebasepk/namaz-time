@@ -43,7 +43,7 @@ public class AlarmHelpers extends ContextWrapper {
                     setAlarmsForNamaz(context, subtractTenMinutes, namazTime);
                     break;
                 } else if (presentTime.after(lastItem)) {
-                    Log.i("TAG", "Working");
+                    Log.i("TAG", "Setting alarm for 1AM");
                     mHelpers.setTimesFromDatabase(false);
                     alarmIfNoNamazTimeAvailable(context);
                     break;

@@ -21,6 +21,8 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
     private ProgressDialog mProgressDialog = null;
     private Context mContext = null;
     private Helpers mHelpers = null;
+    private boolean dialogShowing = false;
+    boolean taskRunning = false;
 
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
@@ -35,6 +37,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
+        this.dialogShowing = true;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
     @Override
     protected void onPostExecute(JsonElement jsonElement) {
         super.onPostExecute(jsonElement);
-        mProgressDialog.dismiss();
+        taskRunning = true;
         JsonObject mRootJsonObject = jsonElement.getAsJsonObject();
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
@@ -72,6 +75,14 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
             Intent intent = new Intent(mContext, MainActivity.class);
             mContext.startActivity(intent);
         }
+        try {
+            if (this.dialogShowing) {
+                mProgressDialog.dismiss();
+            }
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+        this.dialogShowing = false;
         mHelpers.setTimesFromDatabase(true);
         Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
         mContext.sendBroadcast(alarmIntent);

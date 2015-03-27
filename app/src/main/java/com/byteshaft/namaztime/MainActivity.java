@@ -45,17 +45,13 @@ public class MainActivity extends ActionBarActivity {
         if (Helpers.setData && !ChangeCity.downloadRun) {
             Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
             sendBroadcast(alarmIntent);
-        }else {
-            Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
-            sendBroadcast(alarmIntent);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (!mHelpers.mPresentDate.equals(mHelpers.getDate())) {
-            Log.i("refreshNamazTime", "working");
+        if (file.exists()) {
             mHelpers.setTimesFromDatabase(true);
         }
         if (!file.exists()) {

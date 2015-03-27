@@ -29,7 +29,7 @@ public class Helpers extends ContextWrapper {
     private String mData = null;
     private final String SELECTED_CITY_POSITION = "cityPosition";
     private final String SELECTED_CITY_NAME = "cityName";
-    String mPresentDate;
+    static String mShowingDate = null;
     static boolean setData;
 
     Helpers(Context context) {
@@ -122,7 +122,7 @@ public class Helpers extends ContextWrapper {
                         retrieveTimeForNamaz("asr") + "\n" + "\n" +
                         retrieveTimeForNamaz("maghrib") + "\n" + "\n" +
                         retrieveTimeForNamaz("isha"));
-        mPresentDate = getDate();
+        mShowingDate = getDate();
     }
 
     String getDataFromFileAsString() {
