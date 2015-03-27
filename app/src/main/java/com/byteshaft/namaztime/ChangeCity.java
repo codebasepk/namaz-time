@@ -15,7 +15,7 @@ public class ChangeCity extends ActionBarActivity {
     public final static String sFileName = "NAMAZ_TIMES";
     LinearLayout linearLayout;
     Helpers mHelpers;
-    public static  boolean downloadRun = false;
+    public static boolean downloadRun = false;
 
 
     @Override

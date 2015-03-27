@@ -74,5 +74,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
             mContext.startActivity(intent);
         }
         mHelpers.setTimesFromDatabase(true);
+        Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
+        mContext.sendBroadcast(alarmIntent);
     }
 }

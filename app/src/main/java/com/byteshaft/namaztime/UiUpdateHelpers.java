@@ -17,9 +17,10 @@ public class UiUpdateHelpers {
         TextView textCity = (TextView) mActivity.findViewById(R.id.textCity);
         setupLabels(textCity, city);
     }
+
     public void displayDate(String date) {
         TextView displayDate = (TextView) mActivity.findViewById(R.id.displayTime);
-        setupLabels(displayDate , date);
+        setupLabels(displayDate, date);
     }
 
     public void setDate(String date) {
@@ -43,7 +44,7 @@ public class UiUpdateHelpers {
         textView.setTextSize(TEXT_SIZE);
         textView.setTextColor(getCustomTextColorCode());
         textView.setText(text);
-        textView.setShadowLayer(4 , 6 , 4 , Color.BLACK);
+        textView.setShadowLayer(4, 6, 4, Color.BLACK);
     }
 
     private Typeface getTypeface() {

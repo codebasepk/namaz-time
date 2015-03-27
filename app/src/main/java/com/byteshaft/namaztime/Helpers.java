@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,23 +30,24 @@ public class Helpers extends ContextWrapper {
     private final String SELECTED_CITY_POSITION = "cityPosition";
     private final String SELECTED_CITY_NAME = "cityName";
     private String mPresentDate;
+    static boolean setData;
 
-    public Helpers(Context context) {
+    Helpers(Context context) {
         super(context);
     }
 
-    public Helpers(Activity activityContext) {
+    Helpers(Activity activityContext) {
         super(activityContext);
     }
 
-    public boolean isNetworkAvailable() {
+    boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void showInternetNotAvailableDialog() {
+    void showInternetNotAvailableDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("No Internet");
         alert.setMessage("Please connect to the internet and try again");
@@ -65,19 +67,20 @@ public class Helpers extends ContextWrapper {
         return new SimpleDateFormat("yyyy-M-d");
     }
 
-    public String getDate() {
+    String getDate() {
         return getDateFormat().format(getCalenderInstance().getTime());
     }
 
-    public String getAmPm() {
+    String getAmPm() {
         return getTimeFormat().format(getCalenderInstance().getTime());
     }
 
-    public SimpleDateFormat getTimeFormat() {
+    SimpleDateFormat getTimeFormat() {
         return new SimpleDateFormat("h:mm aa");
     }
 
-    public void setTimesFromDatabase(boolean runningFromActivity) {
+    void setTimesFromDatabase(boolean runningFromActivity) {
+        setData = true;
         String date = getDate();
         String output = getPrayerTimesForDate(date, runningFromActivity);
         try {
@@ -103,7 +106,7 @@ public class Helpers extends ContextWrapper {
         return jsonObject.get(namaz).toString();
     }
 
-    public void displayData() {
+    void displayData() {
         String currentCity = getPreviouslySelectedCityName();
         UiUpdateHelpers uiUpdateHelpers = new UiUpdateHelpers(MainActivity.getInstance());
         uiUpdateHelpers.setDate(getDate());
@@ -115,14 +118,14 @@ public class Helpers extends ContextWrapper {
                 + "Isha");
         uiUpdateHelpers.setNamazTimesLabel(
                 retrieveTimeForNamaz("fajr") + "\n" + "\n" +
-                retrieveTimeForNamaz("dhuhr") + "\n" + "\n" +
-                retrieveTimeForNamaz("asr") + "\n" + "\n" +
-                retrieveTimeForNamaz("maghrib") + "\n" + "\n" +
-                retrieveTimeForNamaz("isha"));
+                        retrieveTimeForNamaz("dhuhr") + "\n" + "\n" +
+                        retrieveTimeForNamaz("asr") + "\n" + "\n" +
+                        retrieveTimeForNamaz("maghrib") + "\n" + "\n" +
+                        retrieveTimeForNamaz("isha"));
         mPresentDate = getDate();
     }
 
-    private String getDataFromFileAsString() {
+    String getDataFromFileAsString() {
         FileInputStream fileInputStream;
         try {
             fileInputStream = openFileInput(MainActivity.sFileName);
@@ -164,25 +167,25 @@ public class Helpers extends ContextWrapper {
         return mData;
     }
 
-    public String getDiskLocationForFile(String file) {
+    String getDiskLocationForFile(String file) {
         return getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + file;
     }
 
-    public SharedPreferences getPreferenceManager() {
+    SharedPreferences getPreferenceManager() {
         return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-    public String getPreviouslySelectedCityName() {
+    String getPreviouslySelectedCityName() {
         SharedPreferences preferences = getPreferenceManager();
         return preferences.getString(SELECTED_CITY_NAME, "Karachi");
     }
 
-    public int getPreviouslySelectedCityIndex() {
+    int getPreviouslySelectedCityIndex() {
         SharedPreferences preferences = getPreferenceManager();
         return preferences.getInt(SELECTED_CITY_POSITION, 0);
     }
 
-    public void saveSelectedCity(String cityName, int positionInSpinner) {
+    void saveSelectedCity(String cityName, int positionInSpinner) {
         SharedPreferences preferences = getPreferenceManager();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(SELECTED_CITY_NAME, cityName);
@@ -190,7 +193,7 @@ public class Helpers extends ContextWrapper {
         editor.apply();
     }
 
-    public void writeDataToFile(String file, String data) {
+    void writeDataToFile(String file, String data) {
         FileOutputStream fileOutputStream;
         try {
             fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
@@ -201,8 +204,8 @@ public class Helpers extends ContextWrapper {
         }
     }
 
-    public String[] getNamazTimesArray() {
-        return new String[] {
+    String[] getNamazTimesArray() {
+        return new String[]{
                 retrieveTimeForNamaz("fajr"),
                 retrieveTimeForNamaz("dhuhr"),
                 retrieveTimeForNamaz("asr"),
@@ -211,13 +214,14 @@ public class Helpers extends ContextWrapper {
         };
     }
 
-    public void refreshNamazTimeIfDateChange() {
+    void refreshNamazTimeIfDateChange() {
         if (!mPresentDate.equals(getDate())) {
+            Log.i("refreshNamazTime" , "working");
             setTimesFromDatabase(true);
         }
     }
 
-    public String toTheUpperCaseSingle(String givenString) {
+    String toTheUpperCaseSingle(String givenString) {
         String example = givenString;
 
         example = example.substring(0, 1).toUpperCase()
@@ -234,12 +238,6 @@ public class Helpers extends ContextWrapper {
     private String retrieveTimeForNamaz(String namaz) {
         SharedPreferences preference = getPreferenceManager();
         return preference.getString(namaz, null);
-    }
-
-    boolean arePrayerTimesForTodaySaved() {
-        SharedPreferences preference = getPreferenceManager();
-        String currentDate = getDate();
-        return preference.getString("date", null).equals(currentDate);
     }
 }
 
