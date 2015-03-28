@@ -18,11 +18,11 @@ import java.net.URL;
 
 public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement> {
 
+    static boolean taskRunning = false;
     private ProgressDialog mProgressDialog = null;
     private Context mContext = null;
     private Helpers mHelpers = null;
     private boolean dialogShowing = false;
-    boolean taskRunning = false;
 
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
@@ -71,20 +71,24 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         mHelpers.writeDataToFile(MainActivity.sFileName, data);
-        if (ChangeCity.downloadRun) {
-            Intent intent = new Intent(mContext, MainActivity.class);
-            mContext.startActivity(intent);
-        }
         try {
             if (this.dialogShowing) {
                 mProgressDialog.dismiss();
             }
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
+            MainActivity.closeApp();
+            taskRunning = false;
         }
-        this.dialogShowing = false;
+        mHelpers.setTimesFromDatabase(false);
         mHelpers.setTimesFromDatabase(true);
         Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
         mContext.sendBroadcast(alarmIntent);
+        this.dialogShowing = false;
+        if (ChangeCity.downloadRun && taskRunning) {
+            Intent intent = new Intent(mContext, MainActivity.class);
+            mContext.startActivity(intent);
+        }
+
     }
 }

@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -37,14 +38,12 @@ public class AlarmHelpers extends ContextWrapper {
                 Date namaz = mHelpers.getTimeFormat().parse(namazTime);
                 String item = namazTimes[4];
                 Date lastItem = mHelpers.getTimeFormat().parse(item);
-                if (namaz.after(presentTime)) {
+                if (presentTime.before(namaz)) {
                     long difference = namaz.getTime() - presentTime.getTime();
                     long subtractTenMinutes = difference - TEN_MINUTES;
                     setAlarmsForNamaz(context, subtractTenMinutes, namazTime);
                     break;
                 } else if (presentTime.after(lastItem)) {
-                    Log.i("TAG", "Setting alarm for 1AM");
-                    mHelpers.setTimesFromDatabase(false);
                     alarmIfNoNamazTimeAvailable(context);
                     break;
                 }
@@ -69,16 +68,14 @@ public class AlarmHelpers extends ContextWrapper {
 
     private void alarmIfNoNamazTimeAvailable(Context context) {
         AlarmManager alarmMgr = getAlarmManager(context);
-
-        Intent intent = new Intent("com.byteshaft.SetNullAlarm");
+        Intent intent = new Intent("com.byteShaft.StandardAlarm");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         Calendar timeOff = Calendar.getInstance();
         timeOff.add(Calendar.DATE, 1);
-        //time 1.00AM
-        timeOff.set(Calendar.HOUR_OF_DAY, 1);
+        timeOff.set(Calendar.HOUR_OF_DAY, 0);
         timeOff.set(Calendar.MINUTE, 5);
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                timeOff.getTimeInMillis() + 86400000, AlarmManager.INTERVAL_DAY, pendingIntent);
+        alarmMgr.setInexactRepeating(AlarmManager.RTC,
+                timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
         Log.i("TAG", "setting alarm of :" + timeOff.getTime());
     }
 }

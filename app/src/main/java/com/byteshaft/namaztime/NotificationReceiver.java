@@ -24,7 +24,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     private void alarmToForTwelveMinutes(Context context, long time) {
-        Log.i("Setting Alarm For ", ":" + time);
+        Log.i("Setting Alarm FOR ", ":" + time);
         AlarmManager alarmManager = getAlarmManager(context);
         Intent intent = new Intent("com.byteshaft.SetNextAlarm");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);

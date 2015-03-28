@@ -25,12 +25,10 @@ import java.util.Calendar;
 
 public class Helpers extends ContextWrapper {
 
-    private StringBuilder stringBuilder = null;
-    private String mData = null;
     private final String SELECTED_CITY_POSITION = "cityPosition";
     private final String SELECTED_CITY_NAME = "cityName";
-    static String mShowingDate = null;
-    static boolean setData;
+    private StringBuilder stringBuilder = null;
+    private String mData = null;
 
     Helpers(Context context) {
         super(context);
@@ -80,7 +78,6 @@ public class Helpers extends ContextWrapper {
     }
 
     void setTimesFromDatabase(boolean runningFromActivity) {
-        setData = true;
         String date = getDate();
         String output = getPrayerTimesForDate(date, runningFromActivity);
         try {
@@ -117,12 +114,11 @@ public class Helpers extends ContextWrapper {
                 + "\n" + "\n" + "Maghrib" + "\n" + "\n"
                 + "Isha");
         uiUpdateHelpers.setNamazTimesLabel(
-                retrieveTimeForNamaz("fajr") + "\n" + "\n" +
-                        retrieveTimeForNamaz("dhuhr") + "\n" + "\n" +
-                        retrieveTimeForNamaz("asr") + "\n" + "\n" +
-                        retrieveTimeForNamaz("maghrib") + "\n" + "\n" +
-                        retrieveTimeForNamaz("isha"));
-        mShowingDate = getDate();
+                retrieveTimeForNamazAndTime("fajr") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("dhuhr") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("asr") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("maghrib") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("isha"));
     }
 
     String getDataFromFileAsString() {
@@ -167,10 +163,6 @@ public class Helpers extends ContextWrapper {
         return mData;
     }
 
-    String getDiskLocationForFile(String file) {
-        return getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + file;
-    }
-
     SharedPreferences getPreferenceManager() {
         return PreferenceManager.getDefaultSharedPreferences(this);
     }
@@ -206,14 +198,14 @@ public class Helpers extends ContextWrapper {
 
     String[] getNamazTimesArray() {
         return new String[]{
-                retrieveTimeForNamaz("fajr"),
-                retrieveTimeForNamaz("dhuhr"),
-                retrieveTimeForNamaz("asr"),
-                retrieveTimeForNamaz("maghrib"),
-                retrieveTimeForNamaz("isha")
+                "4:08 pm",
+                retrieveTimeForNamazAndTime("fajr"),
+                retrieveTimeForNamazAndTime("dhuhr"),
+                retrieveTimeForNamazAndTime("asr"),
+                retrieveTimeForNamazAndTime("maghrib"),
+                retrieveTimeForNamazAndTime("isha")
         };
     }
-
 
     String toTheUpperCaseSingle(String givenString) {
         String example = givenString;
@@ -229,7 +221,7 @@ public class Helpers extends ContextWrapper {
         preference.edit().putString("date", getDate()).apply();
     }
 
-    private String retrieveTimeForNamaz(String namaz) {
+    String retrieveTimeForNamazAndTime(String namaz) {
         SharedPreferences preference = getPreferenceManager();
         return preference.getString(namaz, null);
     }

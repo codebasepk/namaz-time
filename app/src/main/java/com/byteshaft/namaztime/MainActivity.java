@@ -16,11 +16,15 @@ public class MainActivity extends ActionBarActivity {
 
     final static String sFileName = "NAMAZ_TIMES";
     private static MainActivity sActivityInstance = null;
-    private Helpers mHelpers = null;
     File file;
+    private Helpers mHelpers = null;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
+    }
+
+    static void closeApp() {
+        sActivityInstance.finish();
     }
 
     private void setActivityInstance(MainActivity mainActivity) {
@@ -42,7 +46,7 @@ public class MainActivity extends ActionBarActivity {
         } else {
             mHelpers.setTimesFromDatabase(true);
         }
-        if (Helpers.setData && !ChangeCity.downloadRun) {
+        if (file.exists() && !ChangeCity.downloadRun) {
             Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
             sendBroadcast(alarmIntent);
         }
@@ -51,10 +55,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (file.exists()) {
+        if (file.exists() && !mHelpers.retrieveTimeForNamazAndTime("date").equals(mHelpers.getDate())) {
             mHelpers.setTimesFromDatabase(true);
         }
-        if (!file.exists()) {
+        else if (!file.exists() && mHelpers.isNetworkAvailable()) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
         }
     }

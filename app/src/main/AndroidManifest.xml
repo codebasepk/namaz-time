@@ -62,9 +62,9 @@
                 <action android:name="com.byteshaft.SetNextAlarm"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".NullAlarmReceiver" android:exported="false">
+        <receiver android:name=".StandardAlarmReceiver" android:exported="false">
             <intent-filter>
-                <action android:name="com.byteshaft.SetNullAlarm"/>
+                <action android:name="com.byteShaft.StandardAlarm"/>
             </intent-filter>
         </receiver>
 
