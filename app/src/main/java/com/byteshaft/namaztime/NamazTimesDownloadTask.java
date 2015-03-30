@@ -71,6 +71,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         mHelpers.writeDataToFile(MainActivity.sFileName, data);
+        mHelpers.setTimesFromDatabase(false);
         try {
             if (this.dialogShowing) {
                 mProgressDialog.dismiss();
@@ -80,7 +81,6 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
             MainActivity.closeApp();
             taskRunning = false;
         }
-        mHelpers.setTimesFromDatabase(false);
         mHelpers.setTimesFromDatabase(true);
         Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
         mContext.sendBroadcast(alarmIntent);
