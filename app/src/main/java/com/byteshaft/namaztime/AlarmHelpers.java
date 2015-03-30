@@ -10,7 +10,6 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -20,17 +19,17 @@ public class AlarmHelpers extends ContextWrapper {
 
     public AlarmHelpers(Context base) {
         super(base);
+        mHelpers = new Helpers(this);
     }
 
-    void setAlarmForNextNamaz(Context context) {
+    void setAlarmForNextNamaz() {
         final int ONE_SECOND = 1000;
         final int ONE_MINUTE = ONE_SECOND * 60;
         final int TEN_MINUTES = ONE_MINUTE * 10;
-        mHelpers = new Helpers(context);
-        settingAlarm(context, TEN_MINUTES);
+        settingAlarm(TEN_MINUTES);
     }
 
-    void settingAlarm(Context context, int TEN_MINUTES) {
+    void settingAlarm(int TEN_MINUTES) {
         String[] namazTimes = mHelpers.getNamazTimesArray();
         for (String namazTime : namazTimes) {
             try {
@@ -41,10 +40,10 @@ public class AlarmHelpers extends ContextWrapper {
                 if (presentTime.before(namaz)) {
                     long difference = namaz.getTime() - presentTime.getTime();
                     long subtractTenMinutes = difference - TEN_MINUTES;
-                    setAlarmsForNamaz(context, subtractTenMinutes, namazTime);
+                    setAlarmsForNamaz(subtractTenMinutes, namazTime);
                     break;
                 } else if (presentTime.after(lastItem)) {
-                    alarmIfNoNamazTimeAvailable(context);
+                    alarmIfNoNamazTimeAvailable(this);
                     break;
                 }
             } catch (ParseException e) {
@@ -53,12 +52,13 @@ public class AlarmHelpers extends ContextWrapper {
         }
     }
 
-    private void setAlarmsForNamaz(Context context, long time, String namaz) {
-        Log.i("Setting Alarm For ", ":" + TimeUnit.MILLISECONDS.toMinutes(time));
-        AlarmManager alarmManager = getAlarmManager(context);
+    private void setAlarmsForNamaz(long time, String namaz) {
+        Log.i("NAMAZ_TIME",
+                String.format("Setting alarm for: %d", TimeUnit.MILLISECONDS.toMinutes(time)));
+        AlarmManager alarmManager = getAlarmManager(this);
         Intent intent = new Intent("com.byteshaft.fireNotification");
         intent.putExtra("namaz", namaz);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + time, pendingIntent);
     }
 

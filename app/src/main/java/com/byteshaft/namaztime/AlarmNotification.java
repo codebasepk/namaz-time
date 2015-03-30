@@ -10,7 +10,7 @@ public class AlarmNotification extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
-        alarmHelpers.setAlarmForNextNamaz(context);
+        alarmHelpers.setAlarmForNextNamaz();
     }
 
 

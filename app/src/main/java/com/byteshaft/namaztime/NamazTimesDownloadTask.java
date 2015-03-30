@@ -71,7 +71,6 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         mHelpers.writeDataToFile(MainActivity.sFileName, data);
-        mHelpers.setTimesFromDatabase(false);
         try {
             if (this.dialogShowing) {
                 mProgressDialog.dismiss();

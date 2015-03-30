@@ -11,6 +11,7 @@ import android.util.Log;
 
 
 public class NotificationReceiver extends BroadcastReceiver {
+
     private int ONE_SECOND = 1000;
     private int ONE_MINUTE = ONE_SECOND * 60;
     private int TWELVE_MINUTE = ONE_MINUTE * 12;
