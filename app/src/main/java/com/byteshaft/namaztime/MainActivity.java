@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
         file = new File(location);
         if (!file.exists() && mHelpers.isNetworkAvailable() || file.length() ==0) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
-        } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
+        } else if (!mHelpers.isNetworkAvailable() && !file.exists() || file.length() == 0) {
             mHelpers.showInternetNotAvailableDialog();
         } else {
             mHelpers.setTimesFromDatabase(true, sFileName);
