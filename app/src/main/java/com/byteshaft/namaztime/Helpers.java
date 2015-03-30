@@ -154,7 +154,7 @@ public class Helpers extends ContextWrapper {
             e.printStackTrace();
         }
         if (runningFromActivity) {
-            if (!mData.contains(request) && isNetworkAvailable()) {
+            if (!mData.contains(request) && isNetworkAvailable() || mData.length() == 0) {
                 new NamazTimesDownloadTask(this).execute();
             } else if (isNetworkAvailable() && !mData.contains(request)) {
                 showInternetNotAvailableDialog();
