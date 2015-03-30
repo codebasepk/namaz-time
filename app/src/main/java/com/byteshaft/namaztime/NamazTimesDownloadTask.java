@@ -18,9 +18,11 @@ import java.net.URL;
 
 public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement> {
 
+    static boolean taskRunning = false;
     private ProgressDialog mProgressDialog = null;
     private Context mContext = null;
     private Helpers mHelpers = null;
+    private boolean dialogShowing = false;
 
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
@@ -35,6 +37,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
+        this.dialogShowing = true;
     }
 
     @Override
@@ -63,17 +66,29 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
     @Override
     protected void onPostExecute(JsonElement jsonElement) {
         super.onPostExecute(jsonElement);
-        mProgressDialog.dismiss();
+        taskRunning = true;
         JsonObject mRootJsonObject = jsonElement.getAsJsonObject();
         JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
         String data = mNamazTimesArray.toString();
         mHelpers.writeDataToFile(MainActivity.sFileName, data);
-        if (ChangeCity.downloadRun) {
-            Intent intent = new Intent(mContext, MainActivity.class);
-            mContext.startActivity(intent);
+        mHelpers.setTimesFromDatabase(false);
+        try {
+            if (this.dialogShowing) {
+                mProgressDialog.dismiss();
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            MainActivity.closeApp();
+            taskRunning = false;
         }
         mHelpers.setTimesFromDatabase(true);
         Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
         mContext.sendBroadcast(alarmIntent);
+        this.dialogShowing = false;
+        if (ChangeCity.downloadRun && taskRunning) {
+            Intent intent = new Intent(mContext, MainActivity.class);
+            mContext.startActivity(intent);
+        }
+
     }
 }

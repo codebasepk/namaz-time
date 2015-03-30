@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public class NullAlarmReceiver extends BroadcastReceiver {
+public class StandardAlarmReceiver extends BroadcastReceiver {
     Helpers mHelpers;
     AlarmHelpers alarmHelpers;
 

@@ -66,8 +66,8 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setContentText("Slide to remove");
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
-        notificationBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
-        notificationBuilder.setLights(Color.RED, 3000, 3000);
+        notificationBuilder.setVibrate(new long[]{250, 175, 250, 175, 250});
+        notificationBuilder.setLights(Color.GREEN, 3000, 3000);
         notificationBuilder.setSound(uri);
         notificationBuilder.setContentIntent(pIntent);
         return notificationBuilder;
