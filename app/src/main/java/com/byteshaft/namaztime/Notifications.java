@@ -51,7 +51,7 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setOngoing(true);
+        notificationBuilder.setDeleteIntent(pIntent);
         notificationBuilder.setContentIntent(pIntent);
         return notificationBuilder;
     }
@@ -65,6 +65,7 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setContentTitle("Namaz Time at " + namaz);
         notificationBuilder.setContentText("Slide to remove");
         notificationBuilder.setAutoCancel(true);
+        notificationBuilder.setDeleteIntent(pIntent);
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         notificationBuilder.setVibrate(new long[]{250, 175, 250, 175, 250});
         notificationBuilder.setLights(Color.GREEN, 3000, 3000);
