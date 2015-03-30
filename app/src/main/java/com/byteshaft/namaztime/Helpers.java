@@ -77,9 +77,9 @@ public class Helpers extends ContextWrapper {
         return new SimpleDateFormat("h:mm aa");
     }
 
-    void setTimesFromDatabase(boolean runningFromActivity) {
+    void setTimesFromDatabase(boolean runningFromActivity, String fileName) {
         String date = getDate();
-        String output = getPrayerTimesForDate(date, runningFromActivity);
+        String output = getPrayerTimesForDate(date, runningFromActivity, fileName);
         try {
             JSONObject jsonObject = new JSONObject(output);
             setPrayerTime(jsonObject, runningFromActivity);
@@ -121,10 +121,10 @@ public class Helpers extends ContextWrapper {
                         retrieveTimeForNamazAndTime("isha"));
     }
 
-    String getDataFromFileAsString() {
+    String getDataFromFileAsString(String fileName) {
         FileInputStream fileInputStream;
         try {
-            fileInputStream = openFileInput(MainActivity.sFileName);
+            fileInputStream = openFileInput(fileName);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             stringBuilder = new StringBuilder();
             while (bufferedInputStream.available() != 0) {
@@ -139,10 +139,10 @@ public class Helpers extends ContextWrapper {
         return stringBuilder.toString();
     }
 
-    private String getPrayerTimesForDate(String request, boolean runningFromActivity) {
+    private String getPrayerTimesForDate(String request, boolean runningFromActivity, String fileName) {
         try {
             mData = null;
-            String data = getDataFromFileAsString();
+            String data = getDataFromFileAsString(fileName);
             JSONArray readingData = new JSONArray(data);
             for (int i = 0; i < readingData.length(); i++) {
                 mData = readingData.getJSONObject(i).toString();

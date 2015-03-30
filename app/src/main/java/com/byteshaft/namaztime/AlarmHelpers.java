@@ -56,7 +56,7 @@ public class AlarmHelpers extends ContextWrapper {
         Log.i("NAMAZ_TIME",
                 String.format("Setting alarm for: %d", TimeUnit.MILLISECONDS.toMinutes(time)));
         AlarmManager alarmManager = getAlarmManager(this);
-        Intent intent = new Intent("com.byteshaft.fireNotification");
+        Intent intent = new Intent("com.byteshaft.shownotification");
         intent.putExtra("namaz", namaz);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + time, pendingIntent);
@@ -68,7 +68,7 @@ public class AlarmHelpers extends ContextWrapper {
 
     private void alarmIfNoNamazTimeAvailable(Context context) {
         AlarmManager alarmMgr = getAlarmManager(context);
-        Intent intent = new Intent("com.byteShaft.StandardAlarm");
+        Intent intent = new Intent("com.byteShaft.standardalarm");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         Calendar timeOff = Calendar.getInstance();
         timeOff.add(Calendar.DATE, 1);
@@ -76,6 +76,6 @@ public class AlarmHelpers extends ContextWrapper {
         timeOff.set(Calendar.MINUTE, 5);
         alarmMgr.setInexactRepeating(AlarmManager.RTC,
                 timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        Log.i("TAG", "setting alarm of :" + timeOff.getTime());
+        Log.i("NAMAZ_TIME", "setting alarm of :" + timeOff.getTime());
     }
 }

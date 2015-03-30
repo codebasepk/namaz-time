@@ -10,7 +10,7 @@ public class StandardAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Helpers helpers = new Helpers(context);
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
-        helpers.setTimesFromDatabase(false);
+        helpers.setTimesFromDatabase(false, MainActivity.sFileName);
         alarmHelpers.setAlarmForNextNamaz();
     }
 }

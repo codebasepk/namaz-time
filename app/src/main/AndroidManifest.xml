@@ -43,7 +43,7 @@
             android:name=".NotificationReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.byteshaft.fireNotification"/>
+                <action android:name="com.byteshaft.shownotification"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".RingtoneRestoreReceiver" android:exported="false">
@@ -54,17 +54,17 @@
 
         <receiver android:name=".AlarmNotification" android:exported="false">
             <intent-filter>
-                <action android:name="com.byteshaft.Setalarm"/>
+                <action android:name="com.byteshaft.setalarm"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".NextNamazTimeReceiver" android:exported="false">
             <intent-filter>
-                <action android:name="com.byteshaft.SetNextAlarm"/>
+                <action android:name="com.byteshaft.setnextalarm"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".StandardAlarmReceiver" android:exported="false">
             <intent-filter>
-                <action android:name="com.byteShaft.StandardAlarm"/>
+                <action android:name="com.byteShaft.standardalarm"/>
             </intent-filter>
         </receiver>
 
