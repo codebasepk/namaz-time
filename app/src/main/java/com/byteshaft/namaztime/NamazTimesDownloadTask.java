@@ -57,7 +57,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
             httpConnection.connect();
             rootJsonElement = jsonParser.parse(
                     new InputStreamReader((InputStream) httpConnection.getContent()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return rootJsonElement;
