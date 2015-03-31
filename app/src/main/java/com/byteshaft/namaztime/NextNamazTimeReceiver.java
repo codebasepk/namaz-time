@@ -10,6 +10,8 @@ public class NextNamazTimeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
+        Notifications notifications = new Notifications(context);
+        notifications.removeNotification();
         alarmHelpers.setAlarmForNextNamaz();
     }
 }

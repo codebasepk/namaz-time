@@ -13,7 +13,9 @@ import android.support.v4.app.NotificationCompat;
 public class Notifications extends ContextWrapper {
 
     private final int SILENT_NOTIFICATION_ID = 56;
+    final int UPCOMING_NAMAZ_NOTIFICATION_ID = 57;
     private NotificationManager mNotificationManager = null;
+
 
     public Notifications(Context context) {
         super(context);
@@ -32,7 +34,7 @@ public class Notifications extends ContextWrapper {
     }
 
     public void startUpcomingNamazNotification(String namaz) {
-        final int UPCOMING_NAMAZ_NOTIFICATION_ID = 57;
+
         NotificationCompat.Builder notification = buildUpcomingNamazNotification(namaz);
         showNotification(UPCOMING_NAMAZ_NOTIFICATION_ID, notification);
     }
@@ -47,7 +49,7 @@ public class Notifications extends ContextWrapper {
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
         notificationBuilder.setContentTitle("Namaz Time");
-        notificationBuilder.setContentText("Tap to remove");
+        notificationBuilder.setContentText("Swipe to remove");
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
@@ -72,5 +74,10 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setSound(uri);
         notificationBuilder.setContentIntent(pIntent);
         return notificationBuilder;
+    }
+    void removeNotification() {
+        mNotificationManager.cancel(UPCOMING_NAMAZ_NOTIFICATION_ID);
+
+
     }
 }
