@@ -49,7 +49,7 @@ public class Notifications extends ContextWrapper {
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
         notificationBuilder.setContentTitle("Namaz Time");
-        notificationBuilder.setContentText("Swipe to remove");
+        notificationBuilder.setContentText("Slide to reset Ringtone");
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
