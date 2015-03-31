@@ -17,8 +17,8 @@
             android:id="@+id/dateLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="130dp"
-            android:layout_marginRight="130dp"
+            android:layout_marginEnd="120dp"
+            android:layout_marginRight="120dp"
             android:gravity="center"
             android:textColor="#FFFFFF"
 
@@ -50,8 +50,8 @@
             android:id="@+id/namazLabel"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="125dp"
-            android:layout_marginRight="125dp" />
+            android:layout_marginEnd="120dp"
+            android:layout_marginRight="120dp" />
 
         <TextView
             android:id="@+id/namazTimesLabel"

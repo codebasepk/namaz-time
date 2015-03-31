@@ -2,10 +2,8 @@ package com.byteshaft.namaztime;
 
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -14,7 +12,7 @@ import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
 
-    final static String sFileName = "NAMAZ_TIMES";
+    static String sFileName = "Karachi";
     private static MainActivity sActivityInstance = null;
     File file;
     private Helpers mHelpers = null;
@@ -39,15 +37,15 @@ public class MainActivity extends ActionBarActivity {
         mHelpers = new Helpers(this);
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
-        if (!file.exists() && mHelpers.isNetworkAvailable()) {
+        if (!file.exists() && mHelpers.isNetworkAvailable() || file.length() ==0) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
-        } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
+        } else if (!mHelpers.isNetworkAvailable() && !file.exists() || file.length() == 0) {
             mHelpers.showInternetNotAvailableDialog();
         } else {
-            mHelpers.setTimesFromDatabase(true);
+            mHelpers.setTimesFromDatabase(true, sFileName);
         }
         if (file.exists() && !ChangeCity.downloadRun) {
-            Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
+            Intent alarmIntent = new Intent("com.byteshaft.setalarm");
             sendBroadcast(alarmIntent);
         }
     }
@@ -56,9 +54,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         if (file.exists() && !mHelpers.retrieveTimeForNamazAndTime("date").equals(mHelpers.getDate())) {
-            mHelpers.setTimesFromDatabase(true);
-        }
-        else if (!file.exists() && mHelpers.isNetworkAvailable()) {
+            mHelpers.setTimesFromDatabase(true, sFileName);
+        } else if (!file.exists() && mHelpers.isNetworkAvailable()) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
         }
     }

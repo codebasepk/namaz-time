@@ -14,7 +14,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private int ONE_SECOND = 1000;
     private int ONE_MINUTE = ONE_SECOND * 60;
-    private int TWELVE_MINUTE = ONE_MINUTE * 12;
+    private int TWELVE_MINUTE = ONE_MINUTE * 30;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -25,9 +25,9 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     private void alarmToForTwelveMinutes(Context context, long time) {
-        Log.i("Setting Alarm FOR ", ":" + time);
+        Log.i("NAMAZ_TIME" , "Setting Alarm FOR :" + time);
         AlarmManager alarmManager = getAlarmManager(context);
-        Intent intent = new Intent("com.byteshaft.SetNextAlarm");
+        Intent intent = new Intent("com.byteshaft.setnextalarm");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + time, pendingIntent);
     }

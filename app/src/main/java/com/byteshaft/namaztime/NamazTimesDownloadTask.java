@@ -57,7 +57,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
             httpConnection.connect();
             rootJsonElement = jsonParser.parse(
                     new InputStreamReader((InputStream) httpConnection.getContent()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return rootJsonElement;
@@ -80,8 +80,8 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, JsonElement>
             MainActivity.closeApp();
             taskRunning = false;
         }
-        mHelpers.setTimesFromDatabase(true);
-        Intent alarmIntent = new Intent("com.byteshaft.Setalarm");
+        mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
+        Intent alarmIntent = new Intent("com.byteshaft.setalarm");
         mContext.sendBroadcast(alarmIntent);
         this.dialogShowing = false;
         if (ChangeCity.downloadRun && taskRunning) {
