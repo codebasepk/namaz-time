@@ -57,6 +57,8 @@ public class ChangeCity extends ActionBarActivity {
         parent.setSelection(position);
         String cityName = parent.getItemAtPosition(position).toString().toLowerCase();
         mHelpers.saveSelectedCity(cityName, position);
+        Intent alarmIntent = new Intent("com.byteshaft.setalarm");
+        sendBroadcast(alarmIntent);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
