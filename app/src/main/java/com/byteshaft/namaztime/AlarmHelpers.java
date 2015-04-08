@@ -84,12 +84,16 @@ public class AlarmHelpers extends ContextWrapper {
     }
 
     void removePreviousAlarams() {
-        if (pendingIntent != null) {
-            Log.i("NAMAZ_TIME", "removing namaz Alarm");
-            alarmManager.cancel(pendingIntent);
-        } else {
-            Log.i("NAMAZ_TIME", "removing");
-            alarmManager.cancel(pIntent);
+        try {
+            if (pendingIntent != null) {
+                Log.i("NAMAZ_TIME", "removing namaz Alarm");
+                alarmManager.cancel(pendingIntent);
+            } else {
+                Log.i("NAMAZ_TIME", "removing");
+                alarmManager.cancel(pIntent);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 

@@ -12,7 +12,7 @@ import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
 
-    static String sFileName = "Karachi";
+    public static String sFileName;
     private static MainActivity sActivityInstance = null;
     File file;
     private Helpers mHelpers = null;
@@ -35,6 +35,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         setActivityInstance(this);
         mHelpers = new Helpers(this);
+        sFileName = mHelpers.getPreviouslySelectedCityName();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
         if (!file.exists() && mHelpers.isNetworkAvailable()) {
