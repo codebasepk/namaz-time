@@ -12,8 +12,8 @@ import android.widget.ListView;
 import java.io.File;
 
 
-public class ChangeCity extends ActionBarActivity {
-    public static boolean downloadRun = false;
+public class ChangeCity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+    static boolean downloadRun = false;
     LinearLayout linearLayout;
     Helpers mHelpers;
     AlarmHelpers alarmHelpers;
@@ -28,21 +28,7 @@ public class ChangeCity extends ActionBarActivity {
         int mPreviousCity = mHelpers.getPreviouslySelectedCityIndex();
         linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         ListView list = getListView(mPreviousCity);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                alarmHelpers.removePreviousAlarams();
-                String city = parent.getItemAtPosition(position).toString();
-                String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
-                file = new File(location);
-                MainActivity.sFileName = city;
-                if (file.exists()) {
-                    fileExsist(parent, position);
-                } else {
-                    fileNotExsist(parent, position);
-                }
-            }
-        });
+        list.setOnItemClickListener(this);
     }
 
     private void fileNotExsist(AdapterView<?> parent, int position) {
@@ -86,5 +72,20 @@ public class ChangeCity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
         this.finish();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        alarmHelpers.removePreviousAlarams();
+        String city = parent.getItemAtPosition(position).toString();
+        String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
+        file = new File(location);
+        MainActivity.sFileName = city;
+        if (file.exists()) {
+            fileExsist(parent, position);
+        } else {
+            fileNotExsist(parent, position);
+        }
+
     }
 }

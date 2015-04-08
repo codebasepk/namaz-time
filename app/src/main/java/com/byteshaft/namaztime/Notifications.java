@@ -75,6 +75,7 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setContentIntent(pIntent);
         return notificationBuilder;
     }
+
     void removeNotification() {
         mNotificationManager.cancel(UPCOMING_NAMAZ_NOTIFICATION_ID);
 

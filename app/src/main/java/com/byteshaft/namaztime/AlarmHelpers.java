@@ -15,13 +15,19 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class AlarmHelpers extends ContextWrapper {
+
+    static AlarmManager alarmManager;
+    static PendingIntent pendingIntent;
+    static PendingIntent pIntent;
     Helpers mHelpers;
-    AlarmManager alarmManager;
-    PendingIntent pendingIntent;
 
     public AlarmHelpers(Context base) {
         super(base);
         mHelpers = new Helpers(this);
+    }
+
+    private AlarmManager getAlarmManager(Context context) {
+        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
     void setAlarmForNextNamaz() {
@@ -61,27 +67,31 @@ public class AlarmHelpers extends ContextWrapper {
         Intent intent = new Intent("com.byteshaft.shownotification");
         intent.putExtra("namaz", namaz);
         pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + time, pendingIntent);
-    }
-
-    private AlarmManager getAlarmManager(Context context) {
-        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + time, pendingIntent);
     }
 
     private void alarmIfNoNamazTimeAvailable(Context context) {
         alarmManager = getAlarmManager(context);
         Intent intent = new Intent("com.byteShaft.standardalarm");
-        pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+        pIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         Calendar timeOff = Calendar.getInstance();
         timeOff.add(Calendar.DATE, 1);
         timeOff.set(Calendar.HOUR_OF_DAY, 0);
         timeOff.set(Calendar.MINUTE, 5);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+                timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pIntent);
         Log.i("NAMAZ_TIME", "setting alarm of :" + timeOff.getTime());
     }
 
     void removePreviousAlarams() {
-        alarmManager.cancel(pendingIntent);
+        if (pendingIntent != null) {
+            Log.i("NAMAZ_TIME", "removing namaz Alarm");
+            alarmManager.cancel(pendingIntent);
+        } else {
+            Log.i("NAMAZ_TIME", "removing");
+            alarmManager.cancel(pIntent);
+        }
     }
+
+
 }
