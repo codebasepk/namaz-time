@@ -70,8 +70,8 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, String> {
             rootJsonElement = jsonParser.parse(
                     new InputStreamReader((InputStream) httpConnection.getContent()));
 
-            JsonObject mRootJsonObject = rootJsonElement.getAsJsonObject();
-            JsonArray mNamazTimesArray = mRootJsonObject.get("items").getAsJsonArray();
+            JsonObject jSonObject = rootJsonElement.getAsJsonObject();
+            JsonArray mNamazTimesArray = jSonObject.get("items").getAsJsonArray();
             String data = mNamazTimesArray.toString();
             mHelpers.writeDataToFile(MainActivity.sFileName, data);
         } catch (MalformedJsonException | UnknownHostException e) {
