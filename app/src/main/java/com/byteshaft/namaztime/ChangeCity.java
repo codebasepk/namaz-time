@@ -16,6 +16,7 @@ public class ChangeCity extends ActionBarActivity {
     public static boolean downloadRun = false;
     LinearLayout linearLayout;
     Helpers mHelpers;
+    AlarmHelpers alarmHelpers;
     File file;
 
     @Override
@@ -23,13 +24,14 @@ public class ChangeCity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
         mHelpers = new Helpers(this);
+        alarmHelpers = new AlarmHelpers(this);
         int mPreviousCity = mHelpers.getPreviouslySelectedCityIndex();
         linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-        mHelpers = new Helpers(this);
         ListView list = getListView(mPreviousCity);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                alarmHelpers.removePreviousAlarams();
                 String city = parent.getItemAtPosition(position).toString();
                 String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
                 file = new File(location);
