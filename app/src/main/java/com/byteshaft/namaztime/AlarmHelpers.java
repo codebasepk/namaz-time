@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AlarmHelpers extends ContextWrapper {
     Helpers mHelpers;
+    AlarmManager alarmManager;
 
     public AlarmHelpers(Context base) {
         super(base);
@@ -55,11 +56,11 @@ public class AlarmHelpers extends ContextWrapper {
     private void setAlarmsForNamaz(long time, String namaz) {
         Log.i("NAMAZ_TIME",
                 String.format("Setting alarm for: %d", TimeUnit.MILLISECONDS.toMinutes(time)));
-        AlarmManager alarmManager = getAlarmManager(this);
+        alarmManager = getAlarmManager(this);
         Intent intent = new Intent("com.byteshaft.shownotification");
         intent.putExtra("namaz", namaz);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + time, pendingIntent);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + time, pendingIntent);
     }
 
     private AlarmManager getAlarmManager(Context context) {
@@ -67,14 +68,14 @@ public class AlarmHelpers extends ContextWrapper {
     }
 
     private void alarmIfNoNamazTimeAvailable(Context context) {
-        AlarmManager alarmMgr = getAlarmManager(context);
+        alarmManager = getAlarmManager(context);
         Intent intent = new Intent("com.byteShaft.standardalarm");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         Calendar timeOff = Calendar.getInstance();
         timeOff.add(Calendar.DATE, 1);
         timeOff.set(Calendar.HOUR_OF_DAY, 0);
         timeOff.set(Calendar.MINUTE, 5);
-        alarmMgr.setInexactRepeating(AlarmManager.RTC,
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
         Log.i("NAMAZ_TIME", "setting alarm of :" + timeOff.getTime());
     }

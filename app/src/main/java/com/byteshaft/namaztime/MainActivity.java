@@ -37,9 +37,9 @@ public class MainActivity extends ActionBarActivity {
         mHelpers = new Helpers(this);
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
-        if (!file.exists() && mHelpers.isNetworkAvailable() || file.length() ==0) {
+        if (!file.exists() && mHelpers.isNetworkAvailable()) {
             new NamazTimesDownloadTask(MainActivity.this).execute();
-        } else if (!mHelpers.isNetworkAvailable() && !file.exists() || file.length() == 0) {
+        } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
             mHelpers.showInternetNotAvailableDialog();
         } else {
             mHelpers.setTimesFromDatabase(true, sFileName);
