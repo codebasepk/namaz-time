@@ -45,7 +45,7 @@ public class AlarmHelpers extends ContextWrapper {
                 Date namaz = mHelpers.getTimeFormat().parse(namazTime);
                 String item = namazTimes[4];
                 Date lastItem = mHelpers.getTimeFormat().parse(item);
-                if (presentTime.before(namaz)) {
+                if (namaz.after(presentTime)) {
                     long difference = namaz.getTime() - presentTime.getTime();
                     long subtractTenMinutes = difference - TEN_MINUTES;
                     setAlarmsForNamaz(subtractTenMinutes, namazTime);
@@ -77,7 +77,7 @@ public class AlarmHelpers extends ContextWrapper {
         Calendar timeOff = Calendar.getInstance();
         timeOff.add(Calendar.DATE, 1);
         timeOff.set(Calendar.HOUR_OF_DAY, 0);
-        timeOff.set(Calendar.MINUTE, 5);
+        timeOff.set(Calendar.MINUTE, 2);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pIntent);
         Log.i("NAMAZ_TIME", "setting alarm of :" + timeOff.getTime());

@@ -51,7 +51,6 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setContentTitle("Namaz Time");
         notificationBuilder.setContentText("Swipe to restore Ringtone");
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
-        // dismiss notification when its tapped.
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setDeleteIntent(pIntent);
         notificationBuilder.setContentIntent(pIntent);
@@ -72,7 +71,6 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setVibrate(new long[]{250, 175, 250, 175, 250});
         notificationBuilder.setLights(Color.GREEN, 3000, 3000);
         notificationBuilder.setSound(uri);
-        notificationBuilder.setContentIntent(pIntent);
         return notificationBuilder;
     }
 

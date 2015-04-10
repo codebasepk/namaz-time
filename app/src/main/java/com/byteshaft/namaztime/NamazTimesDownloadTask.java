@@ -6,14 +6,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.MalformedJsonException;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
+import com.google.gson.stream.JsonReader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,16 +27,15 @@ import java.net.UnknownHostException;
 public class NamazTimesDownloadTask extends AsyncTask<String, Void, String> {
 
     static boolean taskRunning = false;
-    private ProgressDialog mProgressDialog = null;
+    static ProgressDialog mProgressDialog = null;
     private Context mContext = null;
     private Helpers mHelpers = null;
-    private boolean dialogShowing = false;
+    static boolean dialogShowing = false;
 
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
         mHelpers = new Helpers(mContext);
     }
-
 
     @Override
     protected void onPreExecute() {
@@ -42,13 +43,13 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, String> {
         mProgressDialog = new ProgressDialog(mContext);
         mProgressDialog.setMessage("Downloading Namaz Time");
         mProgressDialog.setIndeterminate(false);
-        mProgressDialog.setCancelable(true);
+        mProgressDialog.setCancelable(false);
         mProgressDialog.show();
+        dialogShowing = true;
         if (isCancelled())  {
             mProgressDialog.dismiss();
             return;
         }
-        this.dialogShowing = true;
     }
 
     @Override
@@ -60,16 +61,16 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, String> {
                 timeSpan, month, city);
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
         String API = siteLink.concat(apiKey);
-        JsonElement rootJsonElement = null;
+        JsonElement rootJsonElement;
 
         try {
             URL url = new URL(API);
             JsonParser jsonParser = new JsonParser();
             HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
             httpConnection.connect();
-            rootJsonElement = jsonParser.parse(
-                    new InputStreamReader((InputStream) httpConnection.getContent()));
-
+            JsonReader jsonReader = new JsonReader(new InputStreamReader((InputStream)httpConnection.getContent()));
+            jsonReader.setLenient(true);
+            rootJsonElement = jsonParser.parse(jsonReader);
             JsonObject jSonObject = rootJsonElement.getAsJsonObject();
             JsonArray mNamazTimesArray = jSonObject.get("items").getAsJsonArray();
             String data = mNamazTimesArray.toString();
@@ -83,14 +84,12 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, String> {
         return null;
     }
 
-
     @Override
     protected void onPostExecute(String work) {
         super.onPostExecute(work);
         taskRunning = true;
-
         try {
-            if (this.dialogShowing) {
+            if (dialogShowing) {
                 mProgressDialog.dismiss();
             }
         } catch (IllegalArgumentException e) {
@@ -101,7 +100,7 @@ public class NamazTimesDownloadTask extends AsyncTask<String, Void, String> {
         mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
         Intent alarmIntent = new Intent("com.byteshaft.setalarm");
         mContext.sendBroadcast(alarmIntent);
-        this.dialogShowing = false;
+        dialogShowing = false;
         if (ChangeCity.downloadRun && taskRunning) {
             Intent intent = new Intent(mContext, MainActivity.class);
             mContext.startActivity(intent);

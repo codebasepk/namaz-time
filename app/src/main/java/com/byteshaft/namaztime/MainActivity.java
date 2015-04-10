@@ -2,8 +2,10 @@ package com.byteshaft.namaztime;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -54,10 +56,18 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        String currentCity = mHelpers.getPreviouslySelectedCityName();
+        if (file.exists() && !mHelpers.getPreviouslySelectedCityName().equals(sFileName)) {
+            mHelpers.setTimesFromDatabase(true , currentCity);
+        }
+        changeCityInDisplay();
+
+    }
+
+    private void changeCityInDisplay() {
         if (file.exists() && !mHelpers.retrieveTimeForNamazAndTime("date").equals(mHelpers.getDate())) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-        } else if (!file.exists() && mHelpers.isNetworkAvailable()) {
-            new NamazTimesDownloadTask(MainActivity.this).execute();
+            System.out.println("called");
         }
     }
 
@@ -96,5 +106,29 @@ public class MainActivity extends ActionBarActivity {
     private void changeCity() {
         Intent intent = new Intent(this, ChangeCity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (NamazTimesDownloadTask.dialogShowing) {
+            NamazTimesDownloadTask.mProgressDialog.dismiss();
+        }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return true;
+         }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            openOptionsMenu();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 }

@@ -21,10 +21,10 @@ public class NotificationReceiver extends BroadcastReceiver {
         String namaz = intent.getExtras().getString("namaz");
         Notifications notifications = new Notifications(context);
         notifications.startUpcomingNamazNotification(namaz);
-        alarmToForTwelveMinutes(context, THIRTY_MINUTE);
+        alarmToForThirtyMinutes(context, THIRTY_MINUTE);
     }
 
-    private void alarmToForTwelveMinutes(Context context, long time) {
+    private void alarmToForThirtyMinutes(Context context, long time) {
         Log.i("NAMAZ_TIME", "Setting Alarm FOR :" + time);
         AlarmManager alarmManager = getAlarmManager(context);
         Intent intent = new Intent("com.byteshaft.setnextalarm");

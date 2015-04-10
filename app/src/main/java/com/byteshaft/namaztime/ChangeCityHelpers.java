@@ -14,12 +14,11 @@ public class ChangeCityHelpers extends ContextWrapper {
     }
 
     void fileNotExsist(AdapterView<?> parent, int position) {
-        new NamazTimesDownloadTask(this).execute();
         parent.getItemAtPosition(position);
         parent.setSelection(position);
         String cityName = parent.getItemAtPosition(position).toString();
         mHelpers.saveSelectedCity(cityName, position);
-
+        new NamazTimesDownloadTask(this).execute();
     }
 
     void fileExsist(AdapterView<?> parent, int position) {
