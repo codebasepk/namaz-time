@@ -94,13 +94,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                if (mHelpers.isNetworkAvailable()) {
                     changeCity();
-                    return true;
-                } else {
-                    Toast.makeText(this, "Network isn't available", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
             default:
                 return super.onOptionsItemSelected(item);
         }

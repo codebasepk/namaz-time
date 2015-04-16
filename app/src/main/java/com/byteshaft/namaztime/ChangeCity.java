@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -51,8 +52,12 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         if (file.exists()) {
             mChangeCityHelpers.fileExists(parent, position);
         } else {
-            mChangeCityHelpers.fileNotExists(parent, position);
-            downloadRun = true;
+            if (mHelpers.isNetworkAvailable()) {
+                mChangeCityHelpers.fileNotExists(parent, position);
+                downloadRun = true;
+            } else {
+                Toast.makeText(this, "Network isn't available", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
