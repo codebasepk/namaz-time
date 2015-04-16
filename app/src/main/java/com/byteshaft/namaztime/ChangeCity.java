@@ -40,8 +40,8 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         AlarmHelpers.removePreviousAlarams();
-        Log.i("NAMAZ_TIME" , String.valueOf(AlarmHelpers.pendingIntent == null));
-        Log.i("NAMAZ_TIME" , String.valueOf(AlarmHelpers.pIntent == null));
+        Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pendingIntent == null));
+        Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pIntent == null));
         Notifications notifications = new Notifications(this);
         notifications.removeNotification();
         String city = parent.getItemAtPosition(position).toString();
@@ -54,8 +54,8 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
             mChangeCityHelpers.fileNotExists(parent, position);
             downloadRun = true;
         }
-
     }
+
     ListView getListView(int mPreviousCity) {
         ListView list = new ListView(this);
         String[] cityList = new String[]{"Karachi", "Lahore", "Multan"
@@ -76,9 +76,8 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     @Override
     protected void onPause() {
         super.onPause();
-        if (!mProgressBar.isShown()) {
+        if (mProgressBar.isShown()) {
             this.finish();
         }
     }
-
 }

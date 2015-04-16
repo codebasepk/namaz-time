@@ -1,7 +1,5 @@
 package com.byteshaft.namaztime;
 
-
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -17,18 +15,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class NamazTimesDownloadTask  {
-
     static boolean taskRunning = false;
     private Context mContext = null;
     private Helpers mHelpers = null;
-    static boolean dialogShowing = false;
     String data;
-
 
     public NamazTimesDownloadTask(Context context) {
         this.mContext = context;
         mHelpers = new Helpers(mContext);
     }
+
     void downloadNamazTime() {
         String city = mHelpers.getPreviouslySelectedCityName();
         String timeSpan = "monthly";
@@ -39,7 +35,6 @@ public class NamazTimesDownloadTask  {
         String API = siteLink.concat(apiKey);
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-
         JsonObjectRequest request = new JsonObjectRequest(API , new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -50,10 +45,8 @@ public class NamazTimesDownloadTask  {
                     mHelpers.writeDataToFile(MainActivity.sFileName, data);
                     if(response.length() != 0) {
                         mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
-                        Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-                        mContext.sendBroadcast(alarmIntent);
                         if (MainActivity.progressBar.isShown()){
-                        MainActivity.progressBar.setVisibility(View.INVISIBLE);
+                            MainActivity.progressBar.setVisibility(View.INVISIBLE);
                         } else if (ChangeCity.mProgressBar.isShown()) {
                             ChangeCity.mProgressBar.setVisibility(View.INVISIBLE);
                             Intent intent = new Intent(mContext , MainActivity.class);
@@ -71,10 +64,8 @@ public class NamazTimesDownloadTask  {
                 error.printStackTrace();
                 Log.i("NetworkTime", String.valueOf(error.getNetworkTimeMs()));
                 Log.i("NetworkTime", String.valueOf(error.getCause()));
-
             }
         });
         requestQueue.add(request);
-
-        }
     }
+}

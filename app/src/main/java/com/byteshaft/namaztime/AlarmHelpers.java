@@ -88,7 +88,7 @@ public class AlarmHelpers extends ContextWrapper {
             if (pendingIntent != null) {
                 Log.i("NAMAZ_TIME", "removing namaz Alarm");
                 alarmManager.cancel(pendingIntent);
-            } else {
+            } else if (pIntent != null) {
                 Log.i("NAMAZ_TIME", "removing");
                 alarmManager.cancel(pIntent);
             }
@@ -96,6 +96,4 @@ public class AlarmHelpers extends ContextWrapper {
             e.printStackTrace();
         }
     }
-
-
 }

@@ -1,11 +1,8 @@
 package com.byteshaft.namaztime;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -19,17 +16,13 @@ import java.io.File;
 public class MainActivity extends ActionBarActivity {
 
     public static String sFileName;
+    static ProgressBar progressBar;
     private static MainActivity sActivityInstance = null;
     File file;
     private Helpers mHelpers = null;
-    static ProgressBar progressBar;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
-    }
-
-    static void closeApp() {
-        sActivityInstance.finish();
     }
 
     private void setActivityInstance(MainActivity mainActivity) {
@@ -53,28 +46,25 @@ public class MainActivity extends ActionBarActivity {
             namazTimesDownloadTask.downloadNamazTime();
         } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
             mHelpers.showInternetNotAvailableDialog();
-        }
-        else if (file.exists()) {
+        } else if (file.exists()) {
             mHelpers.setTimesFromDatabase(true, sFileName);
 
-        if (file.exists()) {
-            AlarmHelpers.removePreviousAlarams();
-            Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-            sendBroadcast(alarmIntent);
+            if (file.exists()) {
+                AlarmHelpers.removePreviousAlarams();
+                Intent alarmIntent = new Intent("com.byteshaft.setalarm");
+                sendBroadcast(alarmIntent);
             }
         }
-}
-
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         String currentCity = mHelpers.getPreviouslySelectedCityName();
         if (file.exists() && !mHelpers.getPreviouslySelectedCityName().equals(sFileName)) {
-            mHelpers.setTimesFromDatabase(true , currentCity);
+            mHelpers.setTimesFromDatabase(true, currentCity);
         }
         changeCityInDisplay();
-
     }
 
     private void changeCityInDisplay() {
@@ -128,11 +118,12 @@ public class MainActivity extends ActionBarActivity {
             progressBar.setVisibility(View.INVISIBLE);
         }
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             return true;
-         }
+        }
         return super.onKeyDown(keyCode, event);
     }
 

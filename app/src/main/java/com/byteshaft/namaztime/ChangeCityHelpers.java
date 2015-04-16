@@ -29,8 +29,6 @@ public class ChangeCityHelpers extends ContextWrapper {
         parent.setSelection(position);
         String cityName = parent.getItemAtPosition(position).toString();
         mHelpers.saveSelectedCity(cityName, position);
-        Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-        sendBroadcast(alarmIntent);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

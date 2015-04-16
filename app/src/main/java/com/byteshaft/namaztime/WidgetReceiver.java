@@ -19,7 +19,6 @@ public class WidgetReceiver extends BroadcastReceiver {
         if (sNotifications == null) {
             sNotifications = new Notifications(context);
         }
-
         if (WidgetGlobals.isPhoneSilent()) {
             widgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
             sNotifications.clearPhoneSilentNotification();

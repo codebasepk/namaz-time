@@ -34,7 +34,6 @@ public class Notifications extends ContextWrapper {
     }
 
     public void startUpcomingNamazNotification(String namaz) {
-
         NotificationCompat.Builder notification = buildUpcomingNamazNotification(namaz);
         showNotification(UPCOMING_NAMAZ_NOTIFICATION_ID, notification);
     }
