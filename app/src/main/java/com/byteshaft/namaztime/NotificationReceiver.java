@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
 
-
 public class NotificationReceiver extends BroadcastReceiver {
 
     private int ONE_SECOND = 1000;

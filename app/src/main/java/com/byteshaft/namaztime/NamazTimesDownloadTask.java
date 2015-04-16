@@ -10,11 +10,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class NamazTimesDownloadTask  {
+public class NamazTimesDownloadTask {
     static boolean taskRunning = false;
     private Context mContext = null;
     private Helpers mHelpers = null;
@@ -35,21 +36,20 @@ public class NamazTimesDownloadTask  {
         String API = siteLink.concat(apiKey);
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-        JsonObjectRequest request = new JsonObjectRequest(API , new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(API, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("items");
                     data = jsonArray.toString();
-                    System.out.println(jsonArray);
                     mHelpers.writeDataToFile(MainActivity.sFileName, data);
-                    if(response.length() != 0) {
+                    if (response.length() != 0) {
                         mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
-                        if (MainActivity.progressBar.isShown()){
+                        if (MainActivity.progressBar.isShown()) {
                             MainActivity.progressBar.setVisibility(View.INVISIBLE);
                         } else if (ChangeCity.mProgressBar.isShown()) {
                             ChangeCity.mProgressBar.setVisibility(View.INVISIBLE);
-                            Intent intent = new Intent(mContext , MainActivity.class);
+                            Intent intent = new Intent(mContext, MainActivity.class);
                             mContext.startActivity(intent);
                         }
                     }
@@ -58,7 +58,7 @@ public class NamazTimesDownloadTask  {
                     e.printStackTrace();
                 }
             }
-        } , new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();

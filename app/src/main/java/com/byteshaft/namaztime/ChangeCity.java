@@ -15,7 +15,7 @@ import java.io.File;
 
 
 public class ChangeCity extends ActionBarActivity implements ListView.OnItemClickListener {
-    static boolean downloadRun = false;
+
     RelativeLayout linearLayout;
     Helpers mHelpers;
     AlarmHelpers alarmHelpers;
@@ -54,7 +54,6 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         } else {
             if (mHelpers.isNetworkAvailable()) {
                 mChangeCityHelpers.fileNotExists(parent, position);
-                downloadRun = true;
             } else {
                 Toast.makeText(this, "Network isn't available", Toast.LENGTH_SHORT).show();
             }
