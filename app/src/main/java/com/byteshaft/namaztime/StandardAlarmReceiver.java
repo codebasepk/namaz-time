@@ -11,6 +11,7 @@ public class StandardAlarmReceiver extends BroadcastReceiver {
         Helpers helpers = new Helpers(context);
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
         helpers.setTimesFromDatabase(false, MainActivity.sFileName);
+        System.out.println(MainActivity.sFileName);
         alarmHelpers.setAlarmForNextNamaz();
     }
 }

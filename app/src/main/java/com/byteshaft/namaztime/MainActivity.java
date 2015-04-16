@@ -4,25 +4,25 @@ package com.byteshaft.namaztime;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
 
-    static String sFileName = "Karachi";
+    public static String sFileName;
+    static ProgressBar progressBar;
     private static MainActivity sActivityInstance = null;
     File file;
     private Helpers mHelpers = null;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
-    }
-
-    static void closeApp() {
-        sActivityInstance.finish();
     }
 
     private void setActivityInstance(MainActivity mainActivity) {
@@ -33,30 +33,44 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
         setActivityInstance(this);
         mHelpers = new Helpers(this);
+        sFileName = mHelpers.getPreviouslySelectedCityName();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
-        if (!file.exists() && mHelpers.isNetworkAvailable() || file.length() ==0) {
-            new NamazTimesDownloadTask(MainActivity.this).execute();
-        } else if (!mHelpers.isNetworkAvailable() && !file.exists() || file.length() == 0) {
+        if (!file.exists() && mHelpers.isNetworkAvailable()) {
+            progressBar.setVisibility(View.VISIBLE);
+            NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
+            namazTimesDownloadTask.downloadNamazTime();
+        } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
             mHelpers.showInternetNotAvailableDialog();
-        } else {
+        } else if (file.exists()) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-        }
-        if (file.exists() && !ChangeCity.downloadRun) {
-            Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-            sendBroadcast(alarmIntent);
+
+            if (file.exists()) {
+                AlarmHelpers.removePreviousAlarams();
+                Intent alarmIntent = new Intent("com.byteshaft.setalarm");
+                sendBroadcast(alarmIntent);
+            }
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        String currentCity = mHelpers.getPreviouslySelectedCityName();
+        if (file.exists() && !mHelpers.getPreviouslySelectedCityName().equals(sFileName)) {
+            mHelpers.setTimesFromDatabase(true, currentCity);
+        }
+        changeCityInDisplay();
+    }
+
+    private void changeCityInDisplay() {
         if (file.exists() && !mHelpers.retrieveTimeForNamazAndTime("date").equals(mHelpers.getDate())) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-        } else if (!file.exists() && mHelpers.isNetworkAvailable()) {
-            new NamazTimesDownloadTask(MainActivity.this).execute();
+            System.out.println("called");
         }
     }
 
@@ -95,5 +109,30 @@ public class MainActivity extends ActionBarActivity {
     private void changeCity() {
         Intent intent = new Intent(this, ChangeCity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressBar.isShown()) {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            openOptionsMenu();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 }

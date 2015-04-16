@@ -6,11 +6,12 @@ import android.content.Intent;
 
 
 public class NextNamazTimeReceiver extends BroadcastReceiver {
+    Notifications notifications;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
-        Notifications notifications = new Notifications(context);
+        notifications = new Notifications(context);
         notifications.removeNotification();
         alarmHelpers.setAlarmForNextNamaz();
     }

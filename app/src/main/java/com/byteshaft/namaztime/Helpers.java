@@ -5,12 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -155,7 +153,8 @@ public class Helpers extends ContextWrapper {
         }
         if (runningFromActivity) {
             if (!mData.contains(request) && isNetworkAvailable() || mData.length() == 0) {
-                new NamazTimesDownloadTask(this).execute();
+                NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
+                namazTimesDownloadTask.downloadNamazTime();
             } else if (isNetworkAvailable() && !mData.contains(request)) {
                 showInternetNotAvailableDialog();
             }
@@ -197,7 +196,7 @@ public class Helpers extends ContextWrapper {
     }
 
     String[] getNamazTimesArray() {
-        return new String[] {
+        return new String[]{
                 retrieveTimeForNamazAndTime("fajr"),
                 retrieveTimeForNamazAndTime("dhuhr"),
                 retrieveTimeForNamazAndTime("asr"),
@@ -224,5 +223,6 @@ public class Helpers extends ContextWrapper {
         SharedPreferences preference = getPreferenceManager();
         return preference.getString(namaz, null);
     }
+
 }
 

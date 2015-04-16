@@ -15,11 +15,19 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class AlarmHelpers extends ContextWrapper {
+
+    static AlarmManager alarmManager;
+    static PendingIntent pendingIntent;
+    static PendingIntent pIntent;
     Helpers mHelpers;
 
     public AlarmHelpers(Context base) {
         super(base);
         mHelpers = new Helpers(this);
+    }
+
+    private AlarmManager getAlarmManager(Context context) {
+        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
     void setAlarmForNextNamaz() {
@@ -37,7 +45,7 @@ public class AlarmHelpers extends ContextWrapper {
                 Date namaz = mHelpers.getTimeFormat().parse(namazTime);
                 String item = namazTimes[4];
                 Date lastItem = mHelpers.getTimeFormat().parse(item);
-                if (presentTime.before(namaz)) {
+                if (namaz.after(presentTime)) {
                     long difference = namaz.getTime() - presentTime.getTime();
                     long subtractTenMinutes = difference - TEN_MINUTES;
                     setAlarmsForNamaz(subtractTenMinutes, namazTime);
@@ -55,27 +63,37 @@ public class AlarmHelpers extends ContextWrapper {
     private void setAlarmsForNamaz(long time, String namaz) {
         Log.i("NAMAZ_TIME",
                 String.format("Setting alarm for: %d", TimeUnit.MILLISECONDS.toMinutes(time)));
-        AlarmManager alarmManager = getAlarmManager(this);
+        alarmManager = getAlarmManager(this);
         Intent intent = new Intent("com.byteshaft.shownotification");
         intent.putExtra("namaz", namaz);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + time, pendingIntent);
     }
 
-    private AlarmManager getAlarmManager(Context context) {
-        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-    }
-
     private void alarmIfNoNamazTimeAvailable(Context context) {
-        AlarmManager alarmMgr = getAlarmManager(context);
+        alarmManager = getAlarmManager(context);
         Intent intent = new Intent("com.byteShaft.standardalarm");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+        pIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         Calendar timeOff = Calendar.getInstance();
         timeOff.add(Calendar.DATE, 1);
         timeOff.set(Calendar.HOUR_OF_DAY, 0);
-        timeOff.set(Calendar.MINUTE, 5);
-        alarmMgr.setInexactRepeating(AlarmManager.RTC,
-                timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        timeOff.set(Calendar.MINUTE, 2);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                timeOff.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pIntent);
         Log.i("NAMAZ_TIME", "setting alarm of :" + timeOff.getTime());
+    }
+
+    static void removePreviousAlarams() {
+        try {
+            if (pendingIntent != null) {
+                Log.i("NAMAZ_TIME", "removing namaz Alarm");
+                alarmManager.cancel(pendingIntent);
+            } else if (pIntent != null) {
+                Log.i("NAMAZ_TIME", "removing");
+                alarmManager.cancel(pIntent);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }

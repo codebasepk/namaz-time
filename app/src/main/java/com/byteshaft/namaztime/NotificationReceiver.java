@@ -14,18 +14,18 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private int ONE_SECOND = 1000;
     private int ONE_MINUTE = ONE_SECOND * 60;
-    private int TWELVE_MINUTE = ONE_MINUTE * 30;
+    private int THIRTY_MINUTE = ONE_MINUTE * 30;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String namaz = intent.getExtras().getString("namaz");
         Notifications notifications = new Notifications(context);
         notifications.startUpcomingNamazNotification(namaz);
-        alarmToForTwelveMinutes(context, TWELVE_MINUTE);
+        alarmToForThirtyMinutes(context, THIRTY_MINUTE);
     }
 
-    private void alarmToForTwelveMinutes(Context context, long time) {
-        Log.i("NAMAZ_TIME" , "Setting Alarm FOR :" + time);
+    private void alarmToForThirtyMinutes(Context context, long time) {
+        Log.i("NAMAZ_TIME", "Setting Alarm FOR :" + time);
         AlarmManager alarmManager = getAlarmManager(context);
         Intent intent = new Intent("com.byteshaft.setnextalarm");
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
