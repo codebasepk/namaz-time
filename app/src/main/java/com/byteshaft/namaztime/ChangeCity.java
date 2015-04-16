@@ -1,41 +1,47 @@
 package com.byteshaft.namaztime;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import java.io.File;
 
 
 public class ChangeCity extends ActionBarActivity implements ListView.OnItemClickListener {
     static boolean downloadRun = false;
-    LinearLayout linearLayout;
+    RelativeLayout linearLayout;
     Helpers mHelpers;
     AlarmHelpers alarmHelpers;
     File file;
     ChangeCityHelpers mChangeCityHelpers;
+    static ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings);
+        setContentView(R.layout.changecitylayout);
+        mProgressBar = (ProgressBar) findViewById(R.id.mprogressBar);
+        mProgressBar.setVisibility(View.INVISIBLE);
         mHelpers = new Helpers(this);
         alarmHelpers = new AlarmHelpers(this);
         mChangeCityHelpers = new ChangeCityHelpers(this);
         int mPreviousCity = mHelpers.getPreviouslySelectedCityIndex();
-        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        linearLayout = (RelativeLayout) findViewById(R.id.linearLayout);
         ListView list = getListView(mPreviousCity);
         list.setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        alarmHelpers.removePreviousAlarams();
+        AlarmHelpers.removePreviousAlarams();
+        Log.i("NAMAZ_TIME" , String.valueOf(AlarmHelpers.pendingIntent == null));
+        Log.i("NAMAZ_TIME" , String.valueOf(AlarmHelpers.pIntent == null));
         Notifications notifications = new Notifications(this);
         notifications.removeNotification();
         String city = parent.getItemAtPosition(position).toString();
@@ -43,9 +49,9 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         file = new File(location);
         MainActivity.sFileName = city;
         if (file.exists()) {
-            mChangeCityHelpers.fileExsist(parent, position);
+            mChangeCityHelpers.fileExists(parent, position);
         } else {
-            mChangeCityHelpers.fileNotExsist(parent, position);
+            mChangeCityHelpers.fileNotExists(parent, position);
             downloadRun = true;
         }
 
@@ -65,15 +71,13 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        this.finish();
-        if (NamazTimesDownloadTask.dialogShowing) {
-            NamazTimesDownloadTask.mProgressDialog.dismiss();
+        if (!mProgressBar.isShown()) {
+            this.finish();
         }
     }
 

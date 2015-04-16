@@ -1,13 +1,17 @@
 package com.byteshaft.namaztime;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -18,6 +22,7 @@ public class MainActivity extends ActionBarActivity {
     private static MainActivity sActivityInstance = null;
     File file;
     private Helpers mHelpers = null;
+    static ProgressBar progressBar;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
@@ -35,23 +40,31 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         sFileName = mHelpers.getPreviouslySelectedCityName();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
         if (!file.exists() && mHelpers.isNetworkAvailable()) {
-            new NamazTimesDownloadTask(MainActivity.this).execute();
+            progressBar.setVisibility(View.VISIBLE);
+            NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
+            namazTimesDownloadTask.downloadNamazTime();
         } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
             mHelpers.showInternetNotAvailableDialog();
-        } else {
-            mHelpers.setTimesFromDatabase(true, sFileName);
         }
-        if (file.exists() && !ChangeCity.downloadRun) {
+        else if (file.exists()) {
+            mHelpers.setTimesFromDatabase(true, sFileName);
+
+        if (file.exists()) {
+            AlarmHelpers.removePreviousAlarams();
             Intent alarmIntent = new Intent("com.byteshaft.setalarm");
             sendBroadcast(alarmIntent);
+            }
         }
-    }
+}
+
 
     @Override
     protected void onResume() {
@@ -111,8 +124,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (NamazTimesDownloadTask.dialogShowing) {
-            NamazTimesDownloadTask.mProgressDialog.dismiss();
+        if (progressBar.isShown()) {
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
     @Override

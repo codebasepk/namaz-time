@@ -4,6 +4,7 @@ package com.byteshaft.namaztime;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.view.View;
 import android.widget.AdapterView;
 
 public class ChangeCityHelpers extends ContextWrapper {
@@ -13,15 +14,17 @@ public class ChangeCityHelpers extends ContextWrapper {
         super(base);
     }
 
-    void fileNotExsist(AdapterView<?> parent, int position) {
+    void fileNotExists(AdapterView<?> parent, int position) {
         parent.getItemAtPosition(position);
         parent.setSelection(position);
         String cityName = parent.getItemAtPosition(position).toString();
         mHelpers.saveSelectedCity(cityName, position);
-        new NamazTimesDownloadTask(this).execute();
+        NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
+        ChangeCity.mProgressBar.setVisibility(View.VISIBLE);
+        namazTimesDownloadTask.downloadNamazTime();
     }
 
-    void fileExsist(AdapterView<?> parent, int position) {
+    void fileExists(AdapterView<?> parent, int position) {
         mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
         parent.setSelection(position);
         String cityName = parent.getItemAtPosition(position).toString();

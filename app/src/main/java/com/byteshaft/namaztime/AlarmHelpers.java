@@ -83,7 +83,7 @@ public class AlarmHelpers extends ContextWrapper {
         Log.i("NAMAZ_TIME", "setting alarm of :" + timeOff.getTime());
     }
 
-    void removePreviousAlarams() {
+    static void removePreviousAlarams() {
         try {
             if (pendingIntent != null) {
                 Log.i("NAMAZ_TIME", "removing namaz Alarm");
