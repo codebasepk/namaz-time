@@ -25,6 +25,8 @@ public class WidgetReceiver extends BroadcastReceiver {
                 == AudioManager.RINGER_MODE_SILENT) {
             widgetHelpers.createToast("Phone is already Silent");
             return;
+        } else if (widgetHelpers.getCurrentRingtoneMode() == AudioManager.RINGER_MODE_VIBRATE) {
+            widgetHelpers.createToast("Phone is already on Vibrate Mode");
         } else {
             setSilentForFifteenMinutes(context, FIFTEEN_MINUTES, widgetHelpers);
         }
