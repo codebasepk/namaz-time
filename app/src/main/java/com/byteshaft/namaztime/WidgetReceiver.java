@@ -20,24 +20,36 @@ public class WidgetReceiver extends BroadcastReceiver {
             sNotifications = new Notifications(context);
         }
         if (WidgetGlobals.isPhoneSilent()) {
-            widgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
-            sNotifications.clearPhoneSilentNotification();
-            widgetHelpers.createToast("Phone ringer setting restored");
-            WidgetGlobals.resetRingtoneBackup();
-            WidgetGlobals.setIsPhoneSilent(false);
+            backupRingtoneMode(widgetHelpers);
+        } else if (widgetHelpers.getCurrentRingtoneMode()
+                == AudioManager.RINGER_MODE_SILENT) {
+            widgetHelpers.createToast("Phone is already Silent");
+            return;
         } else {
-            WidgetGlobals.setRingtoneModeBackup(widgetHelpers.getCurrentRingtoneMode());
-            widgetHelpers.setRingtoneMode(AudioManager.RINGER_MODE_VIBRATE);
-            widgetHelpers.vibrate(500);
-            widgetHelpers.createToast(String.format("Phone set to vibrate for %d minutes",
-                    TimeUnit.MILLISECONDS.toMinutes(FIFTEEN_MINUTES)));
-            WidgetGlobals.setIsPhoneSilent(true);
-            sNotifications.startPhoneSilentNotification();
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);
-            widgetHelpers.setAlarm(FIFTEEN_MINUTES, pendingIntent);
+            setSilentForFifteenMinutes(context, FIFTEEN_MINUTES, widgetHelpers);
         }
 
         WidgetProvider.setupWidget(context);
+    }
+
+    private void setSilentForFifteenMinutes(Context context, int FIFTEEN_MINUTES, WidgetHelpers widgetHelpers) {
+        WidgetGlobals.setRingtoneModeBackup(widgetHelpers.getCurrentRingtoneMode());
+        widgetHelpers.setRingtoneMode(AudioManager.RINGER_MODE_VIBRATE);
+        widgetHelpers.vibrate(500);
+        widgetHelpers.createToast(String.format("Phone set to vibrate for %d minutes",
+                TimeUnit.MILLISECONDS.toMinutes(FIFTEEN_MINUTES)));
+        WidgetGlobals.setIsPhoneSilent(true);
+        sNotifications.startPhoneSilentNotification();
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);
+        widgetHelpers.setAlarm(FIFTEEN_MINUTES, pendingIntent);
+    }
+
+    private void backupRingtoneMode(WidgetHelpers widgetHelpers) {
+        widgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
+        sNotifications.clearPhoneSilentNotification();
+        widgetHelpers.createToast("Phone ringer setting restored");
+        WidgetGlobals.resetRingtoneBackup();
+        WidgetGlobals.setIsPhoneSilent(false);
     }
 }
