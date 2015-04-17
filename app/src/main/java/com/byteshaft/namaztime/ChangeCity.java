@@ -40,7 +40,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        AlarmHelpers.removePreviousAlarams();
+        alarmHelpers.removePreviousAlarams();
         Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pendingIntent == null));
         Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pIntent == null));
         Notifications notifications = new Notifications(this);

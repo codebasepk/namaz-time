@@ -45,7 +45,7 @@ public class AlarmHelpers extends ContextWrapper {
                 Date namaz = mHelpers.getTimeFormat().parse(namazTime);
                 String item = namazTimes[4];
                 Date lastItem = mHelpers.getTimeFormat().parse(item);
-                if (namaz.after(presentTime)) {
+                if (presentTime.before(namaz)) {
                     long difference = namaz.getTime() - presentTime.getTime();
                     long subtractTenMinutes = difference - TEN_MINUTES;
                     setAlarmsForNamaz(subtractTenMinutes, namazTime);
@@ -83,7 +83,7 @@ public class AlarmHelpers extends ContextWrapper {
         Log.i("NAMAZ_TIME", "setting alarm of :" + timeOff.getTime());
     }
 
-    static void removePreviousAlarams() {
+     void removePreviousAlarams() {
         try {
             if (pendingIntent != null) {
                 Log.i("NAMAZ_TIME", "removing namaz Alarm");

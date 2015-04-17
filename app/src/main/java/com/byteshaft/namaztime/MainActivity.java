@@ -49,9 +49,11 @@ public class MainActivity extends ActionBarActivity {
             mHelpers.setTimesFromDatabase(true, sFileName);
 
             if (file.exists()) {
-                AlarmHelpers.removePreviousAlarams();
-                Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-                sendBroadcast(alarmIntent);
+                AlarmHelpers alarmHelpers = new AlarmHelpers(this);
+                if (alarmHelpers.pendingIntent == null || alarmHelpers.pIntent == null) {
+                    Intent alarmIntent = new Intent("com.byteshaft.setalarm");
+                    sendBroadcast(alarmIntent);
+                }
             }
         }
     }
