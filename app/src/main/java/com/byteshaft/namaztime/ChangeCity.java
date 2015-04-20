@@ -84,4 +84,5 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
             this.finish();
         }
     }
+
 }

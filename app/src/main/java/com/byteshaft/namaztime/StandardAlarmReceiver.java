@@ -10,8 +10,8 @@ public class StandardAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Helpers helpers = new Helpers(context);
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
-        helpers.setTimesFromDatabase(false, MainActivity.sFileName);
-        System.out.println(MainActivity.sFileName);
+        String sFileName = helpers.getPreviouslySelectedCityName();
+        helpers.setTimesFromDatabase(false, sFileName);
         alarmHelpers.setAlarmForNextNamaz();
     }
 }
