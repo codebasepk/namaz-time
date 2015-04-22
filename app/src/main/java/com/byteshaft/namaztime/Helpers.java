@@ -196,7 +196,7 @@ public class Helpers extends ContextWrapper {
     }
 
     String[] getNamazTimesArray() {
-        return new String[]{
+        return new String[] {
                 retrieveTimeForNamazAndTime("fajr"),
                 retrieveTimeForNamazAndTime("dhuhr"),
                 retrieveTimeForNamazAndTime("asr"),
