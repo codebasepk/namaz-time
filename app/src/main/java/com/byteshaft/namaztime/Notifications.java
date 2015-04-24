@@ -14,7 +14,7 @@ public class Notifications extends ContextWrapper {
 
     private final int SILENT_NOTIFICATION_ID = 56;
     final int UPCOMING_NAMAZ_NOTIFICATION_ID = 57;
-    private NotificationManager mNotificationManager = null;
+    private  NotificationManager mNotificationManager = null;
 
 
     public Notifications(Context context) {
@@ -74,7 +74,7 @@ public class Notifications extends ContextWrapper {
         return notificationBuilder;
     }
 
-    void removeNotification() {
-        mNotificationManager.cancel(UPCOMING_NAMAZ_NOTIFICATION_ID);
+     void removeNotification() {
+        mNotificationManager.cancelAll();
     }
 }

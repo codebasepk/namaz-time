@@ -17,8 +17,9 @@ public class MainActivity extends ActionBarActivity {
     public static String sFileName;
     static ProgressBar progressBar;
     private static MainActivity sActivityInstance = null;
-    File file;
+    Notifications notifications;
     private Helpers mHelpers = null;
+    File file;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
@@ -36,6 +37,7 @@ public class MainActivity extends ActionBarActivity {
         progressBar.setVisibility(View.INVISIBLE);
         setActivityInstance(this);
         mHelpers = new Helpers(this);
+        notifications = new Notifications(this);
         sFileName = mHelpers.getPreviouslySelectedCityName();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
         file = new File(location);
@@ -47,10 +49,9 @@ public class MainActivity extends ActionBarActivity {
             mHelpers.showInternetNotAvailableDialog();
         } else if (file.exists()) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-
-            if (file.exists()) {
-                    Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-                    sendBroadcast(alarmIntent);
+            if (!ChangeCity.cityChanged && !NotificationReceiver.sNotificationDisplayed) {
+                Intent alarmIntent = new Intent("com.byteshaft.setalarm");
+                sendBroadcast(alarmIntent);
             }
         }
     }
@@ -63,6 +64,13 @@ public class MainActivity extends ActionBarActivity {
             mHelpers.setTimesFromDatabase(true, currentCity);
         }
         changeCityInDisplay();
+        if (ChangeCity.cityChanged) {
+            System.out.println("city Changed");
+            notifications.removeNotification();
+            Intent alarmIntent = new Intent("com.byteshaft.setalarm");
+            sendBroadcast(alarmIntent);
+            ChangeCity.cityChanged = false;
+        }
     }
 
     private void changeCityInDisplay() {

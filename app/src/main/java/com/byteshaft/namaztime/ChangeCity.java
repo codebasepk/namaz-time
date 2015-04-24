@@ -22,6 +22,9 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     File file;
     ChangeCityHelpers mChangeCityHelpers;
     static ProgressBar mProgressBar;
+    Notifications notifications;
+    static boolean cityChanged = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         mHelpers = new Helpers(this);
         alarmHelpers = new AlarmHelpers(this);
         mChangeCityHelpers = new ChangeCityHelpers(this);
+        notifications = new Notifications(this);
         int mPreviousCity = mHelpers.getPreviouslySelectedCityIndex();
         linearLayout = (RelativeLayout) findViewById(R.id.linearLayout);
         ListView list = getListView(mPreviousCity);
@@ -41,10 +45,9 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         alarmHelpers.removePreviousAlarams();
+        cityChanged = true;
         Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pendingIntent == null));
         Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pIntent == null));
-        Notifications notifications = new Notifications(this);
-        notifications.removeNotification();
         String city = parent.getItemAtPosition(position).toString();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         file = new File(location);

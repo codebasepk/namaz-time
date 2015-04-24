@@ -14,6 +14,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     private int ONE_SECOND = 1000;
     private int ONE_MINUTE = ONE_SECOND * 60;
     private int THIRTY_MINUTE = ONE_MINUTE * 30;
+    static boolean sNotificationDisplayed = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -21,6 +22,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         Notifications notifications = new Notifications(context);
         notifications.startUpcomingNamazNotification(namaz);
         alarmToForThirtyMinutes(context, THIRTY_MINUTE);
+        sNotificationDisplayed = true;
     }
 
     private void alarmToForThirtyMinutes(Context context, long time) {
