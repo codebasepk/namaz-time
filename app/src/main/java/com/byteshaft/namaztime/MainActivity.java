@@ -4,6 +4,7 @@ package com.byteshaft.namaztime;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,11 +16,11 @@ import java.io.File;
 public class MainActivity extends ActionBarActivity {
 
     public static String sFileName;
-    static ProgressBar progressBar;
+    static ProgressBar sProgressBar;
     private static MainActivity sActivityInstance = null;
     Notifications notifications;
     private Helpers mHelpers = null;
-    File file;
+    File mFile;
 
     public static MainActivity getInstance() {
         return sActivityInstance;
@@ -33,23 +34,23 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.INVISIBLE);
+        sProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        sProgressBar.setVisibility(View.INVISIBLE);
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         notifications = new Notifications(this);
         sFileName = mHelpers.getPreviouslySelectedCityName();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
-        file = new File(location);
-        if (!file.exists() && mHelpers.isNetworkAvailable()) {
-            progressBar.setVisibility(View.VISIBLE);
+        mFile = new File(location);
+        if (!mFile.exists() && mHelpers.isNetworkAvailable()) {
+            sProgressBar.setVisibility(View.VISIBLE);
             NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
             namazTimesDownloadTask.downloadNamazTime();
-        } else if (!mHelpers.isNetworkAvailable() && !file.exists()) {
+        } else if (!mHelpers.isNetworkAvailable() && !mFile.exists()) {
             mHelpers.showInternetNotAvailableDialog();
-        } else if (file.exists()) {
+        } else if (mFile.exists()) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-            if (!ChangeCity.cityChanged && !NotificationReceiver.sNotificationDisplayed) {
+            if (!ChangeCity.SCityChanged && !NotificationReceiver.sNotificationDisplayed) {
                 Intent alarmIntent = new Intent("com.byteshaft.setalarm");
                 sendBroadcast(alarmIntent);
             }
@@ -60,23 +61,22 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         String currentCity = mHelpers.getPreviouslySelectedCityName();
-        if (file.exists() && !mHelpers.getPreviouslySelectedCityName().equals(sFileName)) {
+        if (mFile.exists() && !mHelpers.getPreviouslySelectedCityName().equals(sFileName)) {
             mHelpers.setTimesFromDatabase(true, currentCity);
         }
         changeCityInDisplay();
-        if (ChangeCity.cityChanged) {
-            System.out.println("city Changed");
+        if (ChangeCity.SCityChanged) {
+            Log.i("NAMAZ_TIME" ,  "City Changed");
             notifications.removeNotification();
             Intent alarmIntent = new Intent("com.byteshaft.setalarm");
             sendBroadcast(alarmIntent);
-            ChangeCity.cityChanged = false;
+            ChangeCity.SCityChanged = false;
         }
     }
 
     private void changeCityInDisplay() {
-        if (file.exists() && !mHelpers.retrieveTimeForNamazAndTime("date").equals(mHelpers.getDate())) {
+        if (mFile.exists() && !mHelpers.retrieveTimeForNamazAndTime("date").equals(mHelpers.getDate())) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-            System.out.println("called");
         }
     }
 
@@ -114,8 +114,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (progressBar.isShown()) {
-            progressBar.setVisibility(View.INVISIBLE);
+        if (sProgressBar.isShown()) {
+            sProgressBar.setVisibility(View.INVISIBLE);
         }
     }
 

@@ -45,10 +45,10 @@ public class NamazTimesDownloadTask {
                     mHelpers.writeDataToFile(MainActivity.sFileName, data);
                     if (response.length() != 0) {
                         mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
-                        if (MainActivity.progressBar.isShown()) {
-                            MainActivity.progressBar.setVisibility(View.INVISIBLE);
-                        } else if (ChangeCity.mProgressBar.isShown()) {
-                            ChangeCity.mProgressBar.setVisibility(View.INVISIBLE);
+                        if (MainActivity.sProgressBar.isShown()) {
+                            MainActivity.sProgressBar.setVisibility(View.INVISIBLE);
+                        } else if (ChangeCity.sProgressBar.isShown()) {
+                            ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
                             Intent intent = new Intent(mContext, MainActivity.class);
                             mContext.startActivity(intent);
                         }
