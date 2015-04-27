@@ -18,7 +18,7 @@ public class MainActivity extends ActionBarActivity {
     public static String sFileName;
     static ProgressBar sProgressBar;
     private static MainActivity sActivityInstance = null;
-    Notifications notifications;
+    private Notifications notifications;
     private Helpers mHelpers = null;
     File mFile;
 

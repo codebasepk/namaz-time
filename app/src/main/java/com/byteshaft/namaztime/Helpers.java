@@ -119,7 +119,7 @@ public class Helpers extends ContextWrapper {
                         retrieveTimeForNamazAndTime("isha"));
     }
 
-    String getDataFromFileAsString(String fileName) {
+    private String getDataFromFileAsString(String fileName) {
         FileInputStream fileInputStream;
         try {
             fileInputStream = openFileInput(fileName);
@@ -162,7 +162,7 @@ public class Helpers extends ContextWrapper {
         return mData;
     }
 
-    SharedPreferences getPreferenceManager() {
+    private SharedPreferences getPreferenceManager() {
         return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
