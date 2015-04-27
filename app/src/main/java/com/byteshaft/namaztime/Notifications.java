@@ -13,7 +13,7 @@ import android.support.v4.app.NotificationCompat;
 public class Notifications extends ContextWrapper {
 
     private final int SILENT_NOTIFICATION_ID = 56;
-    final int UPCOMING_NAMAZ_NOTIFICATION_ID = 57;
+    private final int UPCOMING_NAMAZ_NOTIFICATION_ID = 57;
     private NotificationManager mNotificationManager = null;
 
 
@@ -59,13 +59,9 @@ public class Notifications extends ContextWrapper {
     private NotificationCompat.Builder buildUpcomingNamazNotification(String namaz) {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Intent intent = new Intent("android.intent.NAMAZ.TIME");
-        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
         notificationBuilder.setContentTitle("Namaz Time at " + namaz);
         notificationBuilder.setContentText("Slide to remove");
         notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setDeleteIntent(pIntent);
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         notificationBuilder.setVibrate(new long[]{250, 175, 250, 175, 250});
         notificationBuilder.setLights(Color.GREEN, 3000, 3000);

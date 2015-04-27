@@ -16,40 +16,41 @@ import java.io.File;
 
 public class ChangeCity extends ActionBarActivity implements ListView.OnItemClickListener {
 
-    RelativeLayout linearLayout;
+    RelativeLayout mRelativeLayout;
     Helpers mHelpers;
-    AlarmHelpers alarmHelpers;
-    File file;
+    AlarmHelpers mAlarmHelpers;
+    File mFile;
     ChangeCityHelpers mChangeCityHelpers;
-    static ProgressBar mProgressBar;
+    static ProgressBar sProgressBar;
+    Notifications notifications;
+    static boolean SCityChanged = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.changecitylayout);
-        mProgressBar = (ProgressBar) findViewById(R.id.mprogressBar);
-        mProgressBar.setVisibility(View.INVISIBLE);
+        sProgressBar = (ProgressBar) findViewById(R.id.mprogressBar);
+        sProgressBar.setVisibility(View.INVISIBLE);
         mHelpers = new Helpers(this);
-        alarmHelpers = new AlarmHelpers(this);
+        mAlarmHelpers = new AlarmHelpers(this);
         mChangeCityHelpers = new ChangeCityHelpers(this);
+        notifications = new Notifications(this);
         int mPreviousCity = mHelpers.getPreviouslySelectedCityIndex();
-        linearLayout = (RelativeLayout) findViewById(R.id.linearLayout);
+        mRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         ListView list = getListView(mPreviousCity);
         list.setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        alarmHelpers.removePreviousAlarams();
-        Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pendingIntent == null));
-        Log.i("NAMAZ_TIME", String.valueOf(AlarmHelpers.pIntent == null));
-        Notifications notifications = new Notifications(this);
-        notifications.removeNotification();
+        mAlarmHelpers.removePreviousAlarams();
+        SCityChanged = true;
         String city = parent.getItemAtPosition(position).toString();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
-        file = new File(location);
+        mFile = new File(location);
         MainActivity.sFileName = city;
-        if (file.exists()) {
+        if (mFile.exists()) {
             mChangeCityHelpers.fileExists(parent, position);
         } else {
             if (mHelpers.isNetworkAvailable()) {
@@ -67,7 +68,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityList);
         list.setAdapter(modeAdapter);
         list.setItemChecked(mPreviousCity, true);
-        linearLayout.addView(list);
+        mRelativeLayout.addView(list);
         return list;
     }
 
@@ -80,7 +81,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     @Override
     protected void onPause() {
         super.onPause();
-        if (mProgressBar.isShown()) {
+        if (sProgressBar.isShown()) {
             this.finish();
         }
     }

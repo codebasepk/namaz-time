@@ -25,7 +25,7 @@ public class Helpers extends ContextWrapper {
 
     private final String SELECTED_CITY_POSITION = "cityPosition";
     private final String SELECTED_CITY_NAME = "cityName";
-    private StringBuilder stringBuilder = null;
+    private StringBuilder mStringBuilder = null;
     private String mData = null;
 
     Helpers(Context context) {
@@ -119,22 +119,22 @@ public class Helpers extends ContextWrapper {
                         retrieveTimeForNamazAndTime("isha"));
     }
 
-    String getDataFromFileAsString(String fileName) {
+    private String getDataFromFileAsString(String fileName) {
         FileInputStream fileInputStream;
         try {
             fileInputStream = openFileInput(fileName);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-            stringBuilder = new StringBuilder();
+            mStringBuilder = new StringBuilder();
             while (bufferedInputStream.available() != 0) {
                 char characters = (char) bufferedInputStream.read();
-                stringBuilder.append(characters);
+                mStringBuilder.append(characters);
             }
             bufferedInputStream.close();
             fileInputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return stringBuilder.toString();
+        return mStringBuilder.toString();
     }
 
     private String getPrayerTimesForDate(String request, boolean runningFromActivity, String fileName) {
@@ -162,7 +162,7 @@ public class Helpers extends ContextWrapper {
         return mData;
     }
 
-    SharedPreferences getPreferenceManager() {
+    private SharedPreferences getPreferenceManager() {
         return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
