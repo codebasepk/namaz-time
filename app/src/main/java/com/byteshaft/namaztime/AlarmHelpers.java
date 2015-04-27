@@ -61,7 +61,7 @@ public class AlarmHelpers extends ContextWrapper {
                 String.format("Setting alarm for: %d", TimeUnit.MILLISECONDS.toMinutes(time)));
         Intent intent = new Intent("com.byteshaft.shownotification");
         intent.putExtra("namaz", namaz);
-        mPendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        mPendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mAlarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + time, mPendingIntent);
     }
 
