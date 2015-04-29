@@ -29,7 +29,7 @@ public class ChangeCityHelpers extends ContextWrapper {
         parent.getItemAtPosition(position);
         parent.setSelection(position);
         String cityName = parent.getItemAtPosition(position).toString();
-        mHelpers.saveSelectedCity(cityName, position);
+        mHelpers.saveSelectedCity(cityName.trim(), position);
         NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
         ChangeCity.sProgressBar.setVisibility(View.VISIBLE);
         namazTimesDownloadTask.downloadNamazTime();

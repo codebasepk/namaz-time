@@ -34,7 +34,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     ChangeCityHelpers mChangeCityHelpers;
     static ProgressBar sProgressBar;
     Notifications notifications;
-    static boolean SCityChanged = false;
+    static boolean sCityChanged = false;
 
 
     @Override
@@ -56,7 +56,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mAlarmHelpers.removePreviousAlarams();
-        SCityChanged = true;
+        sCityChanged = true;
         String city = parent.getItemAtPosition(position).toString();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         mFile = new File(location);
@@ -75,7 +75,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     ListView getListView(int mPreviousCity) {
         ListView list = new ListView(this);
         String[] cityList = new String[]{"Karachi", "Lahore", "Multan"
-                , "Islamabad", "Peshawar", "Azad Kashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
+                , "Islamabad", "Peshawar", "Azad-Kashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
         ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityList);
         list.setAdapter(modeAdapter);
         list.setItemChecked(mPreviousCity, true);

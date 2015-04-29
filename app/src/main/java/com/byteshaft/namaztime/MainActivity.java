@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
             mHelpers.showInternetNotAvailableDialog();
         } else if (mFile.exists()) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-            if (!ChangeCity.SCityChanged && !NotificationReceiver.sNotificationDisplayed) {
+            if (!ChangeCity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
                 Intent alarmIntent = new Intent("com.byteshaft.setalarm");
                 sendBroadcast(alarmIntent);
             }
@@ -76,12 +76,12 @@ public class MainActivity extends ActionBarActivity {
             mHelpers.setTimesFromDatabase(true, currentCity);
         }
         changeCityInDisplay();
-        if (ChangeCity.SCityChanged) {
+        if (ChangeCity.sCityChanged) {
             Log.i("NAMAZ_TIME" ,  "City Changed");
             notifications.removeNotification();
             Intent alarmIntent = new Intent("com.byteshaft.setalarm");
             sendBroadcast(alarmIntent);
-            ChangeCity.SCityChanged = false;
+            ChangeCity.sCityChanged = false;
         }
     }
 
