@@ -35,6 +35,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     static ProgressBar sProgressBar;
     Notifications notifications;
     static boolean sCityChanged = false;
+    static boolean sActivityPaused = false;
 
 
     @Override
@@ -92,6 +93,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     @Override
     protected void onPause() {
         super.onPause();
+        sActivityPaused = true;
         if (sProgressBar.isShown()) {
             this.finish();
         }

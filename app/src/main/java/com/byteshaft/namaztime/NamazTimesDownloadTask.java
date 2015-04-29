@@ -62,8 +62,10 @@ public class NamazTimesDownloadTask {
                             if (ChangeCity.sProgressBar.isShown()) {
                                 ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
                             }
-                            Intent intent = new Intent(mContext, MainActivity.class);
-                            mContext.startActivity(intent);
+                            if (!ChangeCity.sActivityPaused) {
+                                Intent intent = new Intent(mContext, MainActivity.class);
+                                mContext.startActivity(intent);
+                            }
                         } else {
                             return;
                         }
