@@ -1,3 +1,14 @@
+/*
+ *
+ *  * (C) Copyright 2015 byteShaft Inc.
+ *  *
+ *  * All rights reserved. This program and the accompanying materials
+ *  * are made available under the terms of the GNU Lesser General Public License
+ *  * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ *  * http://www.gnu.org/licenses/lgpl-2.1.html
+ *  
+ */
+
 package com.byteshaft.namaztime;
 
 import android.os.Bundle;
@@ -23,7 +34,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     ChangeCityHelpers mChangeCityHelpers;
     static ProgressBar sProgressBar;
     Notifications notifications;
-    static boolean SCityChanged = false;
+    static boolean sCityChanged = false;
 
 
     @Override
@@ -45,7 +56,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mAlarmHelpers.removePreviousAlarams();
-        SCityChanged = true;
+        sCityChanged = true;
         String city = parent.getItemAtPosition(position).toString();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         mFile = new File(location);
@@ -64,7 +75,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     ListView getListView(int mPreviousCity) {
         ListView list = new ListView(this);
         String[] cityList = new String[]{"Karachi", "Lahore", "Multan"
-                , "Islamabad", "Peshawar", "Azad Kashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
+                , "Islamabad", "Peshawar", "Azad-Kashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
         ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityList);
         list.setAdapter(modeAdapter);
         list.setItemChecked(mPreviousCity, true);

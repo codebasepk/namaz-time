@@ -1,3 +1,14 @@
+/*
+ *
+ *  * (C) Copyright 2015 byteShaft Inc.
+ *  *
+ *  * All rights reserved. This program and the accompanying materials
+ *  * are made available under the terms of the GNU Lesser General Public License
+ *  * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ *  * http://www.gnu.org/licenses/lgpl-2.1.html
+ *  
+ */
+
 package com.byteshaft.namaztime;
 
 
@@ -50,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
             mHelpers.showInternetNotAvailableDialog();
         } else if (mFile.exists()) {
             mHelpers.setTimesFromDatabase(true, sFileName);
-            if (!ChangeCity.SCityChanged && !NotificationReceiver.sNotificationDisplayed) {
+            if (!ChangeCity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
                 Intent alarmIntent = new Intent("com.byteshaft.setalarm");
                 sendBroadcast(alarmIntent);
             }
@@ -65,12 +76,12 @@ public class MainActivity extends ActionBarActivity {
             mHelpers.setTimesFromDatabase(true, currentCity);
         }
         changeCityInDisplay();
-        if (ChangeCity.SCityChanged) {
+        if (ChangeCity.sCityChanged) {
             Log.i("NAMAZ_TIME" ,  "City Changed");
             notifications.removeNotification();
             Intent alarmIntent = new Intent("com.byteshaft.setalarm");
             sendBroadcast(alarmIntent);
-            ChangeCity.SCityChanged = false;
+            ChangeCity.sCityChanged = false;
         }
     }
 
