@@ -36,7 +36,7 @@ public class ChangeCityHelpers extends ContextWrapper {
     }
 
     void fileExists(AdapterView<?> parent, int position) {
-        mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
+        parent.getItemAtPosition(position);
         parent.setSelection(position);
         String cityName = parent.getItemAtPosition(position).toString();
         mHelpers.saveSelectedCity(cityName, position);

@@ -26,7 +26,7 @@ import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
 
-    public static String sFileName;
+    public String sFileName = null;
     static ProgressBar sProgressBar;
     private static MainActivity sActivityInstance = null;
     private Notifications notifications;
@@ -50,8 +50,14 @@ public class MainActivity extends ActionBarActivity {
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         notifications = new Notifications(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         sFileName = mHelpers.getPreviouslySelectedCityName();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
+        System.out.println(sFileName);
         mFile = new File(location);
         if (!mFile.exists() && mHelpers.isNetworkAvailable()) {
             sProgressBar.setVisibility(View.VISIBLE);
@@ -60,7 +66,8 @@ public class MainActivity extends ActionBarActivity {
         } else if (!mHelpers.isNetworkAvailable() && !mFile.exists()) {
             mHelpers.showInternetNotAvailableDialog();
         } else if (mFile.exists()) {
-            mHelpers.setTimesFromDatabase(true, sFileName);
+            System.out.println(mHelpers.getPreviouslySelectedCityName());
+            mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
             if (!ChangeCity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
                 Intent alarmIntent = new Intent("com.byteshaft.setalarm");
                 sendBroadcast(alarmIntent);
@@ -71,10 +78,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        String currentCity = mHelpers.getPreviouslySelectedCityName();
-        if (mFile.exists() && !mHelpers.getPreviouslySelectedCityName().equals(sFileName)) {
-            mHelpers.setTimesFromDatabase(true, currentCity);
-        }
         changeCityInDisplay();
         if (ChangeCity.sCityChanged) {
             Log.i("NAMAZ_TIME" ,  "City Changed");
@@ -94,11 +97,11 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.finish();
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
         startActivity(startMain);
+        MainActivity.this.finish();
     }
 
     @Override
@@ -119,6 +122,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void changeCity() {
         Intent intent = new Intent(this, ChangeCity.class);
+        finish();
         startActivity(intent);
     }
 
