@@ -53,16 +53,17 @@ public class NamazTimesDownloadTask {
                 try {
                     JSONArray jsonArray = response.getJSONArray("items");
                     data = jsonArray.toString();
-                    mHelpers.writeDataToFile(MainActivity.sFileName, data);
+                    mHelpers.writeDataToFile(mHelpers.getPreviouslySelectedCityName(), data);
                     if (response.length() != 0) {
-                        mHelpers.setTimesFromDatabase(true, MainActivity.sFileName);
+                        mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
                         if (MainActivity.sProgressBar.isShown()) {
                             MainActivity.sProgressBar.setVisibility(View.INVISIBLE);
                         } else if (ChangeCity.sCityChanged) {
                             if (ChangeCity.sProgressBar.isShown()) {
                                 ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
                             }
-                            if (!ChangeCity.sActivityPaused) {
+                            ChangeCity changeCity = new ChangeCity();
+                            if (!changeCity.sActivityPaused) {
                                 Intent intent = new Intent(mContext, MainActivity.class);
                                 mContext.startActivity(intent);
                             }

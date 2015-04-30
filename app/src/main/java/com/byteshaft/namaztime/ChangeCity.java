@@ -11,6 +11,7 @@
 
 package com.byteshaft.namaztime;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -35,7 +36,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     static ProgressBar sProgressBar;
     Notifications notifications;
     static boolean sCityChanged = false;
-    static boolean sActivityPaused = false;
+    boolean sActivityPaused = false;
 
 
     @Override
@@ -61,7 +62,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         String city = parent.getItemAtPosition(position).toString();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         mFile = new File(location);
-        MainActivity.sFileName = city;
+//        MainActivity.sFileName = city;
         if (mFile.exists()) {
             mChangeCityHelpers.fileExists(parent, position);
         } else {
@@ -76,7 +77,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     ListView getListView(int mPreviousCity) {
         ListView list = new ListView(this);
         String[] cityList = new String[]{"Karachi", "Lahore", "Multan"
-                , "Islamabad", "Peshawar", "Azad-Kashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
+                , "Islamabad", "Peshawar", "azadkashmir", "Faisalabad", "Bahawalpur", "Rawalpindi", "Hyderabad", "Quetta"};
         ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityList);
         list.setAdapter(modeAdapter);
         list.setItemChecked(mPreviousCity, true);
@@ -88,6 +89,8 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
+        Intent intent = new Intent(this , MainActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -97,6 +100,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         if (sProgressBar.isShown()) {
             this.finish();
         }
+        finish();
     }
 
 }
