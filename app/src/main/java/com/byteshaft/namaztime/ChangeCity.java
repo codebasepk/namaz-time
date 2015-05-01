@@ -36,7 +36,7 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
     static ProgressBar sProgressBar;
     Notifications notifications;
     static boolean sCityChanged = false;
-    boolean sActivityPaused = false;
+    static boolean sActivityPaused = false;
 
 
     @Override
@@ -62,7 +62,6 @@ public class ChangeCity extends ActionBarActivity implements ListView.OnItemClic
         String city = parent.getItemAtPosition(position).toString();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         mFile = new File(location);
-//        MainActivity.sFileName = city;
         if (mFile.exists()) {
             mChangeCityHelpers.fileExists(parent, position);
         } else {
