@@ -57,7 +57,6 @@ public class MainActivity extends ActionBarActivity {
         super.onStart();
         sFileName = mHelpers.getPreviouslySelectedCityName();
         String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
-        System.out.println(sFileName);
         mFile = new File(location);
         if (!mFile.exists() && mHelpers.isNetworkAvailable()) {
             sProgressBar.setVisibility(View.VISIBLE);
@@ -66,7 +65,6 @@ public class MainActivity extends ActionBarActivity {
         } else if (!mHelpers.isNetworkAvailable() && !mFile.exists()) {
             mHelpers.showInternetNotAvailableDialog();
         } else if (mFile.exists()) {
-            System.out.println(mHelpers.getPreviouslySelectedCityName());
             mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
             if (!ChangeCity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
                 Intent alarmIntent = new Intent("com.byteshaft.setalarm");
