@@ -16,16 +16,20 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.util.Log;
 
 public class RingtoneRestoreReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        WidgetReceiver widgetReceiver = new WidgetReceiver();
         WidgetHelpers widgetHelpers = new WidgetHelpers(context);
         widgetHelpers.setRingtoneMode(WidgetGlobals.getRingtoneModeBackup());
         widgetHelpers.createToast("Phone ringer setting restored");
         WidgetReceiver.sNotifications.clearPhoneSilentNotification();
         WidgetGlobals.resetRingtoneBackup();
+        widgetReceiver.removeAlarm(context);
         WidgetGlobals.setIsPhoneSilent(false);
     }
 }

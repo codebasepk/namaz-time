@@ -22,7 +22,8 @@ import android.widget.Toast;
 
 public class WidgetHelpers extends ContextWrapper {
 
-    private static Toast sToast = null;
+    private static Toast sToast;
+    private static AlarmManager alarmManager;
 
     public WidgetHelpers(Context context) {
         super(context);
@@ -32,7 +33,7 @@ public class WidgetHelpers extends ContextWrapper {
         return (AudioManager) getSystemService(Context.AUDIO_SERVICE);
     }
 
-    private AlarmManager getAlarmManager() {
+    AlarmManager getAlarmManager() {
         return (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     }
 
@@ -41,9 +42,15 @@ public class WidgetHelpers extends ContextWrapper {
     }
 
     public void setAlarm(int time, PendingIntent pendingIntent) {
-        AlarmManager alarmManager = getAlarmManager();
+        alarmManager = getAlarmManager();
         alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + time,
                 pendingIntent);
+    }
+
+    void removePreviousAlarm(PendingIntent pendingIntent) {
+        System.out.println(alarmManager == null);
+        alarmManager.cancel(pendingIntent);
+        alarmManager = null;
     }
 
     public int getCurrentRingtoneMode() {

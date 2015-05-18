@@ -33,6 +33,8 @@ public class ChangeCityHelpers extends ContextWrapper {
         NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
         ChangeCity.sProgressBar.setVisibility(View.VISIBLE);
         namazTimesDownloadTask.downloadNamazTime();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     void fileExists(AdapterView<?> parent, int position) {
@@ -43,5 +45,4 @@ public class ChangeCityHelpers extends ContextWrapper {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
-
 }
