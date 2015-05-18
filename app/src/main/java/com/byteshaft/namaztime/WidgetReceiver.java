@@ -16,17 +16,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
 public class WidgetReceiver extends BroadcastReceiver {
 
-    public static Notifications sNotifications = null;
+    public static Notifications sNotifications;
+    static PendingIntent pendingIntent;
+    WidgetHelpers widgetHelpers;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         final int FIFTEEN_MINUTES = 15 * 60000;
-        WidgetHelpers widgetHelpers = new WidgetHelpers(context);
+        widgetHelpers = new WidgetHelpers(context);
         if (sNotifications == null) {
             sNotifications = new Notifications(context);
         }
@@ -39,13 +42,12 @@ public class WidgetReceiver extends BroadcastReceiver {
         } else if (widgetHelpers.getCurrentRingtoneMode() == AudioManager.RINGER_MODE_VIBRATE) {
             widgetHelpers.createToast("Phone is already on Vibrate Mode");
         } else {
-            setSilentForFifteenMinutes(context, FIFTEEN_MINUTES, widgetHelpers);
+            setSilentForFifteenMinutes(context, FIFTEEN_MINUTES);
         }
-
         WidgetProvider.setupWidget(context);
     }
 
-    private void setSilentForFifteenMinutes(Context context, int FIFTEEN_MINUTES, WidgetHelpers widgetHelpers) {
+    private void setSilentForFifteenMinutes(Context context, int FIFTEEN_MINUTES) {
         WidgetGlobals.setRingtoneModeBackup(widgetHelpers.getCurrentRingtoneMode());
         widgetHelpers.setRingtoneMode(AudioManager.RINGER_MODE_VIBRATE);
         widgetHelpers.vibrate(500);
@@ -53,9 +55,16 @@ public class WidgetReceiver extends BroadcastReceiver {
                 TimeUnit.MILLISECONDS.toMinutes(FIFTEEN_MINUTES)));
         WidgetGlobals.setIsPhoneSilent(true);
         sNotifications.startPhoneSilentNotification();
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+        pendingIntent = PendingIntent.getBroadcast(
                 context, 0, new Intent(WidgetGlobals.SILENT_INTENT), 0);
         widgetHelpers.setAlarm(FIFTEEN_MINUTES, pendingIntent);
+    }
+
+    void removeAlarm(Context context) {
+        Log.i("NAMAZ_TIME", "Removing Alarm");
+        WidgetHelpers widgetHelper = new WidgetHelpers(context);
+        widgetHelper.removePreviousAlarm(pendingIntent);
+        pendingIntent = null;
     }
 
     private void backupRingtoneMode(WidgetHelpers widgetHelpers) {
