@@ -48,7 +48,6 @@ public class WidgetHelpers extends ContextWrapper {
     }
 
     void removePreviousAlarm(PendingIntent pendingIntent) {
-        System.out.println(alarmManager == null);
         alarmManager = getAlarmManager();
         alarmManager.cancel(pendingIntent);
         alarmManager = null;
