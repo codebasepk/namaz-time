@@ -22,6 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
@@ -45,11 +49,15 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         sProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         sProgressBar.setVisibility(View.INVISIBLE);
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         notifications = new Notifications(this);
+
     }
 
     @Override
