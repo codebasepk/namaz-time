@@ -14,7 +14,7 @@ package com.byteshaft.namaztime;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,11 +24,10 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 
 import java.io.File;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     public String sFileName = null;
     static ProgressBar sProgressBar;
@@ -57,7 +56,6 @@ public class MainActivity extends ActionBarActivity {
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         notifications = new Notifications(this);
-
     }
 
     @Override

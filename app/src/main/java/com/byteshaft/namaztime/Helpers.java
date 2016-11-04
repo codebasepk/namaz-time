@@ -179,7 +179,7 @@ public class Helpers extends ContextWrapper {
 
     String getPreviouslySelectedCityName() {
         SharedPreferences preferences = getPreferenceManager();
-        return preferences.getString(SELECTED_CITY_NAME, "Karachi");
+        return preferences.getString(SELECTED_CITY_NAME, "Karachi Sindh");
     }
 
     int getPreviouslySelectedCityIndex() {

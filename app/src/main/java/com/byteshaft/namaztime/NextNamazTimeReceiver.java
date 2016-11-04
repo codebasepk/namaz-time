@@ -16,7 +16,8 @@ import android.content.Context;
 import android.content.Intent;
 
 public class NextNamazTimeReceiver extends BroadcastReceiver {
-    Notifications notifications;
+
+    private Notifications notifications;
 
     @Override
     public void onReceive(Context context, Intent intent) {

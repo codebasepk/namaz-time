@@ -53,16 +53,24 @@ public class Notifications extends ContextWrapper {
         mNotificationManager.notify(id, notification.build());
     }
 
+    private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
+        Intent intent = new Intent(context, DismissReceiver.class);
+        intent.putExtra("com.my.app.notificationId", notificationId);
+
+        PendingIntent pendingIntent =
+                PendingIntent.getBroadcast(context.getApplicationContext(),
+                        notificationId, intent, 0);
+        return pendingIntent;
+    }
+
     private NotificationCompat.Builder buildPhoneSilentNotification() {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         Intent intent = new Intent(WidgetGlobals.SILENT_INTENT);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
         notificationBuilder.setContentTitle("Namaz Time");
         notificationBuilder.setContentText("Swipe to restore Ringtone");
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setDeleteIntent(pIntent);
         notificationBuilder.setContentIntent(pIntent);
         return notificationBuilder;
     }
@@ -76,6 +84,8 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setSmallIcon(R.drawable.ic_notification);
         notificationBuilder.setVibrate(new long[]{250, 175, 250, 175, 250});
         notificationBuilder.setLights(Color.GREEN, 3000, 3000);
+        notificationBuilder.setDeleteIntent(createOnDismissedIntent(getApplicationContext(),
+                UPCOMING_NAMAZ_NOTIFICATION_ID));
         notificationBuilder.setSound(uri);
         return notificationBuilder;
     }
