@@ -60,11 +60,11 @@ public class NamazTimesDownloadTask {
                         mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
                         if (MainActivity.sProgressBar.isShown()) {
                             MainActivity.sProgressBar.setVisibility(View.INVISIBLE);
-                        } else if (ChangeCity.sCityChanged) {
-                            if (ChangeCity.sProgressBar.isShown()) {
-                                ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
+                        } else if (ChangeCityActivity.sCityChanged) {
+                            if (ChangeCityActivity.sProgressBar.isShown()) {
+                                ChangeCityActivity.sProgressBar.setVisibility(View.INVISIBLE);
                             }
-                            if (!ChangeCity.sActivityPaused) {
+                            if (!ChangeCityActivity.sActivityPaused) {
                                 Intent intent = new Intent(mContext, MainActivity.class);
                                 mContext.startActivity(intent);
                             }

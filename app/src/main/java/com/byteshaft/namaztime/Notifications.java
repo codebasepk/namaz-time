@@ -69,7 +69,7 @@ public class Notifications extends ContextWrapper {
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         notificationBuilder.setContentTitle("Namaz Time");
         notificationBuilder.setContentText("Swipe to restore Ringtone");
-        notificationBuilder.setSmallIcon(R.drawable.ic_notification);
+        notificationBuilder.setSmallIcon(R.drawable.notification);
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setContentIntent(pIntent);
         return notificationBuilder;
@@ -81,7 +81,7 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setContentTitle("Namaz Time at " + namaz);
         notificationBuilder.setContentText("Slide to remove");
         notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setSmallIcon(R.drawable.ic_notification);
+        notificationBuilder.setSmallIcon(R.drawable.notification);
         notificationBuilder.setVibrate(new long[]{250, 175, 250, 175, 250});
         notificationBuilder.setLights(Color.GREEN, 3000, 3000);
         notificationBuilder.setDeleteIntent(createOnDismissedIntent(getApplicationContext(),

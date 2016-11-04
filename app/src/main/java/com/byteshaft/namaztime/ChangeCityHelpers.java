@@ -31,7 +31,7 @@ public class ChangeCityHelpers extends ContextWrapper {
         String cityName = parent.getItemAtPosition(position).toString();
         mHelpers.saveSelectedCity(cityName.trim(), position);
         NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
-        ChangeCity.sProgressBar.setVisibility(View.VISIBLE);
+        ChangeCityActivity.sProgressBar.setVisibility(View.VISIBLE);
         namazTimesDownloadTask.downloadNamazTime();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

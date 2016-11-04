@@ -55,7 +55,7 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:21:17
 	android:name
 		ADDED from AndroidManifest.xml:21:27
-activity#com.byteshaft.namaztime.ChangeCity
+activity#com.byteshaft.namaztime.ChangeCityActivity
 ADDED from AndroidManifest.xml:24:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:27:13

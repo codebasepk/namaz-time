@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             mHelpers.showInternetNotAvailableDialog();
         } else if (mFile.exists()) {
             mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
-            if (!ChangeCity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
+            if (!ChangeCityActivity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
                 Intent alarmIntent = new Intent("com.byteshaft.setalarm");
                 sendBroadcast(alarmIntent);
             }
@@ -83,12 +83,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         changeCityInDisplay();
-        if (ChangeCity.sCityChanged) {
+        if (ChangeCityActivity.sCityChanged) {
             Log.i("NAMAZ_TIME" ,  "City Changed");
             notifications.removeNotification();
             Intent alarmIntent = new Intent("com.byteshaft.setalarm");
             sendBroadcast(alarmIntent);
-            ChangeCity.sCityChanged = false;
+            ChangeCityActivity.sCityChanged = false;
         }
     }
 
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeCity() {
-        Intent intent = new Intent(this, ChangeCity.class);
+        Intent intent = new Intent(this, ChangeCityActivity.class);
         finish();
         startActivity(intent);
     }

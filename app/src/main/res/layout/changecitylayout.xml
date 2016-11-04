@@ -12,11 +12,24 @@
         app:popupTheme="@style/AppBaseTheme.PopupOverlay" />
 
     <RelativeLayout
+        android:layout_below="@+id/toolbar"
         android:id="@+id/relativeLayout"
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:layout_above="@+id/add_my_city">
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/add_my_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:text="Add Your City"
+        android:padding="2dp"
+        android:background="@drawable/apptheme_btn_default_holo_light"
+        android:layout_alignParentBottom="true"/>
 
     <ProgressBar
         android:layout_width="wrap_content"

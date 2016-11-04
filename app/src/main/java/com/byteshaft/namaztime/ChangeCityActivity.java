@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -44,7 +45,8 @@ import java.util.ArrayList;
 import static com.byteshaft.namaztime.R.id.relativeLayout;
 
 
-public class ChangeCity extends AppCompatActivity implements ListView.OnItemClickListener {
+public class ChangeCityActivity extends AppCompatActivity implements ListView.OnItemClickListener,
+        View.OnClickListener {
 
     private RelativeLayout mRelativeLayout;
     private Helpers mHelpers;
@@ -60,12 +62,16 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
     private ArrayList<String> search;
     private ArrayAdapter<String> modeAdapter;
     private ListView list;
+    private Button requestCity;
+    private EditText toolbarSearchView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.changecitylayout);
+        requestCity = (Button) findViewById(R.id.add_my_city);
+        requestCity.setOnClickListener(this);
         cityList = new ArrayList<>();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,7 +81,7 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
         searchContainer.setLayoutParams(containerParams);
 
         // Setup search view
-        EditText toolbarSearchView = new EditText(this);
+        toolbarSearchView = new EditText(this);
         // Set width / height / gravity
         int[] textSizeAttr = new int[]{android.R.attr.actionBarSize};
         int indexOfAttrTextSize = 0;
@@ -93,11 +99,12 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
         toolbarSearchView.setGravity(Gravity.CENTER_VERTICAL);
         toolbarSearchView.setSingleLine(true);
         toolbarSearchView.setImeActionLabel("Search", EditorInfo.IME_ACTION_UNSPECIFIED);
-        toolbarSearchView.setHint("Type your city without space");
+        toolbarSearchView.setHint("Search by City Name(without spaces) / province");
         toolbarSearchView.setHintTextColor(Color.parseColor("#b3ffffff"));
         try {
             Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
             f.setAccessible(true);
+            f.set(toolbarSearchView, R.drawable.cursor_color);
         } catch (Exception ignored) {
 
         }
@@ -113,16 +120,17 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
                 if (!s.toString().trim().isEmpty()) {
                     search = new ArrayList<>();
                     list.setAdapter(null);
-                    modeAdapter = new ArrayAdapter<String>(ChangeCity.this, android.R.layout.simple_list_item_1, search);
+                    modeAdapter = new ArrayAdapter<>(ChangeCityActivity.this, R.layout.list_item, search);
                     list.setAdapter(modeAdapter);
                     for (int i = 0; i < cityList.size(); i++) {
-                        if (cityList.contains(s.toString())) {
+                        if (cityList.get(i).toLowerCase().contains(s.toString())) {
                             search.add(cityList.get(i));
+                            modeAdapter.notifyDataSetChanged();
                         }
                     }
                 } else {
                     list.setAdapter(null);
-                    modeAdapter = new ArrayAdapter<String>(ChangeCity.this, android.R.layout.simple_list_item_1, cityList);
+                    modeAdapter = new ArrayAdapter<>(ChangeCityActivity.this, R.layout.list_item, cityList);
                     list.setAdapter(modeAdapter);
                 }
 
@@ -286,7 +294,7 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
         cityList.add("DarraAdamKhel");
         cityList.add("LandiKotal");
         cityList.add("Miranshah");
-        modeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityList);
+        modeAdapter = new ArrayAdapter<>(this, R.layout.list_item, cityList);
         list.setAdapter(modeAdapter);
         list.setItemChecked(mPreviousCity, true);
         mRelativeLayout.addView(list);
@@ -311,4 +319,22 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
         finish();
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.add_my_city:
+                if (!toolbarSearchView.getText().toString().trim().isEmpty()) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_EMAIL, "byteshaft@gmail.com");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "New City Request");
+                    intent.putExtra(Intent.EXTRA_TEXT, String.format("Please Add City : %s to your database. thank you", toolbarSearchView.getText().toString()));
+                    startActivity(Intent.createChooser(intent, "Send Email"));
+                } else {
+                    Toast.makeText(ChangeCityActivity.this, "Please enter your city name at the top with province before pressing this button", Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+
+    }
 }
