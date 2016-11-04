@@ -38,18 +38,20 @@ public class NamazTimesDownloadTask {
     }
 
     void downloadNamazTime() {
-        String city = mHelpers.getPreviouslySelectedCityName();
+        String city = mHelpers.getPreviouslySelectedCityName() + " Pakistan";
         String timeSpan = "monthly";
         String month = mHelpers.getDate();
         String siteLink = String.format("http://muslimsalat.com/%s/%s/%s.json?key=",
                 timeSpan, month, city);
         String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
-        String API = siteLink.concat(apiKey);
+        String API = siteLink.concat(apiKey).replaceAll(" ", "%20");
+        Log.i("TAG", API);
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
         JsonObjectRequest request = new JsonObjectRequest(API, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Log.i("TAG", String.valueOf(response));
                 try {
                     JSONArray jsonArray = response.getJSONArray("items");
                     data = jsonArray.toString();
@@ -58,11 +60,11 @@ public class NamazTimesDownloadTask {
                         mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
                         if (MainActivity.sProgressBar.isShown()) {
                             MainActivity.sProgressBar.setVisibility(View.INVISIBLE);
-                        } else if (ChangeCity.sCityChanged) {
-                            if (ChangeCity.sProgressBar.isShown()) {
-                                ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
+                        } else if (ChangeCityActivity.sCityChanged) {
+                            if (ChangeCityActivity.sProgressBar.isShown()) {
+                                ChangeCityActivity.sProgressBar.setVisibility(View.INVISIBLE);
                             }
-                            if (!ChangeCity.sActivityPaused) {
+                            if (!ChangeCityActivity.sActivityPaused) {
                                 Intent intent = new Intent(mContext, MainActivity.class);
                                 mContext.startActivity(intent);
                             }
