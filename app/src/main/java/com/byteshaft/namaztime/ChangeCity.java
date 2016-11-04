@@ -40,7 +40,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Set;
 
 import static com.byteshaft.namaztime.R.id.relativeLayout;
 
@@ -58,8 +57,9 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
     static boolean sActivityPaused = false;
     private MenuItem refresh;
     private ArrayList<String> cityList;
-    private Set<String> search;
+    private ArrayList<String> search;
     private ArrayAdapter<String> modeAdapter;
+    private ListView list;
 
 
     @Override
@@ -110,11 +110,22 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                for (int i = 0; i < search.size(); i++) {
-                    if (search.contains(s.toString())) {
-
+                if (!s.toString().trim().isEmpty()) {
+                    search = new ArrayList<>();
+                    list.setAdapter(null);
+                    modeAdapter = new ArrayAdapter<String>(ChangeCity.this, android.R.layout.simple_list_item_1, search);
+                    list.setAdapter(modeAdapter);
+                    for (int i = 0; i < cityList.size(); i++) {
+                        if (cityList.contains(s.toString())) {
+                            search.add(cityList.get(i));
+                        }
                     }
+                } else {
+                    list.setAdapter(null);
+                    modeAdapter = new ArrayAdapter<String>(ChangeCity.this, android.R.layout.simple_list_item_1, cityList);
+                    list.setAdapter(modeAdapter);
                 }
+
 
 
             }
@@ -182,7 +193,7 @@ public class ChangeCity extends AppCompatActivity implements ListView.OnItemClic
     }
 
     ListView getListView(int mPreviousCity) {
-        ListView list = new ListView(this);
+        list = new ListView(this);
         // punjab
         cityList.add("Lahore Punjab");
         cityList.add("Multan Punjab");
