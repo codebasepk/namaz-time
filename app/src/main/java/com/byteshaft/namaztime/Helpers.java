@@ -12,14 +12,18 @@
 package com.byteshaft.namaztime;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -179,7 +183,7 @@ public class Helpers extends ContextWrapper {
 
     String getPreviouslySelectedCityName() {
         SharedPreferences preferences = getPreferenceManager();
-        return preferences.getString(SELECTED_CITY_NAME, "Karachi Sindh");
+        return preferences.getString(SELECTED_CITY_NAME, "Karachi");
     }
 
     int getPreviouslySelectedCityIndex() {
@@ -233,6 +237,58 @@ public class Helpers extends ContextWrapper {
     String retrieveTimeForNamazAndTime(String namaz) {
         SharedPreferences preference = getPreferenceManager();
         return preference.getString(namaz, null);
+    }
+
+    public static boolean locationEnabled() {
+        LocationManager lm = (LocationManager) AppGlobals.getContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        return gps_enabled || network_enabled;
+    }
+
+    public static void dialogForLocationEnableManually(final Activity activity) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setMessage("Location is not enabled");
+        dialog.setPositiveButton("Turn on", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                // TODO Auto-generated method stub
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                activity.startActivityForResult(myIntent, AppGlobals.LOCATION_ENABLE);
+                //get gps
+            }
+        });
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+        dialog.show();
+    }
+
+    public static boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) AppGlobals.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

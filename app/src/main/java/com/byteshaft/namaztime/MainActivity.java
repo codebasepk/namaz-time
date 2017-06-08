@@ -12,9 +12,14 @@
 package com.byteshaft.namaztime;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,23 +27,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ActionBarActivity {
 
     public String sFileName = null;
     static ProgressBar sProgressBar;
     private static MainActivity sActivityInstance = null;
     private Notifications notifications;
     private Helpers mHelpers = null;
-    File mFile;
-
+    private File mFile;
     public static MainActivity getInstance() {
         return sActivityInstance;
     }
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
 
     private void setActivityInstance(MainActivity mainActivity) {
         sActivityInstance = mainActivity;
@@ -48,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
         sProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         sProgressBar.setVisibility(View.INVISIBLE);
         setActivityInstance(this);
@@ -117,10 +116,67 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_change_city:
                 changeCity();
+                return true;
+            case R.id.action_add_location:
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_LOCATION);
+
+                } else {
+                    if (Helpers.locationEnabled()) {
+                        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                    } else {
+                        Helpers.dialogForLocationEnableManually(this);
+                    }
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case AppGlobals.LOCATION_ENABLE:
+                if (Helpers.locationEnabled()) {
+                    startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Snackbar.make(findViewById(android.R.id.content), "permission granted",
+                            Snackbar.LENGTH_SHORT).show();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    Snackbar.make(findViewById(android.R.id.content), "permission denied!",
+                            Snackbar.LENGTH_SHORT).show();
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 
