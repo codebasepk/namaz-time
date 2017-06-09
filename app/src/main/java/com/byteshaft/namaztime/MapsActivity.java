@@ -16,8 +16,6 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.byteshaft.namaztime.geofencing.GeofenceTransitionService;
-import com.byteshaft.namaztime.geofencing.SimpleGeofence;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -151,11 +149,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String[] locations = location.split(",");
             LatLng latLng = new LatLng(Double.parseDouble(locations[0]),
                     Double.parseDouble(locations[1]));
-            if (Helpers.isMyServiceRunning(GeofenceTransitionService.getInstance().getClass())) {
-                GeofenceTransitionService.getInstance().stopSelf();
-            }
-            SimpleGeofence simpleGeofence = new SimpleGeofence();
-            simpleGeofence.createGeofences("1", latLng.latitude, latLng.longitude);
             BitmapDescriptor bitmap;
         bitmap = BitmapDescriptorFactory.fromResource(R.drawable.mosque);
 
@@ -219,8 +212,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Snackbar.make(findViewById(android.R.id.content),
                         "Successfully marked Mosque",
                         Snackbar.LENGTH_SHORT).show();
-                SimpleGeofence simpleGeofence = new SimpleGeofence();
-                simpleGeofence.createGeofences("1", latLng.latitude, latLng.longitude);
             }
         });
         alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {

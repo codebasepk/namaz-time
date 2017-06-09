@@ -14,7 +14,8 @@ import java.util.Set;
 public class AppGlobals extends Application {
 
     private static Context sContext;
-    private static final String MaSJIDLOCATIONS = "masjid_locations";
+    private static final String MASJIDLOCATIONS = "masjid_locations";
+    private static final String AudioMode = "audio_mode";
     public static final int LOCATION_ENABLE = 10;
 
     @Override
@@ -33,12 +34,23 @@ public class AppGlobals extends Application {
 
     public static void saveHashSet(Set<String> value) {
         SharedPreferences sharedPreferences = getPreferenceManager();
-        sharedPreferences.edit().putStringSet(MaSJIDLOCATIONS, value).apply();
+        sharedPreferences.edit().remove(MASJIDLOCATIONS).apply();
+        sharedPreferences.edit().putStringSet(MASJIDLOCATIONS, value).apply();
     }
 
     public static Set<String> getHashSet() {
         SharedPreferences sharedPreferences = getPreferenceManager();
         Set<String> strings = new HashSet<>();
-        return sharedPreferences.getStringSet(MaSJIDLOCATIONS, strings);
+        return sharedPreferences.getStringSet(MASJIDLOCATIONS, strings);
+    }
+
+    public static void saveAudioManagerMode(int value) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putInt(AudioMode, value).apply();
+    }
+
+    public static int getAudioMOde() {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getInt(MASJIDLOCATIONS, -1);
     }
 }

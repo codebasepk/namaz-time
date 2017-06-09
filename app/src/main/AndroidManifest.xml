@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
         android:name=".AppGlobals"
@@ -36,7 +39,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver android:name=".WidgetProvider" android:icon="@drawable/ic_widget"
+        <receiver android:name=".WidgetProvider" android:icon="@drawable/ic_launcher"
                   android:label="Namaz Time">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

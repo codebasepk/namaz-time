@@ -13,8 +13,11 @@ package com.byteshaft.namaztime;
 
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -27,7 +30,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.byteshaft.namaztime.geofencing.GeofenceTransitionService;
+import com.byteshaft.namaztime.geofencing.SimpleGeofence;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.File;
+import java.util.Set;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -41,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
         return sActivityInstance;
     }
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
+    private NotificationManager notificationManager;
 
     private void setActivityInstance(MainActivity mainActivity) {
         sActivityInstance = mainActivity;
@@ -52,6 +61,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         sProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         sProgressBar.setVisibility(View.INVISIBLE);
+        notificationManager =
+                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
         setActivityInstance(this);
         mHelpers = new Helpers(this);
         notifications = new Notifications(this);
@@ -89,6 +101,50 @@ public class MainActivity extends ActionBarActivity {
             sendBroadcast(alarmIntent);
             ChangeCityActivity.sCityChanged = false;
         }
+
+        if (GeofenceTransitionService.getInstance() != null) {
+            if (Helpers.isMyServiceRunning(GeofenceTransitionService.getInstance().getClass())) {
+                GeofenceTransitionService.getInstance().stopSelf();
+            }
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+
+        } else {
+            if (Helpers.locationEnabled()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                        && !notificationManager.isNotificationPolicyAccessGranted()) {
+                    Intent intent = new Intent(
+                            android.provider.Settings
+                                    .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                    startActivity(intent);
+                } else {
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Set<String> latLngSet = AppGlobals.getHashSet();
+                            if (latLngSet.size() > 0) {
+                                SimpleGeofence simpleGeofence = new SimpleGeofence();
+                                int counter = 0;
+                                for (String location : latLngSet) {
+                                    Log.i("TAG", "adding fence" + counter);
+                                    String[] locations = location.split(",");
+                                    LatLng latLng = new LatLng(Double.parseDouble(locations[0]),
+                                            Double.parseDouble(locations[1]));
+                                    Log.i("TAG", "Fence :Lat " + latLng.latitude + " Lng "+ latLng.longitude);
+                                    simpleGeofence.createGeofences(String.valueOf(counter), latLng.latitude, latLng.longitude);
+                                    counter++;
+                                }
+                            }
+                        }
+                    }, 2000);
+                }
+            }
+        }
     }
 
     private void changeCityInDisplay() {
@@ -104,7 +160,7 @@ public class MainActivity extends ActionBarActivity {
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
         startActivity(startMain);
-        MainActivity.this.finish();
+        finish();
     }
 
     @Override
@@ -129,7 +185,15 @@ public class MainActivity extends ActionBarActivity {
 
                 } else {
                     if (Helpers.locationEnabled()) {
-                        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                                && !notificationManager.isNotificationPolicyAccessGranted()) {
+                            Intent intent = new Intent(
+                                    android.provider.Settings
+                                            .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                            startActivity(intent);
+                        } else {
+                            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                        }
                     } else {
                         Helpers.dialogForLocationEnableManually(this);
                     }
@@ -146,7 +210,15 @@ public class MainActivity extends ActionBarActivity {
         switch (requestCode) {
             case AppGlobals.LOCATION_ENABLE:
                 if (Helpers.locationEnabled()) {
-                    startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                            && !notificationManager.isNotificationPolicyAccessGranted()) {
+                        Intent intent = new Intent(
+                                android.provider.Settings
+                                        .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                        startActivity(intent);
+                    } else {
+                        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                    }
                 }
                 break;
         }

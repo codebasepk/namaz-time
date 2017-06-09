@@ -32,7 +32,7 @@ public class SimpleGeofence implements LocationListener {
 
     PendingIntent mGeofencePendingIntent;
     public static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 100;
-    private List<Geofence> mGeofenceList;
+    private static List<Geofence> mGeofenceList;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private double currentLatitude;
@@ -157,7 +157,7 @@ public class SimpleGeofence implements LocationListener {
         Geofence fence = new Geofence.Builder()
                 .setRequestId(id)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
-                .setCircularRegion(latitude, longitude, 100)
+                .setCircularRegion(latitude, longitude, 60)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
         mGeofenceList.add(fence);
