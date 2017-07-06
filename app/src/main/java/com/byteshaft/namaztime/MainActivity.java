@@ -13,8 +13,10 @@ package com.byteshaft.namaztime;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -65,6 +67,29 @@ public class MainActivity extends ActionBarActivity {
                 (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
         setActivityInstance(this);
+        Set<String> hashSet = AppGlobals.getHashSet();
+        if (hashSet.size() < 1) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("New Feature");
+            dialog.setMessage("You can now add your mosque to the app to silent your mobile when you are inside mosque.");
+            dialog.setPositiveButton("Add now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+
+                }
+            });
+            dialog.show();
+        }
         mHelpers = new Helpers(this);
         notifications = new Notifications(this);
     }

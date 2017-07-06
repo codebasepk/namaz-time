@@ -51,6 +51,6 @@ public class AppGlobals extends Application {
 
     public static int getAudioMOde() {
         SharedPreferences sharedPreferences = getPreferenceManager();
-        return sharedPreferences.getInt(MASJIDLOCATIONS, -1);
+        return sharedPreferences.getInt(AudioMode, -1);
     }
 }

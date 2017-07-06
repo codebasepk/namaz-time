@@ -157,7 +157,7 @@ public class SimpleGeofence implements LocationListener {
         Geofence fence = new Geofence.Builder()
                 .setRequestId(id)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
-                .setCircularRegion(latitude, longitude, 60)
+                .setCircularRegion(latitude, longitude, 40)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
         mGeofenceList.add(fence);

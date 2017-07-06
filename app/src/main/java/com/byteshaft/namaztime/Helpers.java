@@ -230,8 +230,8 @@ public class Helpers extends ContextWrapper {
 
     private void saveTimeForNamaz(String namaz, String time) {
         SharedPreferences preference = getPreferenceManager();
-        preference.edit().putString(namaz, time).commit();
-        preference.edit().putString("date", getDate()).commit();
+        preference.edit().putString(namaz, time).apply();
+        preference.edit().putString("date", getDate()).apply();
     }
 
     String retrieveTimeForNamazAndTime(String namaz) {

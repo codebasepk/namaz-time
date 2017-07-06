@@ -29,19 +29,24 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapLongClickListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private int locationCounter = 0;
     private Set<String> latLngSet;
+    private boolean mapTouch = false;
+    private ArrayList<Double> alreadyExisting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setContentView(R.layout.activity_maps);
+        alreadyExisting = new ArrayList<>();
         latLngSet = AppGlobals.getHashSet();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         initMap();
@@ -142,6 +148,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mMap.setOnMarkerClickListener(this);
         Log.i("TAG", "locations " + latLngSet.toString());
         // Add a marker in Sydney and move the camera
         int masjidId = 0;
@@ -149,15 +156,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String[] locations = location.split(",");
             LatLng latLng = new LatLng(Double.parseDouble(locations[0]),
                     Double.parseDouble(locations[1]));
+            alreadyExisting.add(Double.parseDouble(locations[0]));
             BitmapDescriptor bitmap;
         bitmap = BitmapDescriptorFactory.fromResource(R.drawable.mosque);
-
         mMap.addMarker(new MarkerOptions()
-                .position(latLng).title(String.valueOf(masjidId)).icon(bitmap));
+                .position(latLng).title("Mosque :"+String.valueOf(masjidId)).icon(bitmap));
             masjidId++;
 
         }
-
     }
 
     @Override
@@ -184,7 +190,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onLocationChanged(Location location) {
         locationCounter++;
-        if (locationCounter > 1) {
+        if (locationCounter > 1 && locationCounter < 3) {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -207,6 +213,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 bitmap = BitmapDescriptorFactory.fromResource(R.drawable.mosque);
                 mMap.addMarker(new MarkerOptions()
                         .position(latLng).title("Mosque").icon(bitmap));
+                alreadyExisting.add(latLng.latitude);
                 latLngSet.add(latLng.latitude+","+latLng.longitude);
                 AppGlobals.saveHashSet(latLngSet);
                 Snackbar.make(findViewById(android.R.id.content),
@@ -222,5 +229,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Delete Mosque Location");
+        String text = "<b>Note:</b> Mobile will not go in Silent Mode when you are in the mosque and normal when exit the mosque";
+        alertDialogBuilder.setMessage("Do you want to Remove this mosque ? \n \n" +
+                Html.fromHtml(text)).setCancelable(false).setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+                for (String location: latLngSet) {
+                    String[] locations = location.split(",");
+                    if (String.valueOf(marker.getPosition().latitude).equals(locations[0])) {
+                        latLngSet.remove(marker.getPosition().latitude+","+marker.getPosition().longitude);
+                        AppGlobals.saveHashSet(latLngSet);
+                        marker.remove();
+                    }
+                }
+
+            }
+        });
+        alertDialogBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        return false;
     }
 }
