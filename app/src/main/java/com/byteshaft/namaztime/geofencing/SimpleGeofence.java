@@ -40,7 +40,7 @@ public class SimpleGeofence implements LocationListener {
     private String uniqueId;
 
     public SimpleGeofence() {
-        mGeofenceList = new ArrayList<Geofence>();
+        mGeofenceList = new ArrayList<>();
 
         int resp = GooglePlayServicesUtil.isGooglePlayServicesAvailable(AppGlobals.getContext());
         if (resp == ConnectionResult.SUCCESS) {

@@ -24,6 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +34,10 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Helpers extends ContextWrapper {
 
@@ -75,7 +78,7 @@ public class Helpers extends ContextWrapper {
     }
 
     private SimpleDateFormat getDateFormat() {
-        return new SimpleDateFormat("yyyy-M-d");
+        return new SimpleDateFormat("dd MMM YYYY");
     }
 
     String getDate() {
@@ -93,6 +96,7 @@ public class Helpers extends ContextWrapper {
     void setTimesFromDatabase(boolean runningFromActivity, String fileName) {
         String date = getDate();
         String output = getPrayerTimesForDate(date, runningFromActivity, fileName);
+        Log.i("TAG", "output " + output);
         try {
             JSONObject jsonObject = new JSONObject(output);
             setPrayerTime(jsonObject, runningFromActivity);
@@ -102,11 +106,11 @@ public class Helpers extends ContextWrapper {
     }
 
     private void setPrayerTime(JSONObject day, boolean runningFromActivity) throws JSONException {
-        saveTimeForNamaz("fajr", getPrayerTime(day, "fajr"));
-        saveTimeForNamaz("dhuhr", getPrayerTime(day, "dhuhr"));
-        saveTimeForNamaz("asr", getPrayerTime(day, "asr"));
-        saveTimeForNamaz("maghrib", getPrayerTime(day, "maghrib"));
-        saveTimeForNamaz("isha", getPrayerTime(day, "isha"));
+        saveTimeForNamaz("Fajr", getPrayerTime(day, "Fajr"));
+        saveTimeForNamaz("Dhuhr", getPrayerTime(day, "Dhuhr"));
+        saveTimeForNamaz("Asr", getPrayerTime(day, "Asr"));
+        saveTimeForNamaz("Maghrib", getPrayerTime(day, "Maghrib"));
+        saveTimeForNamaz("Isha", getPrayerTime(day, "Isha"));
         if (runningFromActivity) {
             displayData();
         }
@@ -127,11 +131,11 @@ public class Helpers extends ContextWrapper {
                 + "\n" + "\n" + "Maghrib" + "\n" + "\n"
                 + "Isha");
         uiUpdateHelpers.setNamazTimesLabel(
-                retrieveTimeForNamazAndTime("fajr") + "\n" + "\n" +
-                        retrieveTimeForNamazAndTime("dhuhr") + "\n" + "\n" +
-                        retrieveTimeForNamazAndTime("asr") + "\n" + "\n" +
-                        retrieveTimeForNamazAndTime("maghrib") + "\n" + "\n" +
-                        retrieveTimeForNamazAndTime("isha"));
+                retrieveTimeForNamazAndTime("Fajr") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("Dhuhr") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("Asr") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("Maghrib") + "\n" + "\n" +
+                        retrieveTimeForNamazAndTime("Isha"));
     }
 
     private String getDataFromFileAsString(String fileName) {
@@ -158,12 +162,25 @@ public class Helpers extends ContextWrapper {
             String data = getDataFromFileAsString(fileName);
             JSONArray readingData = new JSONArray(data);
             for (int i = 0; i < readingData.length(); i++) {
-                mData = readingData.getJSONObject(i).toString();
-                if (mData.contains(request)) {
-                    break;
+                JSONObject jsonObject = readingData.getJSONObject(i);
+                String dateFromData = jsonObject.getJSONObject("date").getString("readable");
+                SimpleDateFormat simpleDateFormat =  new SimpleDateFormat("dd MMM YYYY");
+                Date fromData = simpleDateFormat.parse(dateFromData);
+                Date todaysDate = simpleDateFormat.parse(request);
+                Calendar cal1 = Calendar.getInstance();
+                Calendar cal2 = Calendar.getInstance();
+                cal1.setTime(fromData);
+                cal2.setTime(todaysDate);
+                boolean sameDay = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                        cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+                if (sameDay) {
+                    mData = jsonObject.getJSONObject("timings").toString();
+                    return mData;
                 }
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         if (runningFromActivity) {
@@ -212,11 +229,11 @@ public class Helpers extends ContextWrapper {
 
     String[] getNamazTimesArray() {
         return new String[]{
-                retrieveTimeForNamazAndTime("fajr"),
-                retrieveTimeForNamazAndTime("dhuhr"),
-                retrieveTimeForNamazAndTime("asr"),
-                retrieveTimeForNamazAndTime("maghrib"),
-                retrieveTimeForNamazAndTime("isha")
+                retrieveTimeForNamazAndTime("Fajr"),
+                retrieveTimeForNamazAndTime("Dhuhr"),
+                retrieveTimeForNamazAndTime("Asr"),
+                retrieveTimeForNamazAndTime("Maghrib"),
+                retrieveTimeForNamazAndTime("Isha")
         };
     }
 
@@ -236,7 +253,26 @@ public class Helpers extends ContextWrapper {
 
     String retrieveTimeForNamazAndTime(String namaz) {
         SharedPreferences preference = getPreferenceManager();
-        return preference.getString(namaz, null);
+        String time =  preference.getString(namaz, null);
+        if (!time.contains(getDate())) {
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+            SimpleDateFormat sdfs = new SimpleDateFormat("hh:mm aa");
+            Date dt;
+            String namazTime = null;
+            Log.i("Helpers", "time " + time);
+            Log.i("Helpers", "time " + time.split(" ")[0]);
+            try {
+                dt = sdf.parse(time.split(" ")[0]);
+                namazTime = sdfs.format(dt);
+                System.out.println("Time Display: " + sdfs.format(dt)); // <-- I got result here
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return namazTime;
+        } else {
+            return time;
+        }
     }
 
     public static boolean locationEnabled() {

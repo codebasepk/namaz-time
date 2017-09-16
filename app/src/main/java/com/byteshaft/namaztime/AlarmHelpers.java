@@ -21,6 +21,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -46,12 +47,27 @@ public class AlarmHelpers extends ContextWrapper {
 
     void settingAlarm(int TEN_MINUTES) {
         String[] namazTimes = mHelpers.getNamazTimesArray();
-        for (String namazTime : namazTimes) {
+        for (String raw : namazTimes) {
+            String[] rawNamazTime = raw.split(" ");
+            String namazTime = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+            SimpleDateFormat sdfs = new SimpleDateFormat("hh:mm aa");
+            Date dt;
+            try {
+                dt = sdf.parse(rawNamazTime[0]);
+                namazTime = sdfs.format(dt);
+                System.out.println("Time Display: " + sdfs.format(dt)); // <-- I got result here
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
             try {
                 Date presentTime = mHelpers.getTimeFormat().parse(mHelpers.getAmPm());
                 Date namaz = mHelpers.getTimeFormat().parse(namazTime);
-                String item = namazTimes[4];
-                Date lastItem = mHelpers.getTimeFormat().parse(item);
+                String item = namazTimes[4].split(" ")[0];
+                Date lastDate = sdf.parse(item);
+                Date lastItem = mHelpers.getTimeFormat().parse(sdfs.format(lastDate));
                 if (presentTime.before(namaz)) {
                     long difference = namaz.getTime() - presentTime.getTime();
                     long subtractTenMinutes = difference - TEN_MINUTES;
