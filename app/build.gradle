@@ -7,8 +7,8 @@ android {
         applicationId "com.byteshaft.namaztime"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 4
-        versionName "0.8.4"
+        versionCode 8
+        versionName "0.8.8"
     }
     buildTypes {
         release {
