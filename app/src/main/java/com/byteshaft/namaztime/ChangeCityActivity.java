@@ -11,15 +11,19 @@
 
 package com.byteshaft.namaztime;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -38,9 +42,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byteshaft.namaztime.CityName.CityName;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.byteshaft.namaztime.R.id.relativeLayout;
 
@@ -58,18 +72,19 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
     static boolean sCityChanged = false;
     static boolean sActivityPaused = false;
     private MenuItem refresh;
-    private ArrayList<String> cityList;
-    private ArrayList<String> search;
-    private ArrayAdapter<String> modeAdapter;
+    private ArrayList<CityName> cityList;
+    private ArrayList<CityName> search;
+    private CityAdapter cityAdapter;
     private ListView list;
     private Button requestCity;
     private EditText toolbarSearchView;
-
+    private DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.changecitylayout);
+        getActivityRequests();
         requestCity = (Button) findViewById(R.id.add_my_city);
         requestCity.setOnClickListener(this);
         cityList = new ArrayList<>();
@@ -120,20 +135,19 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
                 if (!s.toString().trim().isEmpty()) {
                     search = new ArrayList<>();
                     list.setAdapter(null);
-                    modeAdapter = new ArrayAdapter<>(ChangeCityActivity.this, R.layout.list_item, search);
-                    list.setAdapter(modeAdapter);
+                    cityAdapter = new CityAdapter(ChangeCityActivity.this, search);
+                    list.setAdapter(cityAdapter);
                     for (int i = 0; i < cityList.size(); i++) {
-                        if (cityList.get(i).toLowerCase().contains(s.toString())) {
+                        if (cityList.get(i).getName().toLowerCase().contains(s.toString())) {
                             search.add(cityList.get(i));
-                            modeAdapter.notifyDataSetChanged();
+                            cityAdapter.notifyDataSetChanged();
                         }
                     }
                 } else {
                     list.setAdapter(null);
-                    modeAdapter = new ArrayAdapter<>(ChangeCityActivity.this, R.layout.list_item, cityList);
-                    list.setAdapter(modeAdapter);
+                    cityAdapter = new CityAdapter(ChangeCityActivity.this, cityList);
+                    list.setAdapter(cityAdapter);
                 }
-
 
 
             }
@@ -202,110 +216,43 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
 
     ListView getListView(int mPreviousCity) {
         list = new ListView(this);
-        // punjab
-        cityList.add("Lahore Punjab");
-        cityList.add("Multan Punjab");
-        cityList.add("Vehari Punjab");
-        cityList.add("Mailsi Punjab");
-        cityList.add("Deraghazikhan Punjab");
-        cityList.add("Shorkot Punjab");
-        cityList.add("Sadiqabad Punjab");
-        cityList.add("Khapur Punjab");
-        cityList.add("Muzaffargarh Punjab");
-        cityList.add("Gujrawala Punjab");
-        cityList.add("Gujrat Punjab");
-        cityList.add("Sialkot Punjab");
-        cityList.add("Chichawatni Punjab");
-        cityList.add("Sahiwal Punjab");
-        cityList.add("Okara Punjab");
-        cityList.add("Rahimyarkhan Punjab");
-        cityList.add("Pattoki Punjab");
-        cityList.add("Faisalabad Punjab");
-        cityList.add("Bahawalpur Punjab");
-        cityList.add("Rawalpindi Punjab");
-        cityList.add("Sargodha Punjab");
-        cityList.add("Sheikhupura Punjab");
-        cityList.add("Jhang Punjab");
-        cityList.add("MianChannu Punjab");
-        cityList.add("Chiniot Punjab");
-        cityList.add("Gojra Punjab");
-        // sindh
-        cityList.add("Sukkur Sindh");
-        cityList.add("Karachi Sindh");
-        cityList.add("Hyderabad Sindh");
-        cityList.add("Larkana Sindh");
-        cityList.add("Nawabshah Sindh");
-        cityList.add("MirpurKhas Sindh");
-        cityList.add("Jacobabad Sindh");
-        cityList.add("Shikarpur Sindh");
-        cityList.add("Khairpur Sindh");
-        cityList.add("Dadu Sindh");
-        // KPK
-        cityList.add("Peshawar Khyber Pakhtunkhwa");
-        cityList.add("Kohat Khyber Pakhtunkhwa");
-        cityList.add("Sawat Khyber Pakhtunkhwa");
-        cityList.add("Mallamjubba Khyber Pakhtunkhwa");
-        cityList.add("Abbottabad Khyber Pakhtunkhwa");
-        cityList.add("Mingora Khyber Pakhtunkhwa");
-        cityList.add("Bannu Khyber Pakhtunkhwa");
-        cityList.add("Swabi Khyber Pakhtunkhwa");
-        cityList.add("Deraismailkhan Khyber Pakhtunkhwa");
-        cityList.add("Charsadda Khyber Pakhtunkhwa");
-        cityList.add("Nowshera Khyber Pakhtunkhwa");
-        cityList.add("Mardan Khyber Pakhtunkhwa");
-        // Balochistan
-        cityList.add("Quetta Balochistan");
-        cityList.add("Turbat Balochistan");
-        cityList.add("Sibi Balochistan");
-        cityList.add("Lasbela Balochistan");
-        cityList.add("Zhob Balochistan");
-        cityList.add("Nasirabad Balochistan");
-        cityList.add("Jaffarabad Balochistan");
-        cityList.add("Hub Balochistan");
-        cityList.add("DeraMuradJamali Balochistan");
-        cityList.add("DeraAllahYar Balochistan");
-        // gitgit baltistan
-        cityList.add("Gilgit Gilgit Baltistan");
-        cityList.add("Skardu Gilgit Baltistan");
-        cityList.add("Ghangche Gilgit Baltistan");
-        cityList.add("Makhanpura Gilgit Baltistan");
-        cityList.add("Asqurdas Gilgit Baltistan");
-        cityList.add("Sumo Gilgit Baltistan");
-        cityList.add("Nagar Gilgit Baltistan");
-        cityList.add("Gupi Gilgit Baltistan");
-        cityList.add("Gultari Gilgit Baltistan");
-        // jammu and kashmir
-        cityList.add("Muzaffarabad Jammu and Kashmir");
-        cityList.add("Mirpur Jammu and Kashmir");
-        cityList.add("Bhimber Jammu and Kashmir");
-        cityList.add("Kotli Jammu and Kashmir");
-        cityList.add("Rawlakot Jammu and Kashmir");
-        cityList.add("Bagh Jammu and Kashmir");
-        cityList.add("Jatlan Jammu and Kashmir");
-        cityList.add("azadkashmir");
-        //ICT
-        cityList.add("Islamabad Capital Territory");
-        cityList.add("Parachinar");
-        cityList.add("Razmak");
-        cityList.add("Sadda");
-        cityList.add("Wana");
-        cityList.add("Khaar");
-        cityList.add("Alizai");
-        cityList.add("DarraAdamKhel");
-        cityList.add("LandiKotal");
-        cityList.add("Miranshah");
-        modeAdapter = new ArrayAdapter<>(this, R.layout.list_item, cityList);
-        list.setAdapter(modeAdapter);
+//        saveCities(cityNameArrayList);
+        cityAdapter = new CityAdapter(this, cityList);
+        list.setAdapter(cityAdapter);
         list.setItemChecked(mPreviousCity, true);
         mRelativeLayout.addView(list);
         return list;
+    }
+
+    private void getActivityRequests() {
+        ref = FirebaseDatabase.getInstance().
+                getReference()
+                .child("Database").child("cities");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Log.i("TAG", "request" + ds.getKey());
+                    Log.i("TAG", "value " + ds.getValue(CityName.class).getName());
+                    cityList.add(ds.getValue(CityName.class));
+                    cityAdapter.notifyDataSetChanged();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("TAG", databaseError.getMessage());
+
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
-        Intent intent = new Intent(this , MainActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
@@ -337,4 +284,56 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
         }
 
     }
+
+    private void saveCities(final ArrayList<CityName> cityNames) {
+        ref = FirebaseDatabase.getInstance().
+                getReference();
+        for (CityName cityName1 : cityNames) {
+            ref.child("Database").child("cities").push()
+                    .setValue(cityName1).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                    }
+                }
+
+            });
+        }
+    }
+
+    private class CityAdapter extends ArrayAdapter<CityName> {
+
+        private ViewHolder viewHolder;
+        private ArrayList<CityName> cityNames;
+
+        public CityAdapter(Context context, ArrayList<CityName> arrayList) {
+            super(context, R.layout.list_item);
+            cityNames = arrayList;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                viewHolder = new ViewHolder();
+                convertView = getLayoutInflater().inflate(R.layout.list_item, parent, false);
+                viewHolder.cityName = (TextView) convertView.findViewById(R.id.tv);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            CityName cityName = cityNames.get(position);
+            viewHolder.cityName.setText(cityName.getName());
+            return convertView;
+        }
+
+        @Override
+        public int getCount() {
+            return cityNames.size();
+        }
+    }
+
+    private class ViewHolder {
+        TextView cityName;
+    }
 }
+

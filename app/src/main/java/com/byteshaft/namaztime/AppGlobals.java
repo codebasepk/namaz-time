@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +25,8 @@ public class AppGlobals extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        FirebaseApp.initializeApp(getApplicationContext());
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     public static Context getContext() {
