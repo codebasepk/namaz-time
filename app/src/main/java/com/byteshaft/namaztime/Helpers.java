@@ -26,6 +26,8 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.byteshaft.namaztime.fragments.Home;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +48,7 @@ public class Helpers extends ContextWrapper {
     private StringBuilder mStringBuilder = null;
     private String mData = null;
 
-    Helpers(Context context) {
+    public Helpers(Context context) {
         super(context);
     }
 
@@ -54,20 +56,20 @@ public class Helpers extends ContextWrapper {
         super(activityContext);
     }
 
-    boolean isNetworkAvailable() {
+    public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    void showInternetNotAvailableDialog() {
+    public void showInternetNotAvailableDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("No Internet");
         alert.setMessage("Please connect to the internet and try again");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                MainActivity.getInstance().finish();
+
             }
         });
         alert.show();
@@ -81,7 +83,7 @@ public class Helpers extends ContextWrapper {
         return new SimpleDateFormat("dd MMM YYYY");
     }
 
-    String getDate() {
+    public String getDate() {
         return getDateFormat().format(getCalenderInstance().getTime());
     }
 
@@ -93,7 +95,7 @@ public class Helpers extends ContextWrapper {
         return new SimpleDateFormat("h:mm aa");
     }
 
-    void setTimesFromDatabase(boolean runningFromActivity, String fileName) {
+    public void setTimesFromDatabase(boolean runningFromActivity, String fileName) {
         String date = getDate();
         String output = getPrayerTimesForDate(date, runningFromActivity, fileName);
         Log.i("TAG", "output " + output);
@@ -122,7 +124,7 @@ public class Helpers extends ContextWrapper {
 
     void displayData() {
         String currentCity = getPreviouslySelectedCityName();
-        UiUpdateHelpers uiUpdateHelpers = new UiUpdateHelpers(MainActivity.getInstance());
+        UiUpdateHelpers uiUpdateHelpers = new UiUpdateHelpers(Home.getInstance().getActivity());
         uiUpdateHelpers.setDate(getDate());
         uiUpdateHelpers.setCurrentCity(toTheUpperCaseSingle(currentCity));
         uiUpdateHelpers.displayDate(getAmPm());
@@ -198,17 +200,17 @@ public class Helpers extends ContextWrapper {
         return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-    String getPreviouslySelectedCityName() {
+    public String getPreviouslySelectedCityName() {
         SharedPreferences preferences = getPreferenceManager();
         return preferences.getString(SELECTED_CITY_NAME, "Karachi");
     }
 
-    int getPreviouslySelectedCityIndex() {
+    public int getPreviouslySelectedCityIndex() {
         SharedPreferences preferences = getPreferenceManager();
         return preferences.getInt(SELECTED_CITY_POSITION, 0);
     }
 
-    void saveSelectedCity(String cityName, int positionInSpinner) {
+    public void saveSelectedCity(String cityName, int positionInSpinner) {
         SharedPreferences preferences = getPreferenceManager();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(SELECTED_CITY_NAME, cityName);
@@ -216,7 +218,7 @@ public class Helpers extends ContextWrapper {
         editor.apply();
     }
 
-    void writeDataToFile(String file, String data) {
+    public void writeDataToFile(String file, String data) {
         FileOutputStream fileOutputStream;
         try {
             fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
@@ -251,7 +253,7 @@ public class Helpers extends ContextWrapper {
         preference.edit().putString("date", getDate()).apply();
     }
 
-    String retrieveTimeForNamazAndTime(String namaz) {
+    public String retrieveTimeForNamazAndTime(String namaz) {
         SharedPreferences preference = getPreferenceManager();
         String time =  preference.getString(namaz, null);
         if (!time.contains(getDate())) {

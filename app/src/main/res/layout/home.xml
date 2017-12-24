@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/dateLabel"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/displayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        />
+
+    <TextView
+        android:id="@+id/textCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dateLabel"
+        android:paddingTop="20dp"
+        />
+
+
+    <TextView
+        android:id="@+id/namazLabel"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textCity"
+        android:paddingTop="25dp"
+        />
+
+    <TextView
+        android:id="@+id/namazTimesLabel"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/namazLabel"
+        android:layout_alignRight="@+id/displayTime"
+        android:layout_alignEnd="@+id/displayTime" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleLarge"
+        android:id="@+id/progressBar"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_icon"
+        tools:ignore="VectorDrawableCompat" />
+
+</RelativeLayout>

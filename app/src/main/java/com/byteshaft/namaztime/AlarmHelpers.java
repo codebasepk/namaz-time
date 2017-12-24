@@ -109,7 +109,7 @@ public class AlarmHelpers extends ContextWrapper {
         return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
-    void removePreviousAlarams() {
+    public void removePreviousAlarams() {
         try {
             if (mPendingIntent != null) {
                 Log.i("NAMAZ_TIME", "removing namaz Alarm");

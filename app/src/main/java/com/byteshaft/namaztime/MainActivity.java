@@ -13,219 +13,88 @@ package com.byteshaft.namaztime;
 
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 
-import com.byteshaft.namaztime.geofencing.GeofenceTransitionService;
-import com.byteshaft.namaztime.geofencing.SimpleGeofence;
-import com.google.android.gms.maps.model.LatLng;
+import com.byteshaft.namaztime.fragments.ChangeCity;
+import com.byteshaft.namaztime.fragments.Home;
+import com.byteshaft.namaztime.fragments.Maps;
 
-import java.io.File;
-import java.util.Set;
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener {
 
-public class MainActivity extends ActionBarActivity {
-
-    public String sFileName = null;
-    static ProgressBar sProgressBar;
-    private static MainActivity sActivityInstance = null;
-    private Notifications notifications;
-    private Helpers mHelpers = null;
-    private File mFile;
-    public static MainActivity getInstance() {
-        return sActivityInstance;
-    }
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
     private NotificationManager notificationManager;
 
-    private void setActivityInstance(MainActivity mainActivity) {
-        sActivityInstance = mainActivity;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        sProgressBar.setVisibility(View.INVISIBLE);
         notificationManager =
                 (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-        setActivityInstance(this);
-        Set<String> hashSet = AppGlobals.getHashSet();
-        if (hashSet.size() < 1) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle("New Feature");
-            dialog.setMessage("You can now add your mosque to the app to silent your mobile when you are inside mosque.");
-            dialog.setPositiveButton("Add now", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    startActivity(new Intent(getApplicationContext(), MapsActivity.class));
-                    //get gps
-                }
-            });
-            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-                }
-            });
-            dialog.show();
-        }
-        mHelpers = new Helpers(this);
-        notifications = new Notifications(this);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        loadFragment(new Home());
+    }
+
+    public void loadFragment(Fragment fragment) {
+        String backStateName = fragment.getClass().getSimpleName();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        fragmentTransaction.replace(R.id.container, fragment, backStateName);
+        fragmentTransaction.commit();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        sFileName = mHelpers.getPreviouslySelectedCityName();
-        String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + sFileName;
-        mFile = new File(location);
-        if (!mFile.exists() && mHelpers.isNetworkAvailable()) {
-            sProgressBar.setVisibility(View.VISIBLE);
-            NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
-            namazTimesDownloadTask.downloadNamazTime();
-        } else if (!mHelpers.isNetworkAvailable() && !mFile.exists()) {
-            mHelpers.showInternetNotAvailableDialog();
-        } else if (mFile.exists()) {
-            mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
-            if (!ChangeCityActivity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
-                Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-                sendBroadcast(alarmIntent);
-            }
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        changeCityInDisplay();
-        if (ChangeCityActivity.sCityChanged) {
-            Log.i("NAMAZ_TIME" ,  "City Changed");
-            notifications.removeNotification();
-            Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-            sendBroadcast(alarmIntent);
-            ChangeCityActivity.sCityChanged = false;
-        }
-
-        if (GeofenceTransitionService.getInstance() != null) {
-            if (Helpers.isMyServiceRunning(GeofenceTransitionService.getInstance().getClass())) {
-                GeofenceTransitionService.getInstance().stopSelf();
-            }
-        }
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_LOCATION);
-
-        } else {
-            if (Helpers.locationEnabled()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                        && !notificationManager.isNotificationPolicyAccessGranted()) {
-                    Intent intent = new Intent(
-                            android.provider.Settings
-                                    .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-                    startActivity(intent);
-                } else {
-                    new android.os.Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Set<String> latLngSet = AppGlobals.getHashSet();
-                            if (latLngSet.size() > 0) {
-                                SimpleGeofence simpleGeofence = new SimpleGeofence();
-                                int counter = 0;
-                                for (String location : latLngSet) {
-                                    Log.i("TAG", "adding fence" + counter);
-                                    String[] locations = location.split(",");
-                                    LatLng latLng = new LatLng(Double.parseDouble(locations[0]),
-                                            Double.parseDouble(locations[1]));
-                                    Log.i("TAG", "Fence :Lat " + latLng.latitude + " Lng "+ latLng.longitude);
-                                    simpleGeofence.createGeofences(String.valueOf(counter), latLng.latitude, latLng.longitude);
-                                    counter++;
-                                }
-                            }
-                        }
-                    }, 2000);
-                }
-            }
-        }
     }
 
-    private void changeCityInDisplay() {
-        if (mFile.exists() && !mHelpers.retrieveTimeForNamazAndTime("date").equals(mHelpers.getDate())) {
-            mHelpers.setTimesFromDatabase(true, sFileName);
-        }
-    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent startMain = new Intent(Intent.ACTION_MAIN);
-        startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
-        startActivity(startMain);
-        finish();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_change_city:
-                changeCity();
-                return true;
-            case R.id.action_add_location:
-                if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            MY_PERMISSIONS_REQUEST_LOCATION);
-
-                } else {
-                    if (Helpers.locationEnabled()) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                                && !notificationManager.isNotificationPolicyAccessGranted()) {
-                            Intent intent = new Intent(
-                                    android.provider.Settings
-                                            .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-                            startActivity(intent);
-                        } else {
-                            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
-                        }
-                    } else {
-                        Helpers.dialogForLocationEnableManually(this);
-                    }
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -242,7 +111,7 @@ public class MainActivity extends ActionBarActivity {
                                         .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                         startActivity(intent);
                     } else {
-                        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                        startActivity(new Intent(getApplicationContext(), Maps.class));
                     }
                 }
                 break;
@@ -278,17 +147,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void changeCity() {
-        Intent intent = new Intent(this, ChangeCityActivity.class);
+        Intent intent = new Intent(this, ChangeCity.class);
         finish();
         startActivity(intent);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (sProgressBar.isShown()) {
-            sProgressBar.setVisibility(View.INVISIBLE);
-        }
     }
 
     @Override
@@ -306,5 +167,64 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_home) {
+            loadFragment(new Home());
+            // Handle the camera action
+        } else if (id == R.id.nav_add_masjid) {
+            loadFragment(new Maps());
+        } else if (id == R.id.nav_change_city) {
+            loadFragment(new ChangeCity());
+
+        } else if (id == R.id.nav_request_addition) {
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto","s9iper1@gmail.com", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "New City Request");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, ("Add this city "));
+            startActivity(Intent.createChooser(emailIntent, "Send Email"));
+        } else if (id == R.id.nav_share) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    private void checkPermissionAndProceed() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+
+        } else {
+            if (Helpers.locationEnabled()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                        && !notificationManager.isNotificationPolicyAccessGranted()) {
+                    Intent intent = new Intent(
+                            android.provider.Settings
+                                    .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                    startActivity(intent);
+                } else {
+                    startActivity(new Intent(getApplicationContext(), Maps.class));
+                }
+            } else {
+                Helpers.dialogForLocationEnableManually(this);
+            }
+        }
     }
 }

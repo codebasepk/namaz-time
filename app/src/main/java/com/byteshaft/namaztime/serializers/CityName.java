@@ -1,4 +1,4 @@
-package com.byteshaft.namaztime.CityName;
+package com.byteshaft.namaztime.serializers;
 
 /**
  * Created by s9iper1 on 12/24/17.

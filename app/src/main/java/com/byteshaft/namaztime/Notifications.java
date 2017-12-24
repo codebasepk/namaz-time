@@ -90,7 +90,7 @@ public class Notifications extends ContextWrapper {
         return notificationBuilder;
     }
 
-    void removeNotification() {
+    public void removeNotification() {
         mNotificationManager.cancel(UPCOMING_NAMAZ_NOTIFICATION_ID);
     }
 }

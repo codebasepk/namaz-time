@@ -20,6 +20,9 @@ public class AppGlobals extends Application {
     private static final String MASJIDLOCATIONS = "masjid_locations";
     private static final String AudioMode = "audio_mode";
     public static final int LOCATION_ENABLE = 10;
+    private static final String MY_CITY = "my_city";
+    private static final String MY_COUNTRY = "my_country";
+    private static final String OPENED_MAPS_ONCE = "open_maps_once";
 
     @Override
     public void onCreate() {
@@ -58,4 +61,35 @@ public class AppGlobals extends Application {
         SharedPreferences sharedPreferences = getPreferenceManager();
         return sharedPreferences.getInt(AudioMode, -1);
     }
+
+    public static void savePersonCity(String  city) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putString(MY_CITY, city).apply();
+    }
+
+    public static String getPersonCity() {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getString(MY_CITY, "");
+    }
+
+    public static void savePersonCountry(String country) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putString(MY_COUNTRY, country).apply();
+    }
+
+    public static String getPersonCountry() {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getString(MY_COUNTRY, "");
+    }
+
+    public static void anyLocationSaved(boolean mapsOpened) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putBoolean(OPENED_MAPS_ONCE, mapsOpened).apply();
+    }
+
+    public static boolean isLocationSaved() {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getBoolean(OPENED_MAPS_ONCE, false);
+    }
 }
+

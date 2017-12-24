@@ -9,7 +9,7 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -26,7 +27,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +45,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.byteshaft.namaztime.CityName.CityName;
+import com.byteshaft.namaztime.AlarmHelpers;
+import com.byteshaft.namaztime.Helpers;
+import com.byteshaft.namaztime.MainActivity;
+import com.byteshaft.namaztime.Notifications;
+import com.byteshaft.namaztime.R;
+import com.byteshaft.namaztime.serializers.CityName;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -54,12 +62,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.byteshaft.namaztime.R.id.relativeLayout;
 
 
-public class ChangeCityActivity extends AppCompatActivity implements ListView.OnItemClickListener,
+public class ChangeCity extends Fragment implements ListView.OnItemClickListener,
         View.OnClickListener {
 
     private RelativeLayout mRelativeLayout;
@@ -67,40 +74,41 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
     private AlarmHelpers mAlarmHelpers;
     private File mFile;
     private ChangeCityHelpers mChangeCityHelpers;
-    static ProgressBar sProgressBar;
+    public static ProgressBar sProgressBar;
     private Notifications notifications;
-    static boolean sCityChanged = false;
-    static boolean sActivityPaused = false;
+    public static boolean sCityChanged = false;
+    public static boolean sActivityPaused = false;
     private MenuItem refresh;
     private ArrayList<CityName> cityList;
     private ArrayList<CityName> search;
     private CityAdapter cityAdapter;
     private ListView list;
-    private Button requestCity;
     private EditText toolbarSearchView;
     private DatabaseReference ref;
+    private View mBaseView;
+    private Toolbar toolbar;
+    private  LinearLayout searchContainer;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.changecitylayout);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mBaseView = inflater.inflate(R.layout.changecitylayout, container, false);
         getActivityRequests();
-        requestCity = (Button) findViewById(R.id.add_my_city);
-        requestCity.setOnClickListener(this);
         cityList = new ArrayList<>();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final LinearLayout searchContainer = new LinearLayout(this);
-        Toolbar.LayoutParams containerParams = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+
+        searchContainer = new LinearLayout(getActivity());
+        Toolbar.LayoutParams containerParams = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
         containerParams.gravity = Gravity.CENTER_VERTICAL;
         searchContainer.setLayoutParams(containerParams);
 
         // Setup search view
-        toolbarSearchView = new EditText(this);
+        toolbarSearchView = new EditText(getActivity());
         // Set width / height / gravity
         int[] textSizeAttr = new int[]{android.R.attr.actionBarSize};
         int indexOfAttrTextSize = 0;
-        TypedArray a = obtainStyledAttributes(new TypedValue().data, textSizeAttr);
+        TypedArray a = getActivity().obtainStyledAttributes(new TypedValue().data, textSizeAttr);
         int actionBarHeight = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
         a.recycle();
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, actionBarHeight);
@@ -135,7 +143,7 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
                 if (!s.toString().trim().isEmpty()) {
                     search = new ArrayList<>();
                     list.setAdapter(null);
-                    cityAdapter = new CityAdapter(ChangeCityActivity.this, search);
+                    cityAdapter = new CityAdapter(getContext(), search);
                     list.setAdapter(cityAdapter);
                     for (int i = 0; i < cityList.size(); i++) {
                         if (cityList.get(i).getName().toLowerCase().contains(s.toString())) {
@@ -145,7 +153,7 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
                     }
                 } else {
                     list.setAdapter(null);
-                    cityAdapter = new CityAdapter(ChangeCityActivity.this, cityList);
+                    cityAdapter = new CityAdapter(getContext(), cityList);
                     list.setAdapter(cityAdapter);
                 }
 
@@ -165,24 +173,36 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
         LinearLayout.LayoutParams clearParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         clearParams.gravity = Gravity.CENTER;
         // Add search view to toolbar and hide it
-        toolbar.addView(searchContainer);
-        sProgressBar = (ProgressBar) findViewById(R.id.mprogressBar);
+        sProgressBar = (ProgressBar) mBaseView.findViewById(R.id.mprogressBar);
         sProgressBar.setVisibility(View.INVISIBLE);
-        mHelpers = new Helpers(this);
-        mAlarmHelpers = new AlarmHelpers(this);
-        mChangeCityHelpers = new ChangeCityHelpers(this);
-        notifications = new Notifications(this);
+        mHelpers = new Helpers(getContext());
+        mAlarmHelpers = new AlarmHelpers(getContext());
+        mChangeCityHelpers = new ChangeCityHelpers(getContext());
+        notifications = new Notifications(getContext());
         int mPreviousCity = mHelpers.getPreviouslySelectedCityIndex();
-        mRelativeLayout = (RelativeLayout) findViewById(relativeLayout);
+        mRelativeLayout = (RelativeLayout) mBaseView.findViewById(relativeLayout);
         ListView list = getListView(mPreviousCity);
         list.setOnItemClickListener(this);
+        return mBaseView;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.select_name_search, menu);
+    public void onResume() {
+        super.onResume();
+        toolbar.addView(searchContainer);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        toolbar.removeView(searchContainer);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.select_name_search, menu);
         refresh = menu.findItem(R.id.action_refresh);
-        return true;
     }
 
     @Override
@@ -201,7 +221,7 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
         mAlarmHelpers.removePreviousAlarams();
         sCityChanged = true;
         String city = parent.getItemAtPosition(position).toString();
-        String location = getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
+        String location = getActivity().getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         mFile = new File(location);
         if (mFile.exists()) {
             mChangeCityHelpers.fileExists(parent, position);
@@ -209,15 +229,15 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
             if (mHelpers.isNetworkAvailable()) {
                 mChangeCityHelpers.fileNotExists(parent, position);
             } else {
-                Toast.makeText(this, "Network isn't available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Network isn't available", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     ListView getListView(int mPreviousCity) {
-        list = new ListView(this);
+        list = new ListView(getContext());
 //        saveCities(cityNameArrayList);
-        cityAdapter = new CityAdapter(this, cityList);
+        cityAdapter = new CityAdapter(getContext(), cityList);
         list.setAdapter(cityAdapter);
         list.setItemChecked(mPreviousCity, true);
         mRelativeLayout.addView(list);
@@ -249,38 +269,9 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        this.finish();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sActivityPaused = true;
-        if (sProgressBar.isShown()) {
-            this.finish();
-        }
-        finish();
-    }
-
-    @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.add_my_city:
-                if (!toolbarSearchView.getText().toString().trim().isEmpty()) {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_EMAIL, "byteshaft@gmail.com");
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "New City Request");
-                    intent.putExtra(Intent.EXTRA_TEXT, String.format("Please Add City : %s to your database. thank you", toolbarSearchView.getText().toString()));
-                    startActivity(Intent.createChooser(intent, "Send Email"));
-                } else {
-                    Toast.makeText(ChangeCityActivity.this, "Please enter your city name at the top with province before pressing this button", Toast.LENGTH_LONG).show();
-                }
-                break;
+
         }
 
     }
@@ -315,7 +306,7 @@ public class ChangeCityActivity extends AppCompatActivity implements ListView.On
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 viewHolder = new ViewHolder();
-                convertView = getLayoutInflater().inflate(R.layout.list_item, parent, false);
+                convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item, parent, false);
                 viewHolder.cityName = (TextView) convertView.findViewById(R.id.tv);
                 convertView.setTag(viewHolder);
             } else {

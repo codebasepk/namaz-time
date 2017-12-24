@@ -9,6 +9,8 @@
     <string name="next">Next</string>
     <string name="ticker_text">Notification</string>
     <string name="action_settings">Change City</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-4138623732239837/6099117309</string>
     <string name="interstitial_ad_id">ca-app-pub-4138623732239837/9345131703</string>

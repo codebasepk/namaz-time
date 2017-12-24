@@ -1,61 +1,25 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="2dp"
-    android:background="@drawable/background"
-    tools:context=".MainActivity">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <TextView
-        android:id="@+id/dateLabel"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"/>
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/displayTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            />
-
-        <TextView
-            android:id="@+id/textCity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/dateLabel"
-            android:paddingTop="20dp"
-            />
-
-
-        <TextView
-            android:id="@+id/namazLabel"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textCity"
-            android:paddingTop="25dp"
-            />
-
-        <TextView
-            android:id="@+id/namazTimesLabel"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/namazLabel"
-            android:layout_alignRight="@+id/displayTime"
-            android:layout_alignEnd="@+id/displayTime" />
-
-    <ProgressBar
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/progressBarStyleLarge"
-        android:id="@+id/progressBar"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
 
-</RelativeLayout>
-
+</android.support.v4.widget.DrawerLayout>

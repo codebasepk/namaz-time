@@ -9,7 +9,7 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.fragments;
 
 
 import android.content.Context;
@@ -17,6 +17,10 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
+
+import com.byteshaft.namaztime.Helpers;
+import com.byteshaft.namaztime.MainActivity;
+import com.byteshaft.namaztime.NamazTimesDownloadTask;
 
 public class ChangeCityHelpers extends ContextWrapper {
     Helpers mHelpers = new Helpers(this);
@@ -31,7 +35,7 @@ public class ChangeCityHelpers extends ContextWrapper {
         String cityName = parent.getItemAtPosition(position).toString();
         mHelpers.saveSelectedCity(cityName.trim(), position);
         NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
-        ChangeCityActivity.sProgressBar.setVisibility(View.VISIBLE);
+        ChangeCity.sProgressBar.setVisibility(View.VISIBLE);
         namazTimesDownloadTask.downloadNamazTime();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

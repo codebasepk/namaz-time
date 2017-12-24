@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.byteshaft.namaztime.fragments.ChangeCity;
+import com.byteshaft.namaztime.fragments.Home;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,7 @@ public class NamazTimesDownloadTask {
         mHelpers = new Helpers(mContext);
     }
 
-    void downloadNamazTime() {
+    public void downloadNamazTime() {
         String[] cityState = mHelpers.getPreviouslySelectedCityName().split(" ");
         String city = cityState[0];
         String state = null;
@@ -65,13 +67,13 @@ public class NamazTimesDownloadTask {
                             data = jsonArray.toString();
                             mHelpers.writeDataToFile(mHelpers.getPreviouslySelectedCityName(), data);
                                 mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
-                                if (MainActivity.sProgressBar.isShown()) {
-                                    MainActivity.sProgressBar.setVisibility(View.INVISIBLE);
-                                } else if (ChangeCityActivity.sCityChanged) {
-                                    if (ChangeCityActivity.sProgressBar.isShown()) {
-                                        ChangeCityActivity.sProgressBar.setVisibility(View.INVISIBLE);
+                                if (Home.sProgressBar.isShown()) {
+                                    Home.sProgressBar.setVisibility(View.INVISIBLE);
+                                } else if (ChangeCity.sCityChanged) {
+                                    if (ChangeCity.sProgressBar.isShown()) {
+                                        ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
                                     }
-                                    if (!ChangeCityActivity.sActivityPaused) {
+                                    if (!ChangeCity.sActivityPaused) {
                                         Intent intent = new Intent(mContext, MainActivity.class);
                                         mContext.startActivity(intent);
                                     }
@@ -90,13 +92,13 @@ public class NamazTimesDownloadTask {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (MainActivity.sProgressBar.isShown()) {
-                    MainActivity.sProgressBar.setVisibility(View.INVISIBLE);
-                } else if (ChangeCityActivity.sCityChanged) {
-                    if (ChangeCityActivity.sProgressBar.isShown()) {
-                        ChangeCityActivity.sProgressBar.setVisibility(View.INVISIBLE);
+                if (Home.sProgressBar.isShown()) {
+                    Home.sProgressBar.setVisibility(View.INVISIBLE);
+                } else if (ChangeCity.sCityChanged) {
+                    if (ChangeCity.sProgressBar.isShown()) {
+                        ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
                     }
-                    if (!ChangeCityActivity.sActivityPaused) {
+                    if (!ChangeCity.sActivityPaused) {
                         Intent intent = new Intent(mContext, MainActivity.class);
                         mContext.startActivity(intent);
                     }
