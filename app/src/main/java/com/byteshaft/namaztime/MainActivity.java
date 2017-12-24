@@ -13,8 +13,10 @@ package com.byteshaft.namaztime;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -31,20 +33,27 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.byteshaft.namaztime.fragments.ChangeCity;
 import com.byteshaft.namaztime.fragments.Home;
 import com.byteshaft.namaztime.fragments.Maps;
+import com.byteshaft.namaztime.geofence.GeofenceService;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
     private NotificationManager notificationManager;
+    public static boolean sPermissionNotGranted = false;
 
 
     @Override
@@ -62,8 +71,50 @@ public class MainActivity extends AppCompatActivity implements
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        final SwitchCompat serviceSwitch = headerView.findViewById(R.id.service_switch);
+        serviceSwitch.setChecked(AppGlobals.isServiceRunning());
+        if (AppGlobals.isServiceRunning() && AppGlobals.isLocationSaved() &&
+            Helpers.locationEnabled() && ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            startService(new Intent(getApplicationContext(), GeofenceService.class));
+        } else if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+
+        } else if (!Helpers.locationEnabled()) {
+            Helpers.dialogForLocationEnableManually(MainActivity.this);
+        }
+
+        serviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if (AppGlobals.isLocationSaved() &&
+                            Helpers.locationEnabled()) {
+                        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                                Manifest.permission.ACCESS_FINE_LOCATION)
+                                == PackageManager.PERMISSION_GRANTED) {
+                            AppGlobals.serviceState(true);
+                            startService(new Intent(getApplicationContext(), GeofenceService.class));
+                        }
+                        else {
+                            sPermissionNotGranted = true;
+                        }
+                    } else {
+                        serviceSwitch.setChecked(false);
+                    }
+                } else {
+                    AppGlobals.serviceState(false);
+                    stopService(new Intent(getApplicationContext(), GeofenceService.class));
+                }
+            }
+        });
         navigationView.setNavigationItemSelectedListener(this);
         loadFragment(new Home());
     }
@@ -111,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements
                                         .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                         startActivity(intent);
                     } else {
-                        startActivity(new Intent(getApplicationContext(), Maps.class));
+
                     }
                 }
                 break;
@@ -128,6 +179,9 @@ public class MainActivity extends AppCompatActivity implements
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Snackbar.make(findViewById(android.R.id.content), "permission granted",
                             Snackbar.LENGTH_SHORT).show();
+                    if (!Helpers.locationEnabled()) {
+                        Helpers.dialogForLocationEnableManually(MainActivity.this);
+                    }
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
@@ -190,13 +244,75 @@ public class MainActivity extends AppCompatActivity implements
             emailIntent.putExtra(Intent.EXTRA_TEXT, ("Add this city "));
             startActivity(Intent.createChooser(emailIntent, "Send Email"));
         } else if (id == R.id.nav_share) {
-
+            shareapp();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    protected void shareapp() {
+
+        String APP_LINK = "https://play.google.com/store/apps/details?id=com.bytesahft.namaztime";
+
+        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+        View promptsView = li.inflate(R.layout.edit, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // set prompts.xml to alertdialog builder
+
+        alertDialogBuilder.setTitle(getString(R.string.app_name));
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText edtText = (EditText) promptsView.findViewById(R.id.edtName);
+        String body = getString(R.string.Share_App_Body_top) + " " + getString(R.string.app_name) + " " +
+                getString(R.string.Share_App_Body_middle) + " " + APP_LINK + " " +
+                getString(R.string.Share_App_Body_bottom);
+        edtText.setText(body);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.Send),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // get user input and set it to result
+                                // edit text
+                                String finalString = (edtText.getText().toString());
+
+                                Intent email = new Intent(Intent.ACTION_SEND);
+                                email.setType("text/plain");
+                                email.putExtra(Intent.EXTRA_EMAIL, "");
+                                email.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                email.putExtra(Intent.EXTRA_SUBJECT, " " + getString(R.string.app_name) + " " + getString(R.string.Share_App_Sub));
+
+                                //						String body=getString(R.string.Share_App_Body_top)+" "+getString(R.string.app_name)+" "+
+                                //						getString(R.string.Share_App_Body_middle)+ " "+APP_LINK+" "+
+                                //						getString(R.string.Share_App_Body_bottom);
+
+                                email.putExtra(Intent.EXTRA_TEXT, finalString);
+
+                                try {
+                                    startActivity(Intent.createChooser(email, "Send Message..."));
+                                } catch (android.content.ActivityNotFoundException ex) {
+
+                                }
+                            }
+                        })
+                .setNegativeButton("cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
+    }
+
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
@@ -220,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements
                                     .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                     startActivity(intent);
                 } else {
-                    startActivity(new Intent(getApplicationContext(), Maps.class));
+
                 }
             } else {
                 Helpers.dialogForLocationEnableManually(this);

@@ -23,6 +23,8 @@ public class AppGlobals extends Application {
     private static final String MY_CITY = "my_city";
     private static final String MY_COUNTRY = "my_country";
     private static final String OPENED_MAPS_ONCE = "open_maps_once";
+    private static final String SERVICE_STATE = "service_state";
+
 
     @Override
     public void onCreate() {
@@ -90,6 +92,16 @@ public class AppGlobals extends Application {
     public static boolean isLocationSaved() {
         SharedPreferences sharedPreferences = getPreferenceManager();
         return sharedPreferences.getBoolean(OPENED_MAPS_ONCE, false);
+    }
+
+    public static void serviceState(boolean mapsOpened) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putBoolean(SERVICE_STATE, mapsOpened).apply();
+    }
+
+    public static boolean isServiceRunning() {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getBoolean(SERVICE_STATE, false);
     }
 }
 

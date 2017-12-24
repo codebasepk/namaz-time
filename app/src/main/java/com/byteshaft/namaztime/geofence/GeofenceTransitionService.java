@@ -1,4 +1,4 @@
-package com.byteshaft.namaztime.geofencing;
+package com.byteshaft.namaztime.geofence;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -46,7 +46,6 @@ public class GeofenceTransitionService extends IntentService {
         Log.i(TAG, "onHandleIntent");
         am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         geofenceTransitionsIntentService = this;
-        Log.i("TAG", intent.getStringExtra("id"));
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             Log.e(TAG, "Goefencing Error " + geofencingEvent.getErrorCode());
@@ -87,7 +86,7 @@ public class GeofenceTransitionService extends IntentService {
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setLargeIcon(bm)
-                .setSmallIcon(R.drawable.mosque)
+                .setSmallIcon(R.drawable.ic_masjid)
                 .setTicker("Mobile silenter")
                 .setContentTitle("Namaz time")
                 .setContentText(message)

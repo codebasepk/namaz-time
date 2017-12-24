@@ -82,9 +82,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <service android:name=".geofence.GeofenceService" android:enabled="true"/>
 
         <service
-            android:name=".geofencing.GeofenceTransitionService"
+            android:name=".geofence.GeofenceTransitionService"
             android:exported="true" />
 
     </application>

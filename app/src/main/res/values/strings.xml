@@ -14,4 +14,13 @@
 
     <string name="banner_ad_unit_id">ca-app-pub-4138623732239837/6099117309</string>
     <string name="interstitial_ad_id">ca-app-pub-4138623732239837/9345131703</string>
+
+    <string name="Share_App">Share App</string>
+    <string name="Share_App_Sub">"Android Application"</string>
+    <string name="Share_App_Body_top">" just found "</string>
+    <string name="Share_App_Body_middle"> , it silent your mobile when you are in mosque and ringer mode when leave mosque.</string>
+    <string name="Share_App_Body_bottom">""</string>
+    <string name="Send">Send</string>
+    <string name="Cancel">Cancel</string>
+    <string name="ContactUS">Contact</string>
 </resources>
