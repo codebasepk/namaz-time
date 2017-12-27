@@ -5,7 +5,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.byteshaft.namaztime"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 26
         versionCode 11
         versionName "1.0"
@@ -31,6 +31,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:11.+'
     compile 'com.google.android.gms:play-services-location:11.+'
     compile 'com.google.firebase:firebase-database:11.+'
+    implementation 'com.byteshaft.requests:requests:0.5.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -111,6 +111,7 @@
     <orderEntry type="library" name="com.google.firebase:firebase-database-11.0.4" level="project" />
     <orderEntry type="library" scope="TEST" name="junit:junit:4.12@jar" level="project" />
     <orderEntry type="library" name="com.android.support:appcompat-v7-26.0.0-alpha1" level="project" />
+    <orderEntry type="library" name="com.byteshaft.requests:requests-0.5.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-media-compat-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="com.mcxiaoke.volley:library:1.0.15@jar" level="project" />
     <orderEntry type="library" name="com.android.support:recyclerview-v7-26.0.0-alpha1" level="project" />

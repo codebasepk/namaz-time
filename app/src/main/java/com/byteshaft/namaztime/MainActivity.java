@@ -23,6 +23,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -35,6 +36,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -47,6 +49,14 @@ import com.byteshaft.namaztime.fragments.Home;
 import com.byteshaft.namaztime.fragments.Maps;
 import com.byteshaft.namaztime.geofence.GeofenceService;
 import com.byteshaft.namaztime.helpers.Helpers;
+import com.byteshaft.namaztime.serializers.MasjidDetails;
+import com.byteshaft.requests.HttpRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.net.HttpURLConnection;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 0;
     private NotificationManager notificationManager;
     public static boolean sPermissionNotGranted = false;
+    private DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements
         });
         navigationView.setNavigationItemSelectedListener(this);
         loadFragment(new Home());
+//        getLocation();
     }
 
     public void loadFragment(Fragment fragment) {
@@ -355,5 +367,57 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
         return check;
+    }
+
+    private void getLocation() {
+        HttpRequest request = new HttpRequest(this);
+        request.setOnReadyStateChangeListener(new HttpRequest.OnReadyStateChangeListener() {
+            @Override
+            public void onReadyStateChange(HttpRequest request, int readyState) {
+                switch (readyState) {
+                    case HttpRequest.STATE_DONE:
+                        switch (request.getStatus()) {
+                            case HttpURLConnection.HTTP_OK:
+                                Log.i("TAG", "GET LOCATION " + request.getResponseText());
+                                break;
+                        }
+                }
+
+            }
+        });
+        request.setOnErrorListener(new HttpRequest.OnErrorListener() {
+            @Override
+            public void onError(HttpRequest request, int readyState, short error, Exception exception) {
+
+            }
+        });
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch" +
+                "/json?location=" + "30.161858325327056"  + ","+"71.52063466608524"
+                + "&radius=50000&types=mosque&name=Multan Pakistan" +
+                "&key=AIzaSyAiQD4d4e9WxI0XXQMColWs0SaznwbSYpg";
+        request.open("POST", url);
+        request.send();
+
+    }
+
+    private void saveMajidManually() {
+        MasjidDetails masjidDetails = new MasjidDetails();
+        masjidDetails.setMasjidName("Mustafa Jama Masjid");
+        masjidDetails.setLat(24.944314);
+        masjidDetails.setLng(67.075838);
+        masjidDetails.setCity("Karachi");
+        masjidDetails.setCountry("Pakistan");
+        ref = FirebaseDatabase.getInstance().
+                getReference();
+        ref.child("Database").child("locations").child("Pakistan").child("Karachi").push()
+                .setValue(masjidDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+
+        });
     }
 }
