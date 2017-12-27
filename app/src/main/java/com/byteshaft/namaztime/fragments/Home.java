@@ -1,14 +1,21 @@
 package com.byteshaft.namaztime.fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +45,8 @@ public class Home extends Fragment {
     private Helpers mHelpers = null;
     private File mFile;
     private static Home instance;
+    private NotificationManager notificationManager;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 010;
 
     public static Home getInstance() {
         return instance;
@@ -47,11 +56,15 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBaseView = inflater.inflate(R.layout.home, container, false);
         instance = this;
+        notificationManager =
+                (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         FloatingActionButton fab =  mBaseView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(new Maps());
+                if (checkPermissionAndProceed()) {
+                    loadFragment(new Maps());
+                }
             }
         });
         sProgressBar = mBaseView.findViewById(R.id.progressBar);
@@ -124,50 +137,36 @@ public class Home extends Fragment {
             getActivity().sendBroadcast(alarmIntent);
             ChangeCity.sCityChanged = false;
         }
+    }
 
-//        if (GeofenceTransitionService.getInstance() != null) {
-//            if (Helpers.isMyServiceRunning(GeofenceTransitionService.getInstance().getClass())) {
-//                GeofenceTransitionService.getInstance().stopSelf();
-//            }
-//        }
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    MY_PERMISSIONS_REQUEST_LOCATION);
-//
-//        } else {
-//            if (Helpers.locationEnabled()) {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-//                        && !notificationManager.isNotificationPolicyAccessGranted()) {
-//                    Intent intent = new Intent(
-//                            android.provider.Settings
-//                                    .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-//                    startActivity(intent);
-//                } else {
-//                    new android.os.Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Set<String> latLngSet = AppGlobals.getHashSet();
-//                            if (latLngSet.size() > 0) {
-//                                SimpleGeofence simpleGeofence = new SimpleGeofence();
-//                                int counter = 0;
-//                                for (String location : latLngSet) {
-//                                    Log.i("TAG", "adding fence" + counter);
-//                                    String[] locations = location.split(",");
-//                                    LatLng latLng = new LatLng(Double.parseDouble(locations[0]),
-//                                            Double.parseDouble(locations[1]));
-//                                    Log.i("TAG", "Fence :Lat " + latLng.latitude + " Lng "+ latLng.longitude);
-//                                    simpleGeofence.createGeofences(String.valueOf(counter), latLng.latitude, latLng.longitude);
-//                                    counter++;
-//                                }
-//                            }
-//                        }
-//                    }, 2000);
-//                }
-//            }
-//        }
+    private boolean checkPermissionAndProceed() {
+        boolean check = true;
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            check = false;
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+
+        } else {
+            if (Helpers.locationEnabled()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                        && !notificationManager.isNotificationPolicyAccessGranted()) {
+                    Intent intent = new Intent(
+                            android.provider.Settings
+                                    .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                    startActivity(intent);
+                    check = false;
+                } else {
+
+                }
+            } else {
+                check = false;
+                Helpers.dialogForLocationEnableManually(getActivity());
+            }
+        }
+        return check;
     }
 
     @Override

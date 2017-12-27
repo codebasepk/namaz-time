@@ -93,13 +93,13 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    if (!AppGlobals.isLocationSaved()) {
-                        if (checkPermissionAndProceed()) {
+                    if (!AppGlobals.isLocationSaved() || checkPermissionAndProceed()) {
+                        if (!AppGlobals.isLocationSaved()) {
                             loadFragment(new Maps());
+                        }
                         } else {
                             serviceSwitch.setChecked(false);
                         }
-                    }
                     if (AppGlobals.isLocationSaved() &&
                             Helpers.locationEnabled()) {
                         if (ContextCompat.checkSelfPermission(MainActivity.this,
@@ -241,7 +241,9 @@ public class MainActivity extends AppCompatActivity implements
             loadFragment(new Home());
             // Handle the camera action
         } else if (id == R.id.nav_add_masjid) {
-            loadFragment(new Maps());
+            if (checkPermissionAndProceed()) {
+                loadFragment(new Maps());
+            }
         } else if (id == R.id.nav_change_city) {
             loadFragment(new ChangeCity());
 

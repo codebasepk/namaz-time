@@ -29,10 +29,7 @@ public class ChangeCityHelpers extends ContextWrapper {
         super(base);
     }
 
-    void fileNotExists(AdapterView<?> parent, int position) {
-        parent.getItemAtPosition(position);
-        parent.setSelection(position);
-        String cityName = parent.getItemAtPosition(position).toString();
+    void fileNotExists(String cityName, int position) {
         mHelpers.saveSelectedCity(cityName.trim(), position);
         NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(this);
         ChangeCity.sProgressBar.setVisibility(View.VISIBLE);

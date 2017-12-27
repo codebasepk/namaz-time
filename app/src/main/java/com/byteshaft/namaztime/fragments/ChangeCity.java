@@ -220,14 +220,16 @@ public class ChangeCity extends Fragment implements ListView.OnItemClickListener
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mAlarmHelpers.removePreviousAlarams();
         sCityChanged = true;
-        String city = parent.getItemAtPosition(position).toString();
+        CityName cityName = cityList.get(position);
+        String city = cityName.getName();
         String location = getActivity().getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         mFile = new File(location);
         if (mFile.exists()) {
             mChangeCityHelpers.fileExists(parent, position);
         } else {
             if (mHelpers.isNetworkAvailable()) {
-                mChangeCityHelpers.fileNotExists(parent, position);
+                parent.setSelection(position);
+                mChangeCityHelpers.fileNotExists(city, position);
             } else {
                 Toast.makeText(getActivity(), "Network isn't available", Toast.LENGTH_SHORT).show();
             }
