@@ -138,6 +138,8 @@ public class Maps extends Fragment implements OnMapReadyCallback,
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
+            mMapView.onDestroy();
+            Log.i("TAG", "Map Disconnected======>>>>");
         }
     }
 

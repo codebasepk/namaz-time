@@ -25,7 +25,6 @@ public class AppGlobals extends Application {
     private static final String OPENED_MAPS_ONCE = "open_maps_once";
     private static final String SERVICE_STATE = "service_state";
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -112,6 +111,16 @@ public class AppGlobals extends Application {
     public static void ringerModeChangedByUs(boolean value) {
         SharedPreferences sharedPreferences = getPreferenceManager();
         sharedPreferences.edit().putBoolean("ringer_mode_by_us", value).apply();
+    }
+
+    public static int getDialogShowCount() {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getInt("dialog_show_count", 0);
+    }
+
+    public static void setDialogShowCount(int value) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putInt("dialog_show_count", value).apply();
     }
 }
 

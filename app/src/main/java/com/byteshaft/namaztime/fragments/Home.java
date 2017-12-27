@@ -67,8 +67,7 @@ public class Home extends Fragment {
         });
         sProgressBar = mBaseView.findViewById(R.id.progressBar);
         sProgressBar.setVisibility(View.INVISIBLE);
-        Set<String> hashSet = AppGlobals.getHashSet();
-        if (hashSet.size() < 1) {
+        if (AppGlobals.getDialogShowCount() < 10) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
             dialog.setTitle("New Feature");
             dialog.setMessage("You can now add your mosque to the app to silent your mobile when you are inside mosque.");
@@ -88,6 +87,7 @@ public class Home extends Fragment {
 
                 }
             });
+            AppGlobals.setDialogShowCount(AppGlobals.getDialogShowCount() + 1);
             dialog.show();
         }
         mHelpers = new Helpers(getContext());
