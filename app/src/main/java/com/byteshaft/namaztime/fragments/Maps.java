@@ -132,8 +132,10 @@ public class Maps extends Fragment implements OnMapReadyCallback,
     }
 
     private void stopLocationUpdate() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
     }
 
 
@@ -182,6 +184,7 @@ public class Maps extends Fragment implements OnMapReadyCallback,
     @Override
     public void onPause() {
         super.onPause();
+        Log.i("TAG", "Map onPuase");
         stopLocationUpdate();
     }
 
