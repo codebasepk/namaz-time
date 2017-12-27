@@ -65,7 +65,7 @@ public class Home extends Fragment {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
-                    startActivity(new Intent(getActivity(), Maps.class));
+                    loadFragment(new Maps());
                     //get gps
                 }
             });

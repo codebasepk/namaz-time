@@ -4,6 +4,7 @@ package com.byteshaft.namaztime.fragments;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -43,6 +44,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -75,7 +78,6 @@ public class Maps extends Fragment implements OnMapReadyCallback,
     private DatabaseReference ref;
     private View mBaseView;
     private MapView mMapView;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -231,12 +233,13 @@ public class Maps extends Fragment implements OnMapReadyCallback,
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("TAG", databaseError.getMessage());
-
             }
         });
     }
 
     private void showExistedMosquesToUser(MasjidDetails masjidDetails) {
+        int strokeColor = Color.parseColor("#4890c8");
+        int shadeColor = Color.parseColor("#334890c8");
         LatLng latLng = new LatLng(masjidDetails.getLat(),
                 masjidDetails.getLng());
         alreadyExisting.add(masjidDetails);
@@ -245,6 +248,10 @@ public class Maps extends Fragment implements OnMapReadyCallback,
         mMap.addMarker(new MarkerOptions()
                 .position(latLng).title(String.valueOf(masjidDetails.getMasjidName()))
                 .icon(bitmap));
+        CircleOptions circleOptions = new CircleOptions().center(latLng).radius(30)
+                .fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(8);
+        Circle mCircle = mMap.addCircle(circleOptions);
+        mCircle.setCenter(latLng);
 
 
     }
@@ -286,9 +293,11 @@ public class Maps extends Fragment implements OnMapReadyCallback,
                                 !input.getText().toString().isEmpty()) {
                             boolean stopHere = false;
                             for (MasjidDetails masjidDetails: alreadyExisting) {
+                                Log.i("TAG", "distance " + distance(masjidDetails.getLat(), masjidDetails.getLng(),
+                                        latLng.latitude, latLng.longitude));
                                 if (masjidDetails.getMasjidName().equalsIgnoreCase(input.getText()
                                         .toString()) || distance(masjidDetails.getLat(), masjidDetails.getLng(),
-                                        latLng.latitude, latLng.longitude) < 0.621371) {
+                                        latLng.latitude, latLng.longitude) < 0.310686) {
                                     stopHere = true;
                                 }
                             }

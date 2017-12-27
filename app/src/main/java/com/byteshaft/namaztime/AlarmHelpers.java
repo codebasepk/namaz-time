@@ -46,8 +46,11 @@ public class AlarmHelpers extends ContextWrapper {
     }
 
     void settingAlarm(int TEN_MINUTES) {
+        boolean namazTimeSet = false;
         String[] namazTimes = mHelpers.getNamazTimesArray();
+        int count = 0;
         for (String raw : namazTimes) {
+            Log.i("TAG", namazTimes[count]);
             String[] rawNamazTime = raw.split(" ");
             String namazTime = null;
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
@@ -55,7 +58,7 @@ public class AlarmHelpers extends ContextWrapper {
             Date dt;
             try {
                 dt = sdf.parse(rawNamazTime[0]);
-                namazTime = sdfs.format(dt);
+                namazTime = namazTimes[count];
                 System.out.println("Time Display: " + sdfs.format(dt)); // <-- I got result here
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
@@ -65,21 +68,26 @@ public class AlarmHelpers extends ContextWrapper {
             try {
                 Date presentTime = mHelpers.getTimeFormat().parse(mHelpers.getAmPm());
                 Date namaz = mHelpers.getTimeFormat().parse(namazTime);
+                Log.i("TAG", "present time " + presentTime);
+                Log.i("TAG", "namaz time " + namaz);
                 String item = namazTimes[4].split(" ")[0];
                 Date lastDate = sdf.parse(item);
                 Date lastItem = mHelpers.getTimeFormat().parse(sdfs.format(lastDate));
+                Log.i("TAG", "condition check " + presentTime.before(namaz));
                 if (presentTime.before(namaz)) {
                     long difference = namaz.getTime() - presentTime.getTime();
                     long subtractTenMinutes = difference - TEN_MINUTES;
                     setAlarmsForNamaz(subtractTenMinutes, namazTime);
-                    break;
-                } else if (presentTime.after(lastItem)) {
-                    alarmIfNoNamazTimeAvailable(this);
+                    namazTimeSet = true;
                     break;
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            count++;
+        }
+        if (count >= 5 && !namazTimeSet) {
+            alarmIfNoNamazTimeAvailable(this);
         }
     }
 

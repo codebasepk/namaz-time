@@ -50,6 +50,7 @@ public class GeofenceService extends Service implements
     private PendingIntent mGeofencePendingIntent;
     private LocationRequest mLocationRequest;
     private DatabaseReference ref;
+    private boolean isServiceAlreadyRunning = false;
 
     @Override
     public void onCreate() {
@@ -92,6 +93,7 @@ public class GeofenceService extends Service implements
             ).setResultCallback(this);
         }
         mGoogleApiClient.disconnect();
+        ref.removeEventListener(valueEventListener);
     }
 
     @Override
@@ -122,6 +124,7 @@ public class GeofenceService extends Service implements
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
         }
+        isServiceAlreadyRunning = true;
     }
 
     @Override
@@ -159,35 +162,48 @@ public class GeofenceService extends Service implements
         ref = FirebaseDatabase.getInstance().
                 getReference()
                 .child("Database").child("locations").child(countryName).child(cityName);
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Log.i("TAG", "request" + ds.getKey());
-                    Log.i("TAG", "value " + ds.getValue(MasjidDetails.class).getCity());
-                    MasjidDetails masjidDetails = ds.getValue(MasjidDetails.class);
-                    mGeofenceList.add(new Geofence.Builder()
-                            .setRequestId(masjidDetails.getMasjidName())
-                            .setCircularRegion(
-                                    masjidDetails.getLat(),
-                                    masjidDetails.getLng(), 40
-
-                            )
-                            .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
-                                    | Geofence.GEOFENCE_TRANSITION_EXIT)
-                            .build());
-                }
-                mGoogleApiClient.connect();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("TAG", databaseError.getMessage());
-
-            }
-        });
+        ref.addValueEventListener(valueEventListener);
     }
+
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot snapshot) {
+            for (DataSnapshot ds : snapshot.getChildren()) {
+                if (isServiceAlreadyRunning) {
+                    onDestroy();
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            isServiceAlreadyRunning = false;
+                            startService(new Intent(getApplicationContext(), GeofenceService.class));
+                        }
+                    }, 1000);
+                    return;
+                }
+                Log.i("TAG SERVICE", "request" + ds.getKey());
+                Log.i("TAG SERVICE", "value " + ds.getValue(MasjidDetails.class).getCity());
+                MasjidDetails masjidDetails = ds.getValue(MasjidDetails.class);
+                mGeofenceList.add(new Geofence.Builder()
+                        .setRequestId(masjidDetails.getMasjidName())
+                        .setCircularRegion(
+                                masjidDetails.getLat(),
+                                masjidDetails.getLng(), 30
+
+                        )
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
+                                | Geofence.GEOFENCE_TRANSITION_EXIT)
+                        .build());
+            }
+            mGoogleApiClient.connect();
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.e("TAG", databaseError.getMessage());
+
+        }
+    };
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)

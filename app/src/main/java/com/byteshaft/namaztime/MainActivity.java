@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,17 +56,14 @@ public class MainActivity extends AppCompatActivity implements
     private NotificationManager notificationManager;
     public static boolean sPermissionNotGranted = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         notificationManager =
                 (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -95,6 +93,13 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
+                    if (!AppGlobals.isLocationSaved()) {
+                        if (checkPermissionAndProceed()) {
+                            loadFragment(new Maps());
+                        } else {
+                            serviceSwitch.setChecked(false);
+                        }
+                    }
                     if (AppGlobals.isLocationSaved() &&
                             Helpers.locationEnabled()) {
                         if (ContextCompat.checkSelfPermission(MainActivity.this,
@@ -111,8 +116,17 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 } else {
                     AppGlobals.serviceState(false);
+                    AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                    if (AppGlobals.isModeChangedByUs()) {
+                        audioManager.setRingerMode(AppGlobals.getAudioMOde());
+                    }
+                    NotificationManager notificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(10001);
                     stopService(new Intent(getApplicationContext(), GeofenceService.class));
                 }
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
             }
         });
         navigationView.setNavigationItemSelectedListener(this);
@@ -200,12 +214,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void changeCity() {
-        Intent intent = new Intent(this, ChangeCity.class);
-        finish();
-        startActivity(intent);
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -253,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     protected void shareapp() {
-
         String APP_LINK = "https://play.google.com/store/apps/details?id=com.bytesahft.namaztime";
 
         LayoutInflater li = LayoutInflater.from(MainActivity.this);
@@ -319,10 +326,12 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void checkPermissionAndProceed() {
+    private boolean checkPermissionAndProceed() {
+        boolean check = true;
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
+            check = false;
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
@@ -335,12 +344,15 @@ public class MainActivity extends AppCompatActivity implements
                             android.provider.Settings
                                     .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                     startActivity(intent);
+                    check = false;
                 } else {
 
                 }
             } else {
+                check = false;
                 Helpers.dialogForLocationEnableManually(this);
             }
         }
+        return check;
     }
 }

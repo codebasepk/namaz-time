@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/white"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="I gave the pledge of allegiance to Allah's Apostle for the following: 1. offer prayers perfectly 2. pay the Zakat (obligatory charity) 3. and be sincere and true to every Muslim.
 (Sahih Bukhari Volume 1, Book 2, Number 54)"
@@ -39,12 +39,13 @@
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/service_switch"
         android:text="Mosque Mode"
-        android:background="@color/colorPrimaryDark"
         android:shadowColor="@color/colorPrimary"
         android:textColor="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:fontFamily="@+id/yananeska.ttf"
+        android:textStyle="italic|bold"
         android:layout_marginBottom="10dp"
         style="@style/SwitchCompatTheme"/>
 

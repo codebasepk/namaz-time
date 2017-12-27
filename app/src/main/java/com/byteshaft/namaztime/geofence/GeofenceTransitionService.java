@@ -58,15 +58,15 @@ public class GeofenceTransitionService extends IntentService {
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL){
             Log.i(TAG, "ENTER Showing Notification...");
             showNotification("Inside Mosque");
+            AppGlobals.ringerModeChangedByUs(true);
             AppGlobals.saveAudioManagerMode(am.getRingerMode());
             if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
                 am.setRingerMode(0);
             }
-
         }
         else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             Log.i(TAG, " Exited Showing Notification...");
-            showNotification("Exit From Mosque");
+            showNotification("Exit Mosque");
             am.setRingerMode(AppGlobals.getAudioMOde());
         } else {
             Log.e(TAG, "Error ");

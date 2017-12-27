@@ -103,5 +103,15 @@ public class AppGlobals extends Application {
         SharedPreferences sharedPreferences = getPreferenceManager();
         return sharedPreferences.getBoolean(SERVICE_STATE, false);
     }
+
+    public static boolean isModeChangedByUs() {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        return sharedPreferences.getBoolean("ringer_mode_by_us", false);
+    }
+
+    public static void ringerModeChangedByUs(boolean value) {
+        SharedPreferences sharedPreferences = getPreferenceManager();
+        sharedPreferences.edit().putBoolean("ringer_mode_by_us", value).apply();
+    }
 }
 

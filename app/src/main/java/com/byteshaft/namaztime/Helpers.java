@@ -92,7 +92,7 @@ public class Helpers extends ContextWrapper {
     }
 
     SimpleDateFormat getTimeFormat() {
-        return new SimpleDateFormat("h:mm aa");
+        return new SimpleDateFormat("hh:mm aa");
     }
 
     public void setTimesFromDatabase(boolean runningFromActivity, String fileName) {
