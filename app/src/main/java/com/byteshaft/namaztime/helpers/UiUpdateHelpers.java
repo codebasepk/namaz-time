@@ -9,12 +9,14 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.helpers;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.widget.TextView;
+
+import com.byteshaft.namaztime.R;
 
 public class UiUpdateHelpers {
 

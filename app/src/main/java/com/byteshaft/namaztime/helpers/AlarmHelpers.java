@@ -9,7 +9,7 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.helpers;
 
 
 import android.app.AlarmManager;
@@ -19,6 +19,8 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
+
+import com.byteshaft.namaztime.receivers.NotificationReceiver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +39,7 @@ public class AlarmHelpers extends ContextWrapper {
         mAlarmManager = getAlarmManager(this);
     }
 
-    void setAlarmForNextNamaz() {
+    public void setAlarmForNextNamaz() {
         NotificationReceiver.sNotificationDisplayed = false;
         final int ONE_SECOND = 1000;
         final int ONE_MINUTE = ONE_SECOND * 60;
@@ -45,7 +47,7 @@ public class AlarmHelpers extends ContextWrapper {
         settingAlarm(TEN_MINUTES);
     }
 
-    void settingAlarm(int TEN_MINUTES) {
+    public void settingAlarm(int TEN_MINUTES) {
         boolean namazTimeSet = false;
         String[] namazTimes = mHelpers.getNamazTimesArray();
         int count = 0;

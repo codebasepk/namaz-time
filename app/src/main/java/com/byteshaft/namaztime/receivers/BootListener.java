@@ -1,4 +1,4 @@
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.receivers;
 
 import android.Manifest;
 import android.app.NotificationManager;
@@ -8,12 +8,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
+import com.byteshaft.namaztime.helpers.Helpers;
 import com.byteshaft.namaztime.geofence.GeofenceService;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.util.Set;
 
 /**
  * Created by s9iper1 on 11/4/16.

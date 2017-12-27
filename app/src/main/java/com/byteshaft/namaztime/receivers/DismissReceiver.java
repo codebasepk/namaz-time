@@ -1,4 +1,4 @@
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".WidgetProvider" android:icon="@drawable/ic_launcher"
+        <receiver android:name=".widget.WidgetProvider" android:icon="@drawable/ic_launcher"
                   android:label="Namaz Time">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -37,41 +37,41 @@
             <meta-data android:name="android.appwidget.provider"
                        android:resource="@xml/widget_info" />
         </receiver>
-        <receiver android:name=".WidgetReceiver"/>
+        <receiver android:name=".receivers.WidgetReceiver"/>
         <receiver
-            android:name=".NotificationReceiver"
+            android:name=".receivers.NotificationReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.byteshaft.shownotification"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".RingtoneRestoreReceiver" android:exported="false">
+        <receiver android:name=".receivers.RingtoneRestoreReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.byteshaft.silent"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".AlarmNotification" android:exported="false">
+        <receiver android:name=".receivers.AlarmNotification" android:exported="false">
             <intent-filter>
                 <action android:name="com.byteshaft.setalarm"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".NextNamazTimeReceiver" android:exported="false">
+        <receiver android:name=".receivers.NextNamazTimeReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.byteshaft.setnextalarm"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".StandardAlarmReceiver" android:exported="false">
+        <receiver android:name=".receivers.StandardAlarmReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.byteShaft.standardalarm"/>
             </intent-filter>
         </receiver>
 
         <receiver
-            android:name=".DismissReceiver"
+            android:name=".receivers.DismissReceiver"
             android:exported="false" >
         </receiver>
-        <receiver android:name=".BootListener" android:enabled="true">
+        <receiver android:name=".receivers.BootListener" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

@@ -23,6 +23,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
+import com.byteshaft.namaztime.receivers.DismissReceiver;
+import com.byteshaft.namaztime.widget.WidgetGlobals;
+
 public class Notifications extends ContextWrapper {
 
     private final int SILENT_NOTIFICATION_ID = 56;

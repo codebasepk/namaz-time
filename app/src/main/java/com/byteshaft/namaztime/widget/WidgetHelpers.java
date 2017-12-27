@@ -9,7 +9,7 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.widget;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -47,7 +47,7 @@ public class WidgetHelpers extends ContextWrapper {
                 pendingIntent);
     }
 
-    void removePreviousAlarm(PendingIntent pendingIntent) {
+    public  void removePreviousAlarm(PendingIntent pendingIntent) {
         alarmManager = getAlarmManager();
         alarmManager.cancel(pendingIntent);
         alarmManager = null;

@@ -9,7 +9,7 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -18,6 +18,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+
+import com.byteshaft.namaztime.R;
+import com.byteshaft.namaztime.receivers.WidgetReceiver;
 
 public class WidgetProvider extends AppWidgetProvider {
 

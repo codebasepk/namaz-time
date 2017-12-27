@@ -69,7 +69,7 @@ category#android.intent.category.DEFAULT
 ADDED from AndroidManifest.xml:30:17
 	android:name
 		ADDED from AndroidManifest.xml:30:27
-receiver#com.byteshaft.namaztime.WidgetProvider
+receiver#com.byteshaft.namaztime.widget.WidgetProvider
 ADDED from AndroidManifest.xml:33:9
 	android:label
 		ADDED from AndroidManifest.xml:34:19
@@ -89,11 +89,11 @@ ADDED from AndroidManifest.xml:38:13
 		ADDED from AndroidManifest.xml:39:24
 	android:name
 		ADDED from AndroidManifest.xml:38:24
-receiver#com.byteshaft.namaztime.WidgetReceiver
+receiver#com.byteshaft.namaztime.receivers.WidgetReceiver
 ADDED from AndroidManifest.xml:41:9
 	android:name
 		ADDED from AndroidManifest.xml:41:19
-receiver#com.byteshaft.namaztime.NotificationReceiver
+receiver#com.byteshaft.namaztime.receivers.NotificationReceiver
 ADDED from AndroidManifest.xml:42:9
 	android:exported
 		ADDED from AndroidManifest.xml:44:13
@@ -105,7 +105,7 @@ action#com.byteshaft.shownotification
 ADDED from AndroidManifest.xml:46:17
 	android:name
 		ADDED from AndroidManifest.xml:46:25
-receiver#com.byteshaft.namaztime.RingtoneRestoreReceiver
+receiver#com.byteshaft.namaztime.receivers.RingtoneRestoreReceiver
 ADDED from AndroidManifest.xml:49:9
 	android:exported
 		ADDED from AndroidManifest.xml:49:59
@@ -117,7 +117,7 @@ action#com.byteshaft.silent
 ADDED from AndroidManifest.xml:51:17
 	android:name
 		ADDED from AndroidManifest.xml:51:25
-receiver#com.byteshaft.namaztime.AlarmNotification
+receiver#com.byteshaft.namaztime.receivers.AlarmNotification
 ADDED from AndroidManifest.xml:55:9
 	android:exported
 		ADDED from AndroidManifest.xml:55:53
@@ -129,7 +129,7 @@ action#com.byteshaft.setalarm
 ADDED from AndroidManifest.xml:57:17
 	android:name
 		ADDED from AndroidManifest.xml:57:25
-receiver#com.byteshaft.namaztime.NextNamazTimeReceiver
+receiver#com.byteshaft.namaztime.receivers.NextNamazTimeReceiver
 ADDED from AndroidManifest.xml:60:9
 	android:exported
 		ADDED from AndroidManifest.xml:60:57
@@ -141,7 +141,7 @@ action#com.byteshaft.setnextalarm
 ADDED from AndroidManifest.xml:62:17
 	android:name
 		ADDED from AndroidManifest.xml:62:25
-receiver#com.byteshaft.namaztime.StandardAlarmReceiver
+receiver#com.byteshaft.namaztime.receivers.StandardAlarmReceiver
 ADDED from AndroidManifest.xml:65:9
 	android:exported
 		ADDED from AndroidManifest.xml:65:57

@@ -9,11 +9,11 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.widget;
 
 public class WidgetGlobals {
 
-    final static String SILENT_INTENT = "com.byteshaft.silent";
+    public static final String SILENT_INTENT = "com.byteshaft.silent";
 
     private static final int DUMMY_RINGTONE_MODE = -78;
     private static boolean isPhoneSilent = false;

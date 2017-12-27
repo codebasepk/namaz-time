@@ -9,7 +9,7 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.helpers;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -26,6 +26,8 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.byteshaft.namaztime.AppGlobals;
+import com.byteshaft.namaztime.NamazTimesDownloadTask;
 import com.byteshaft.namaztime.fragments.Home;
 
 import org.json.JSONArray;

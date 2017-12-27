@@ -9,20 +9,24 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public class StandardAlarmReceiver extends BroadcastReceiver {
+import com.byteshaft.namaztime.helpers.AlarmHelpers;
+import com.byteshaft.namaztime.Notifications;
+
+public class NextNamazTimeReceiver extends BroadcastReceiver {
+
+    private Notifications notifications;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Helpers helpers = new Helpers(context);
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
-        String sFileName = helpers.getPreviouslySelectedCityName();
-        helpers.setTimesFromDatabase(false, sFileName);
+        notifications = new Notifications(context);
+        notifications.removeNotification();
         alarmHelpers.setAlarmForNextNamaz();
     }
 }

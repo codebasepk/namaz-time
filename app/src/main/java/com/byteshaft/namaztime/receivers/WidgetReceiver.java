@@ -9,7 +9,7 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.receivers;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -17,6 +17,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.util.Log;
+
+import com.byteshaft.namaztime.Notifications;
+import com.byteshaft.namaztime.widget.WidgetGlobals;
+import com.byteshaft.namaztime.widget.WidgetHelpers;
+import com.byteshaft.namaztime.widget.WidgetProvider;
 
 import java.util.concurrent.TimeUnit;
 

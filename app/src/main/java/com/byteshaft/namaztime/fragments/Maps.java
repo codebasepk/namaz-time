@@ -4,7 +4,10 @@ package com.byteshaft.namaztime.fragments;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -246,11 +249,13 @@ public class Maps extends Fragment implements OnMapReadyCallback,
         LatLng latLng = new LatLng(masjidDetails.getLat(),
                 masjidDetails.getLng());
         alreadyExisting.add(masjidDetails);
-        BitmapDescriptor bitmap;
-        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.mosque);
+        Bitmap  bitmap;
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mosque);
+        Bitmap bitmapHalfSize = Bitmap.createScaledBitmap(bitmap, 70,
+                95, false);
         mMap.addMarker(new MarkerOptions()
                 .position(latLng).title(String.valueOf(masjidDetails.getMasjidName()))
-                .icon(bitmap));
+                .icon(BitmapDescriptorFactory.fromBitmap(bitmapHalfSize)));
         CircleOptions circleOptions = new CircleOptions().center(latLng).radius(30)
                 .fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(8);
         Circle mCircle = mMap.addCircle(circleOptions);

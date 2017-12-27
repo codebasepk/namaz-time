@@ -9,11 +9,15 @@
  *  
  */
 
-package com.byteshaft.namaztime;
+package com.byteshaft.namaztime.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.byteshaft.namaztime.Notifications;
+import com.byteshaft.namaztime.widget.WidgetGlobals;
+import com.byteshaft.namaztime.widget.WidgetHelpers;
 
 public class RingtoneRestoreReceiver extends BroadcastReceiver {
 

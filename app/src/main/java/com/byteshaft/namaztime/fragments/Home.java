@@ -11,8 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -23,9 +21,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.byteshaft.namaztime.AppGlobals;
-import com.byteshaft.namaztime.Helpers;
+import com.byteshaft.namaztime.helpers.Helpers;
 import com.byteshaft.namaztime.NamazTimesDownloadTask;
-import com.byteshaft.namaztime.NotificationReceiver;
+import com.byteshaft.namaztime.receivers.NotificationReceiver;
 import com.byteshaft.namaztime.Notifications;
 import com.byteshaft.namaztime.R;
 

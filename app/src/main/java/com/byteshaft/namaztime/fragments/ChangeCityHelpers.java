@@ -18,7 +18,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.byteshaft.namaztime.Helpers;
+import com.byteshaft.namaztime.helpers.Helpers;
 import com.byteshaft.namaztime.MainActivity;
 import com.byteshaft.namaztime.NamazTimesDownloadTask;
 
