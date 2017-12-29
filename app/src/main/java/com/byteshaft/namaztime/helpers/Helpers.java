@@ -258,7 +258,12 @@ public class Helpers extends ContextWrapper {
     public String retrieveTimeForNamazAndTime(String namaz) {
         SharedPreferences preference = getPreferenceManager();
         String time =  preference.getString(namaz, null);
-        if (!time.contains(getDate())) {
+        if (time == null) {
+            NamazTimesDownloadTask namazTimesDownloadTask = new NamazTimesDownloadTask(AppGlobals.getContext());
+            namazTimesDownloadTask.downloadNamazTime();
+            return "";
+        }
+        if (time != null && !time.contains(getDate())) {
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
             SimpleDateFormat sdfs = new SimpleDateFormat("hh:mm aa");
             Date dt;

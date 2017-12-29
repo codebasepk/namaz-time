@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 
+import com.byteshaft.namaztime.AppGlobals;
 import com.byteshaft.namaztime.helpers.Helpers;
 import com.byteshaft.namaztime.geofence.GeofenceService;
 
@@ -33,7 +34,9 @@ public class BootListener extends BroadcastReceiver {
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                           context.startService(new Intent(context, GeofenceService.class));
+                            if (AppGlobals.isServiceRunning()) {
+                                context.startService(new Intent(context, GeofenceService.class));
+                            }
                         }
                     }, 2000);
                 }
