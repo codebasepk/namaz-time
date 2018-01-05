@@ -35,7 +35,11 @@ public class BootListener extends BroadcastReceiver {
                         @Override
                         public void run() {
                             if (AppGlobals.isServiceRunning()) {
-                                context.startService(new Intent(context, GeofenceService.class));
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    context.startForegroundService(new Intent(context, GeofenceService.class));
+                                } else {
+                                    context.startService(new Intent(context, GeofenceService.class));
+                                }
                             }
                         }
                     }, 2000);

@@ -18,6 +18,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -49,6 +51,11 @@ import com.byteshaft.namaztime.fragments.Home;
 import com.byteshaft.namaztime.fragments.Maps;
 import com.byteshaft.namaztime.geofence.GeofenceService;
 import com.byteshaft.namaztime.helpers.Helpers;
+import com.byteshaft.namaztime.receivers.AlarmNotification;
+import com.byteshaft.namaztime.receivers.NextNamazTimeReceiver;
+import com.byteshaft.namaztime.receivers.NotificationReceiver;
+import com.byteshaft.namaztime.receivers.RingtoneRestoreReceiver;
+import com.byteshaft.namaztime.receivers.StandardAlarmReceiver;
 import com.byteshaft.namaztime.serializers.MasjidDetails;
 import com.byteshaft.requests.HttpRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -72,14 +79,14 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         notificationManager =
                 (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         final SwitchCompat serviceSwitch = headerView.findViewById(R.id.service_switch);
         serviceSwitch.setChecked(AppGlobals.isServiceRunning());
@@ -87,7 +94,11 @@ public class MainActivity extends AppCompatActivity implements
             Helpers.locationEnabled() && ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            startService(new Intent(getApplicationContext(), GeofenceService.class));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(new Intent(getApplicationContext(), GeofenceService.class));
+            } else {
+                startService(new Intent(getApplicationContext(), GeofenceService.class));
+            }
         } else if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -98,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements
         } else if (!Helpers.locationEnabled()) {
             Helpers.dialogForLocationEnableManually(MainActivity.this);
         }
-
         serviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -116,8 +126,11 @@ public class MainActivity extends AppCompatActivity implements
                                 Manifest.permission.ACCESS_FINE_LOCATION)
                                 == PackageManager.PERMISSION_GRANTED) {
                             AppGlobals.serviceState(true);
-                            startService(new Intent(getApplicationContext(), GeofenceService.class));
-                        }
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startForegroundService(new Intent(getApplicationContext(), GeofenceService.class));
+                            } else {
+                                startService(new Intent(getApplicationContext(), GeofenceService.class));
+                            }                        }
                         else {
                             sPermissionNotGranted = true;
                         }
@@ -135,13 +148,13 @@ public class MainActivity extends AppCompatActivity implements
                     notificationManager.cancel(10001);
                     stopService(new Intent(getApplicationContext(), GeofenceService.class));
                 }
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
         navigationView.setNavigationItemSelectedListener(this);
+        registerAllReceiver();
         loadFragment(new Home());
-//        getLocation();
     }
 
     public void loadFragment(Fragment fragment) {
@@ -166,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -265,15 +278,15 @@ public class MainActivity extends AppCompatActivity implements
             emailIntent.putExtra(Intent.EXTRA_TEXT, ("Add this city "));
             startActivity(Intent.createChooser(emailIntent, "Send Email"));
         } else if (id == R.id.nav_share) {
-            shareapp();
+            shareApp();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    protected void shareapp() {
+    protected void shareApp() {
         String APP_LINK = "https://play.google.com/store/apps/details?id=com.bytesahft.namaztime";
 
         LayoutInflater li = LayoutInflater.from(MainActivity.this);
@@ -419,5 +432,28 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         });
+    }
+
+    private void registerAllReceiver() {
+        // Notification receiver
+        IntentFilter intent = new IntentFilter("com.byteshaft.shownotification");
+        NotificationReceiver notificationReceiver = new NotificationReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(notificationReceiver, intent);
+
+        IntentFilter ringtoneRestore = new IntentFilter("com.byteshaft.silent");
+        RingtoneRestoreReceiver restoreReceiver = new RingtoneRestoreReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(restoreReceiver, ringtoneRestore);
+
+        IntentFilter alarmNotification = new IntentFilter("com.byteshaft.setalarm");
+        AlarmNotification notification = new AlarmNotification();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(notification, alarmNotification);
+
+        IntentFilter next = new IntentFilter("com.byteshaft.setnextalarm");
+        NextNamazTimeReceiver nextNamazTimeReceiver = new NextNamazTimeReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(nextNamazTimeReceiver, next);
+
+        IntentFilter standard = new IntentFilter("com.byteShaft.standardalarm");
+        StandardAlarmReceiver standardAlarmReceiver = new StandardAlarmReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(standardAlarmReceiver, standard);
     }
 }

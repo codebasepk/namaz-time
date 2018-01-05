@@ -11,6 +11,8 @@
 
 package com.byteshaft.namaztime;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -23,7 +25,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
-import com.byteshaft.namaztime.receivers.DismissReceiver;
 import com.byteshaft.namaztime.widget.WidgetGlobals;
 
 public class Notifications extends ContextWrapper {
@@ -31,6 +32,9 @@ public class Notifications extends ContextWrapper {
     private final int SILENT_NOTIFICATION_ID = 56;
     private final int UPCOMING_NAMAZ_NOTIFICATION_ID = 57;
     private NotificationManager mNotificationManager = null;
+    private NotificationChannel mChannel;
+    private String CHANNEL_ID;
+    int importance = 0;
 
 
     public Notifications(Context context) {
@@ -58,18 +62,10 @@ public class Notifications extends ContextWrapper {
         mNotificationManager.notify(id, notification.build());
     }
 
-    private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
-        Intent intent = new Intent(context, DismissReceiver.class);
-        intent.putExtra("com.my.app.notificationId", notificationId);
-
-        PendingIntent pendingIntent =
-                PendingIntent.getBroadcast(context.getApplicationContext(),
-                        notificationId, intent, 0);
-        return pendingIntent;
-    }
-
+    @SuppressLint("WrongConstant")
     private NotificationCompat.Builder buildPhoneSilentNotification() {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,
+                CHANNEL_ID);
         Intent intent = new Intent(WidgetGlobals.SILENT_INTENT);
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -79,11 +75,28 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setSmallIcon(R.drawable.ic_mute);
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setContentIntent(pIntent);
+        notificationBuilder.setChannelId(CHANNEL_ID)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        CHANNEL_ID = getPackageName();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            importance = NotificationManager.IMPORTANCE_HIGH;
+        }
+        CharSequence name = getString(R.string.app_name);// The user-visible name of the channel.
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationBuilder.setChannelId(CHANNEL_ID);
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
         return notificationBuilder;
     }
 
+    @SuppressLint("WrongConstant")
     private NotificationCompat.Builder buildUpcomingNamazNotification(String namaz) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this
+        , CHANNEL_ID);
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         notificationBuilder.setContentTitle("Namaz Time at " + namaz);
@@ -93,9 +106,22 @@ public class Notifications extends ContextWrapper {
         notificationBuilder.setSmallIcon(R.drawable.ic_notify);
         notificationBuilder.setVibrate(new long[]{250, 175, 250, 175, 250});
         notificationBuilder.setLights(Color.GREEN, 3000, 3000);
-        notificationBuilder.setDeleteIntent(createOnDismissedIntent(getApplicationContext(),
-                UPCOMING_NAMAZ_NOTIFICATION_ID));
         notificationBuilder.setSound(uri);
+        notificationBuilder.setChannelId(CHANNEL_ID)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        CHANNEL_ID = getPackageName();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            importance = NotificationManager.IMPORTANCE_HIGH;
+        }
+        CharSequence name = getString(R.string.app_name);// The user-visible name of the channel.
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationBuilder.setChannelId(CHANNEL_ID);
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
         return notificationBuilder;
     }
 

@@ -38,10 +38,7 @@ public class ChangeCityHelpers extends ContextWrapper {
         startActivity(intent);
     }
 
-    void fileExists(AdapterView<?> parent, int position) {
-        parent.getItemAtPosition(position);
-        parent.setSelection(position);
-        String cityName = parent.getItemAtPosition(position).toString();
+    void fileExists(String cityName, int position) {
         mHelpers.saveSelectedCity(cityName, position);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

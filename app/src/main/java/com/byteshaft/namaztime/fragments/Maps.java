@@ -232,8 +232,6 @@ public class Maps extends Fragment implements OnMapReadyCallback,
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    Log.i("TAG", "request" + ds.getKey());
-                    Log.i("TAG", "value " + ds.getValue(MasjidDetails.class).getCity());
                     showExistedMosquesToUser(ds.getValue(MasjidDetails.class));
                 }
             }

@@ -1,6 +1,7 @@
 package com.byteshaft.namaztime.geofence;
 
 import android.app.IntentService;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -26,6 +27,9 @@ public class GeofenceTransitionService extends IntentService {
     private static final String TAG = "GeofenceTransitions";
     private static GeofenceTransitionService geofenceTransitionsIntentService;
     private AudioManager am;
+    private NotificationChannel mChannel;
+    private String CHANNEL_ID;
+    private NotificationManager notificationManager;
 
     public GeofenceTransitionService() {
         super("GeofenceTransitions");
@@ -44,6 +48,7 @@ public class GeofenceTransitionService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.i(TAG, "onHandleIntent");
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         geofenceTransitionsIntentService = this;
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
@@ -81,10 +86,9 @@ public class GeofenceTransitionService extends IntentService {
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
                 PendingIntent.FLAG_ONE_SHOT);
-
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        int importance = 0;
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setLargeIcon(bm)
                 .setSmallIcon(R.drawable.ic_masjid)
                 .setTicker("Mobile silenter")
@@ -93,8 +97,15 @@ public class GeofenceTransitionService extends IntentService {
                 .setAutoCancel(true)
                 .setSound(null)
                 .setContentIntent(pendingIntent);
+        CHANNEL_ID = getPackageName();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            importance = NotificationManager.IMPORTANCE_HIGH;
+        }
+        CharSequence name = getString(R.string.app_name);// The user-visible name of the channel.
 
-
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        }
 //        notificationManager.notify(1000, notificationBuilder.build());
         notificationManager.notify(10001, notificationBuilder.build());
     }

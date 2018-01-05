@@ -52,20 +52,20 @@ public class AlarmHelpers extends ContextWrapper {
         String[] namazTimes = mHelpers.getNamazTimesArray();
         int count = 0;
         for (String raw : namazTimes) {
-            Log.i("TAG", namazTimes[count]);
+            Log.i("TAG","Raw "  +raw);
             String[] rawNamazTime = raw.split(" ");
             String namazTime = null;
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
-            SimpleDateFormat sdfs = new SimpleDateFormat("hh:mm aa");
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat sdfs = new SimpleDateFormat("KK:mm aa");
             Date dt;
             try {
                 dt = sdf.parse(rawNamazTime[0]);
                 namazTime = namazTimes[count];
                 System.out.println("Time Display: " + sdfs.format(dt)); // <-- I got result here
             } catch (ParseException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            Log.i("TAG", "afrer Time displays ");
 
             try {
                 Date presentTime = mHelpers.getTimeFormat().parse(mHelpers.getAmPm());
@@ -89,6 +89,7 @@ public class AlarmHelpers extends ContextWrapper {
             count++;
         }
         if (count >= 5 && !namazTimeSet) {
+            Log.i("TAG", "No time set ------------->>>>>>>>>>>>");
             alarmIfNoNamazTimeAvailable(this);
         }
     }

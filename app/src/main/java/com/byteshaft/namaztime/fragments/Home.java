@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -119,7 +120,7 @@ public class Home extends Fragment {
             mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
             if (!ChangeCity.sCityChanged && !NotificationReceiver.sNotificationDisplayed) {
                 Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-                getActivity().sendBroadcast(alarmIntent);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(alarmIntent);
             }
         }
     }
@@ -132,7 +133,7 @@ public class Home extends Fragment {
             Log.i("NAMAZ_TIME" ,  "City Changed");
             notifications.removeNotification();
             Intent alarmIntent = new Intent("com.byteshaft.setalarm");
-            getActivity().sendBroadcast(alarmIntent);
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(alarmIntent);
             ChangeCity.sCityChanged = false;
         }
     }

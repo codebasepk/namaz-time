@@ -15,6 +15,7 @@ package com.byteshaft.namaztime.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.byteshaft.namaztime.helpers.AlarmHelpers;
 
@@ -22,6 +23,7 @@ public class AlarmNotification extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i("TAG", "Broad cast received for alarm ---->>>");
         AlarmHelpers alarmHelpers = new AlarmHelpers(context);
         alarmHelpers.setAlarmForNextNamaz();
     }

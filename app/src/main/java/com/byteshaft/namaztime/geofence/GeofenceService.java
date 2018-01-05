@@ -2,6 +2,8 @@ package com.byteshaft.namaztime.geofence;
 
 import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -51,6 +54,9 @@ public class GeofenceService extends Service implements
     private LocationRequest mLocationRequest;
     private DatabaseReference ref;
     private boolean isServiceAlreadyRunning = false;
+    private NotificationChannel mChannel;
+    private String CHANNEL_ID;
+    private NotificationManager notificationManager;
 
     @Override
     public void onCreate() {
@@ -71,13 +77,30 @@ public class GeofenceService extends Service implements
     public int onStartCommand(Intent intent, int flags, int startId) {
         getActivityRequests(AppGlobals.getPersonCountry(), AppGlobals.getPersonCity());
         Intent notificationIntent = new Intent(this, MainActivity.class);
+        int importance = 0;
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        CHANNEL_ID = getPackageName();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            importance = NotificationManager.IMPORTANCE_HIGH;
+        }
+        CharSequence name = getString(R.string.app_name);// The user-visible name of the channel.
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
-        Notification notification = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle("Thank you for respecting other's and their prayer")
-                .setContentIntent(pendingIntent).build();
-        startForeground(100221, notification);
+                .setChannelId(CHANNEL_ID)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(pendingIntent);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notification.setChannelId(CHANNEL_ID);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+        startForeground(100221, notification.build());
         return START_NOT_STICKY;
     }
 
@@ -180,8 +203,6 @@ public class GeofenceService extends Service implements
                     }, 1000);
                     return;
                 }
-                Log.i("TAG SERVICE", "request" + ds.getKey());
-                Log.i("TAG SERVICE", "value " + ds.getValue(MasjidDetails.class).getCity());
                 MasjidDetails masjidDetails = ds.getValue(MasjidDetails.class);
                 mGeofenceList.add(new Geofence.Builder()
                         .setRequestId(masjidDetails.getMasjidName())

@@ -264,7 +264,7 @@ public class Helpers extends ContextWrapper {
             return "";
         }
         if (time != null && !time.contains(getDate())) {
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             SimpleDateFormat sdfs = new SimpleDateFormat("hh:mm aa");
             Date dt;
             String namazTime = null;

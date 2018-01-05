@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
     defaultConfig {
         applicationId "com.byteshaft.namaztime"
         minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 13
-        versionName "1.0.2"
+        targetSdkVersion 27
+        versionCode 14
+        versionName "1.0.3"
     }
     buildTypes {
         release {
@@ -25,12 +25,12 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:design:26.+'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:design:27.0.2'
     compile 'com.mcxiaoke.volley:library:1.0.15'
-    compile 'com.google.android.gms:play-services-maps:11.+'
-    compile 'com.google.android.gms:play-services-location:11.+'
-    compile 'com.google.firebase:firebase-database:11.+'
+    compile 'com.google.android.gms:play-services-maps:11.8.0'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
+    compile 'com.google.firebase:firebase-database:11.8.0'
     implementation 'com.byteshaft.requests:requests:0.5.2'
 }
 

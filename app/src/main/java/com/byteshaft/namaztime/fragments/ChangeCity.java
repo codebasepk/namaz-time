@@ -221,7 +221,7 @@ public class ChangeCity extends Fragment implements ListView.OnItemClickListener
         String location = getActivity().getFilesDir().getAbsoluteFile().getAbsolutePath() + "/" + city;
         mFile = new File(location);
         if (mFile.exists()) {
-            mChangeCityHelpers.fileExists(parent, position);
+            mChangeCityHelpers.fileExists(city, position);
         } else {
             if (mHelpers.isNetworkAvailable()) {
                 parent.setSelection(position);

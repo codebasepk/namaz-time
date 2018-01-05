@@ -66,6 +66,7 @@ public class NamazTimesDownloadTask {
                         try {
                             JSONArray jsonArray = response.getJSONArray("data");
                             data = jsonArray.toString();
+                            Log.i("TAG", "data " + jsonArray.toString());
                             mHelpers.writeDataToFile(mHelpers.getPreviouslySelectedCityName(), data);
                                 mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
                                 if (Home.sProgressBar.isShown()) {
