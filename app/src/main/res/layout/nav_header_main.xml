@@ -38,7 +38,7 @@
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/service_switch"
-        android:text="Mosque Mode"
+        android:text="Notify Prayer Time"
         android:shadowColor="@color/colorPrimary"
         android:textColor="@android:color/white"
         android:layout_width="match_parent"

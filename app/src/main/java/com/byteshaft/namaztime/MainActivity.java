@@ -13,6 +13,7 @@ package com.byteshaft.namaztime;
 
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -94,10 +95,12 @@ public class MainActivity extends AppCompatActivity implements
             Helpers.locationEnabled() && ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(new Intent(getApplicationContext(), GeofenceService.class));
-            } else {
-                startService(new Intent(getApplicationContext(), GeofenceService.class));
+            if (!isMyServiceRunning(GeofenceService.class)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(new Intent(getApplicationContext(), GeofenceService.class));
+                } else {
+                    startService(new Intent(getApplicationContext(), GeofenceService.class));
+                }
             }
         } else if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -126,11 +129,13 @@ public class MainActivity extends AppCompatActivity implements
                                 Manifest.permission.ACCESS_FINE_LOCATION)
                                 == PackageManager.PERMISSION_GRANTED) {
                             AppGlobals.serviceState(true);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                startForegroundService(new Intent(getApplicationContext(), GeofenceService.class));
-                            } else {
-                                startService(new Intent(getApplicationContext(), GeofenceService.class));
-                            }                        }
+                            if (!isMyServiceRunning(GeofenceService.class)) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startForegroundService(new Intent(getApplicationContext(), GeofenceService.class));
+                                } else {
+                                    startService(new Intent(getApplicationContext(), GeofenceService.class));
+                                }
+                            }}
                         else {
                             sPermissionNotGranted = true;
                         }
@@ -153,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
         navigationView.setNavigationItemSelectedListener(this);
-        registerAllReceiver();
         loadFragment(new Home());
     }
 
@@ -163,6 +167,16 @@ public class MainActivity extends AppCompatActivity implements
         fragmentTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         fragmentTransaction.replace(R.id.container, fragment, backStateName);
         fragmentTransaction.commit();
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -432,28 +446,5 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         });
-    }
-
-    private void registerAllReceiver() {
-        // Notification receiver
-        IntentFilter intent = new IntentFilter("com.byteshaft.shownotification");
-        NotificationReceiver notificationReceiver = new NotificationReceiver();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(notificationReceiver, intent);
-
-        IntentFilter ringtoneRestore = new IntentFilter("com.byteshaft.silent");
-        RingtoneRestoreReceiver restoreReceiver = new RingtoneRestoreReceiver();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(restoreReceiver, ringtoneRestore);
-
-        IntentFilter alarmNotification = new IntentFilter("com.byteshaft.setalarm");
-        AlarmNotification notification = new AlarmNotification();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(notification, alarmNotification);
-
-        IntentFilter next = new IntentFilter("com.byteshaft.setnextalarm");
-        NextNamazTimeReceiver nextNamazTimeReceiver = new NextNamazTimeReceiver();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(nextNamazTimeReceiver, next);
-
-        IntentFilter standard = new IntentFilter("com.byteShaft.standardalarm");
-        StandardAlarmReceiver standardAlarmReceiver = new StandardAlarmReceiver();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(standardAlarmReceiver, standard);
     }
 }

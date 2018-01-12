@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.byteshaft.namaztime.receivers.NotificationReceiver;
@@ -97,6 +98,11 @@ public class AlarmHelpers extends ContextWrapper {
     private void setAlarmsForNamaz(long time, String namaz) {
         Log.i("NAMAZ_TIME",
                 String.format("Setting alarm for: %d", TimeUnit.MILLISECONDS.toMinutes(time)));
+        if (String.valueOf(TimeUnit.MILLISECONDS.toMinutes(time)).contains("-")) {
+            Intent alarmIntent = new Intent("com.byteshaft.shownotification");
+            alarmIntent.putExtra("namaz", namaz);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(alarmIntent);
+        }
         Intent intent = new Intent("com.byteshaft.shownotification");
         intent.putExtra("namaz", namaz);
         mPendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -104,7 +110,6 @@ public class AlarmHelpers extends ContextWrapper {
     }
 
     private void alarmIfNoNamazTimeAvailable(Context context) {
-
         Intent intent = new Intent("com.byteShaft.standardalarm");
         mPIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
         Calendar timeOff = Calendar.getInstance();

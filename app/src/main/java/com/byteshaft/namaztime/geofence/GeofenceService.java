@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -19,12 +20,18 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.byteshaft.namaztime.AppGlobals;
 import com.byteshaft.namaztime.MainActivity;
 import com.byteshaft.namaztime.R;
+import com.byteshaft.namaztime.receivers.AlarmNotification;
+import com.byteshaft.namaztime.receivers.NextNamazTimeReceiver;
+import com.byteshaft.namaztime.receivers.NotificationReceiver;
+import com.byteshaft.namaztime.receivers.RingtoneRestoreReceiver;
+import com.byteshaft.namaztime.receivers.StandardAlarmReceiver;
 import com.byteshaft.namaztime.serializers.MasjidDetails;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,13 +50,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.byteshaft.namaztime.AppGlobals.getContext;
+
 
 public class GeofenceService extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status>,
         LocationListener {
 
     protected ArrayList<Geofence> mGeofenceList;
-    GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
     private PendingIntent mGeofencePendingIntent;
     private LocationRequest mLocationRequest;
     private DatabaseReference ref;
@@ -61,6 +70,9 @@ public class GeofenceService extends Service implements
     @Override
     public void onCreate() {
         super.onCreate();
+        registerAllReceiver();
+        Intent alarmIntent = new Intent("com.byteshaft.setalarm");
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(alarmIntent);
         mGeofenceList = new ArrayList<>();
         mGeofencePendingIntent = null;
         buildGoogleApiClient();
@@ -236,5 +248,29 @@ public class GeofenceService extends Service implements
 
     @Override
     public void onLocationChanged(Location location) {
+
+    }
+
+    private void registerAllReceiver() {
+        // Notification receiver
+        IntentFilter intent = new IntentFilter("com.byteshaft.shownotification");
+        NotificationReceiver notificationReceiver = new NotificationReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(notificationReceiver, intent);
+
+        IntentFilter ringtoneRestore = new IntentFilter("com.byteshaft.silent");
+        RingtoneRestoreReceiver restoreReceiver = new RingtoneRestoreReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(restoreReceiver, ringtoneRestore);
+
+        IntentFilter alarmNotification = new IntentFilter("com.byteshaft.setalarm");
+        AlarmNotification notification = new AlarmNotification();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(notification, alarmNotification);
+
+        IntentFilter next = new IntentFilter("com.byteshaft.setnextalarm");
+        NextNamazTimeReceiver nextNamazTimeReceiver = new NextNamazTimeReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(nextNamazTimeReceiver, next);
+
+        IntentFilter standard = new IntentFilter("com.byteShaft.standardalarm");
+        StandardAlarmReceiver standardAlarmReceiver = new StandardAlarmReceiver();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(standardAlarmReceiver, standard);
     }
 }
