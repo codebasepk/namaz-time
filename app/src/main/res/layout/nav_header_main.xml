@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@drawable/side_nav_bar"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@android:color/white"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="I gave the pledge of allegiance to Allah's Apostle for the following: 1. offer prayers perfectly 2. pay the Zakat (obligatory charity) 3. and be sincere and true to every Muslim.
+(Sahih Bukhari Volume 1, Book 2, Number 54)"
+        android:textStyle="italic|bold"
+        android:padding="5dp"
+        android:fontFamily="@+id/yananeska.ttf"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textSize="12sp"-->
+        <!--android:padding="5dp"-->
+        <!--android:textStyle="italic"-->
+        <!--android:fontFamily="@+id/yananeska.ttf"-->
+        <!--android:textColor="@android:color/darker_gray"-->
+        <!--android:text="Some people asked Allah's Apostle,Whose Islam is the best? i.e. (Who is a very good Muslim)? He replied, One who avoids harming the Muslims with his tongue and hands.-->
+        <!--(Sahih Bukhari Volume 1, Book 2, Number 10)" />-->
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/service_switch"
+        android:text="Notify Prayer Time"
+        android:shadowColor="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@+id/yananeska.ttf"
+        android:textStyle="italic|bold"
+        android:layout_marginBottom="10dp"
+        style="@style/SwitchCompatTheme"/>
+
+</LinearLayout>

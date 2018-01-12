@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_masjid"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_add_masjid"
+            android:icon="@drawable/ic_icon"
+            android:title="+ Mosque" />
+        <item
+            android:id="@+id/nav_change_city"
+            android:icon="@drawable/change_city"
+            android:title="change city" />
+        <item
+            android:id="@+id/nav_request_addition"
+            android:icon="@drawable/ic_email"
+            android:title="+ Request City" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_share"
+                android:title="Share" />
+</menu>
+    </item>
+
+</menu>

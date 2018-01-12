@@ -21,6 +21,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.byteshaft.namaztime.fragments.ChangeCity;
+import com.byteshaft.namaztime.fragments.Home;
+import com.byteshaft.namaztime.helpers.Helpers;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,14 +40,20 @@ public class NamazTimesDownloadTask {
         mHelpers = new Helpers(mContext);
     }
 
-    void downloadNamazTime() {
-        String city = mHelpers.getPreviouslySelectedCityName() + " Pakistan";
-        String timeSpan = "monthly";
-        String month = mHelpers.getDate();
-        String siteLink = String.format("http://muslimsalat.com/%s/%s/%s.json?key=",
-                timeSpan, month, city);
-        String apiKey = "0aa4ecbf66c02cf5330688a105dbdc3c";
-        String API = siteLink.concat(apiKey).replaceAll(" ", "%20");
+    public void downloadNamazTime() {
+        String[] cityState = mHelpers.getPreviouslySelectedCityName().split(" ");
+        String city = cityState[0];
+        String state = null;
+        if (cityState.length > 1) {
+            state = cityState[1];
+        }
+        String country = "Pakistan";
+        String API = String.format("http://api.aladhan.com/calendarByCity?city=%s" +
+                        "&country=%s&school=1&method=4",
+                city,country);
+        if (state != null) {
+            API = API + "&state="+ state;
+        }
         Log.i("TAG", API);
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
@@ -53,26 +62,31 @@ public class NamazTimesDownloadTask {
             public void onResponse(JSONObject response) {
                 Log.i("TAG", String.valueOf(response));
                 try {
-                    JSONArray jsonArray = response.getJSONArray("items");
-                    data = jsonArray.toString();
-                    mHelpers.writeDataToFile(mHelpers.getPreviouslySelectedCityName(), data);
-                    if (response.length() != 0) {
-                        mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
-                        if (MainActivity.sProgressBar.isShown()) {
-                            MainActivity.sProgressBar.setVisibility(View.INVISIBLE);
-                        } else if (ChangeCityActivity.sCityChanged) {
-                            if (ChangeCityActivity.sProgressBar.isShown()) {
-                                ChangeCityActivity.sProgressBar.setVisibility(View.INVISIBLE);
-                            }
-                            if (!ChangeCityActivity.sActivityPaused) {
-                                Intent intent = new Intent(mContext, MainActivity.class);
-                                mContext.startActivity(intent);
-                            }
-                        } else {
-                            return;
+                    if (response.getInt("code") == 200) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("data");
+                            data = jsonArray.toString();
+                            Log.i("TAG", "data " + jsonArray.toString());
+                            mHelpers.writeDataToFile(mHelpers.getPreviouslySelectedCityName(), data);
+                                mHelpers.setTimesFromDatabase(true, mHelpers.getPreviouslySelectedCityName());
+                                if (Home.sProgressBar.isShown()) {
+                                    Home.sProgressBar.setVisibility(View.INVISIBLE);
+                                } else if (ChangeCity.sCityChanged) {
+                                    if (ChangeCity.sProgressBar.isShown()) {
+                                        ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
+                                    }
+                                    if (!ChangeCity.sActivityPaused) {
+                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                        mContext.startActivity(intent);
+                                    }
+                                } else {
+                                    return;
+                                }
+                            taskRunning = true;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-                    taskRunning = true;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -80,6 +94,19 @@ public class NamazTimesDownloadTask {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                if (Home.sProgressBar.isShown()) {
+                    Home.sProgressBar.setVisibility(View.INVISIBLE);
+                } else if (ChangeCity.sCityChanged) {
+                    if (ChangeCity.sProgressBar.isShown()) {
+                        ChangeCity.sProgressBar.setVisibility(View.INVISIBLE);
+                    }
+                    if (!ChangeCity.sActivityPaused) {
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        mContext.startActivity(intent);
+                    }
+                } else {
+                    return;
+                }
                 error.printStackTrace();
                 Log.i("NetworkTime", String.valueOf(error.getNetworkTimeMs()));
                 Log.i("NetworkTime", String.valueOf(error.getCause()));

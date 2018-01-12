@@ -6,8 +6,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
+        android:name=".AppGlobals"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -15,6 +21,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
             >
             <intent-filter>
@@ -22,18 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ChangeCityActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <receiver android:name=".WidgetProvider" android:icon="@drawable/ic_widget"
+        <receiver
+            android:name=".widget.WidgetProvider"
+            android:icon="@drawable/ic_launcher"
                   android:label="Namaz Time">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -41,45 +39,52 @@
             <meta-data android:name="android.appwidget.provider"
                        android:resource="@xml/widget_info" />
         </receiver>
-        <receiver android:name=".WidgetReceiver"/>
-        <receiver
-            android:name=".NotificationReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.byteshaft.shownotification"/>
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".RingtoneRestoreReceiver" android:exported="false">
-            <intent-filter>
-                <action android:name="com.byteshaft.silent"/>
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".receivers.WidgetReceiver"/>
+        <!--<receiver-->
+            <!--android:name=".receivers.NotificationReceiver"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.byteshaft.shownotification"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+        <!--<receiver android:name=".receivers.RingtoneRestoreReceiver" android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.byteshaft.silent"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
-        <receiver android:name=".AlarmNotification" android:exported="false">
-            <intent-filter>
-                <action android:name="com.byteshaft.setalarm"/>
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".NextNamazTimeReceiver" android:exported="false">
-            <intent-filter>
-                <action android:name="com.byteshaft.setnextalarm"/>
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".StandardAlarmReceiver" android:exported="false">
-            <intent-filter>
-                <action android:name="com.byteShaft.standardalarm"/>
-            </intent-filter>
-        </receiver>
+        <!--<receiver android:name=".receivers.AlarmNotification" android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.byteshaft.setalarm"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+        <!--<receiver android:name=".receivers.NextNamazTimeReceiver" android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.byteshaft.setnextalarm"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+        <!--<receiver android:name=".receivers.StandardAlarmReceiver" android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.byteShaft.standardalarm"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
-        <receiver
-            android:name=".DismissReceiver"
-            android:exported="false" >
-        </receiver>
-        <receiver android:name=".BootListener" android:enabled="true">
+        <receiver android:name=".receivers.BootListener" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <!--location work-->
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+        <service android:name=".geofence.GeofenceService" android:enabled="true"/>
+
+        <service
+            android:name=".geofence.GeofenceTransitionService"
+            android:exported="true" />
 
     </application>
 

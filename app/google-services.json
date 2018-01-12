@@ -1,27 +1,31 @@
 {
   "project_info": {
-    "project_number": "978610215017",
-    "firebase_url": "https://namaz-time-d4ff9.firebaseio.com",
-    "project_id": "namaz-time-d4ff9",
-    "storage_bucket": "namaz-time-d4ff9.appspot.com"
+    "project_number": "233719093085",
+    "firebase_url": "https://namaz-time-bd6ca.firebaseio.com",
+    "project_id": "namaz-time",
+    "storage_bucket": "namaz-time.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:978610215017:android:27114c874c6185fd",
+        "mobilesdk_app_id": "1:233719093085:android:27114c874c6185fd",
         "android_client_info": {
           "package_name": "com.byteshaft.namaztime"
         }
       },
       "oauth_client": [
         {
-          "client_id": "978610215017-n1a1dqmha8n6amlo5v8m683kmnr9nt4u.apps.googleusercontent.com",
+          "client_id": "233719093085-vorutboho1v2940h6se2nglik0elppcv.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "233719093085-dot4f84v8o69tn43mekthrioo45rg44m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD7V9HXxFg_tnsYXqyxPbSjF0q8jLA0RqI"
+          "current_key": "AIzaSyAiQD4d4e9WxI0XXQMColWs0SaznwbSYpg"
         }
       ],
       "services": {
